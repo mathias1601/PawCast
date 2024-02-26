@@ -3,3 +3,4 @@
 - Synnøve Birkeland
 - Isabelle Røed Lampl
 - Mai Anh Duong 
+- Linn Srongyoo Hjulstad
