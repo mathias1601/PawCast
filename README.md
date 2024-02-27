@@ -2,3 +2,4 @@
 - Markus Evanger
 - Synnøve Birkeland
 - Isabelle Røed Lampl
+- Mai Anh Duong 
