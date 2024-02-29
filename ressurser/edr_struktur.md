@@ -1,7 +1,5 @@
 
-
-
-```
+```mermaid
 graph TB
     landingpage --> landingpage
     landingpage --> openapi
