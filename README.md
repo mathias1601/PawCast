@@ -4,3 +4,4 @@
 - Isabelle Røed Lampl
 - Mai Anh Duong 
 - Linn Srongyoo Hjulstad
+- Mathias Knudsen
