@@ -6,4 +6,4 @@
 - Linn Srongyoo Hjulstad
 - Mathias Knudsen
 
-![](https://media.github.uio.no/user/9657/files/64bd2b05-bd91-4708-b7a2-61e885c0a8d2)
+![](https://tenor.com/view/cat-wtf-oh-hell-nah-gif-4183712492046775434)
