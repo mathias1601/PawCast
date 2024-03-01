@@ -6,4 +6,4 @@
 - Linn Srongyoo Hjulstad
 - Mathias Knudsen
 
-![image](https://tenor.com/view/cat-wtf-oh-hell-nah-gif-4183712492046775434)
+![image](https://media1.tenor.com/m/Og-IWGLP9IoAAAAC/cat-wtf.gif)
