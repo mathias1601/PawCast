@@ -6,4 +6,4 @@
 - Linn Srongyoo Hjulstad
 - Mathias Knudsen
 
-![image](https://media.github.uio.no/user/9657/files/64bd2b05-bd91-4708-b7a2-61e885c0a8d2)
+![](https://media.github.uio.no/user/9657/files/64bd2b05-bd91-4708-b7a2-61e885c0a8d2)
