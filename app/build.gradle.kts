@@ -66,4 +66,17 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // EGNE DEPENDENCIES
+
+    // ktor dependencies
+    val ktor_version = "2.3.8"
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-serialization-gson:$ktor_version")
+
+    implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 }
