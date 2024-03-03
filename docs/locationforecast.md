@@ -89,7 +89,7 @@ Tyngre? Bedre? Mer modulær? Stay tuned 👀
 
 ```kotlin
 fun main(){
-    val client = HttpClient { install(ContentNegotiation){ gson() } } // KTOR client
+    val client = HttpClient() // set up KTOR client
 
     // IFI coordinates
     val LATITUDE = 60
