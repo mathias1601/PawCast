@@ -12,14 +12,13 @@ import no.uio.ifi.in2000.team19.prosjekt.data.objects.LocationForecast
 
 fun main() = runBlocking{
 
-
     // IFI coordinates
     val LONGITUDE = "10"
     val LATITUDE = "60"
     val HEIGHT = "0"
 
     val response = getLocationForecast(LONGITUDE, LATITUDE, HEIGHT) // HttpResponse
-    println("Reponse: ${response.status}")
+    println("Response: ${response.status}")
 
     val forecast = deserializeLocationForecast(response)
 
