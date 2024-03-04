@@ -7,12 +7,12 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.gson.gson
 import kotlinx.coroutines.runBlocking
-import no.uio.ifi.in2000.team19.prosjekt.data.objects.LocationForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.locationForecast.LocationForecast
 
 
 fun main() = runBlocking{
 
-    // IFI coordinates
+    // Coordinates
     val LONGITUDE = "10"
     val LATITUDE = "60"
     val HEIGHT = "0"
@@ -22,7 +22,9 @@ fun main() = runBlocking{
 
     val forecast = deserializeLocationForecast(response)
 
-    println(forecast)
+    val temp = getAirTemperatureFromForecast(forecast)
+
+    println("Temperature: $temp degrees")
 }
 
 
@@ -42,6 +44,9 @@ suspend fun deserializeLocationForecast(response: HttpResponse): LocationForecas
     return response.body<LocationForecast>()
 }
 
+fun getAirTemperatureFromForecast(forecast: LocationForecast): Double {
+    return forecast.properties.timeseries[0].data.instant.details.air_temperature
+}
 
 
 
