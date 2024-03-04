@@ -59,12 +59,17 @@ Hentet fra https://api.met.no/weatherapi/locationforecast/2.0/documentation
 
 ## Respons 
 
-⚠️ // TODO// ⚠️
+> 🚨 Se `LocationForcastResponseGraph.md` for en visuell graf av hvordan man navigerer responsen av LocationForecast. 
 
-Må forstå/skrive mer om hvordan responsen fra API-fungerer.
-- Hvilken data jobber vi med? 
-- Hvordan aksesserer vi den? 
+Etter deserialisering får vi et `LocationForecast` data objekt. 
 
+Den viktigste dataen vi får finner vi med å akkesere:
+```kotlin
+
+val forecast = LocationForecast() 
+val temp = forecast.properties.meta.units.
+
+``````
 
 
 ## Tanker rundt EDR vs vanlige API-kall
@@ -81,6 +86,7 @@ vanlig:
 EDR: `https://api.met.no/weatherapi/locationforecast/2.0/edr/collections/complete/position?coords=POINT(10+60)`
 
 Tyngre? Bedre? Mer modulær? Stay tuned 👀
+(Burde nok skrive mer om dette med tanke på prosjektinnleveringen)
 
 
 ## Kotlin eksempel: 

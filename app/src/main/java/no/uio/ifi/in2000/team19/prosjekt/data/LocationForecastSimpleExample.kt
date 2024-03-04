@@ -24,15 +24,18 @@ fun main() = runBlocking{
     val forecast = deserializeLocationForecast(response)
 
     println(forecast)
-
 }
 
 
 suspend fun getLocationForecast(LONGITUDE:String, LATITUDE:String, HEIGHT:String): HttpResponse {
     val client = HttpClient { install(ContentNegotiation) { gson() }} // set up KTOR client
+
     val path = "https://api.met.no/weatherapi/locationforecast/2.0/edr/collections/complete/position?coords=POINT($LONGITUDE+$LATITUDE)&z=$HEIGHT"
+
     val result = client.get(path)
+
     client.close()
+
     return result
 }
 
