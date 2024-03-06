@@ -77,6 +77,11 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-gson:$ktor_version")
 
+    // Android dependecies vi har lagt til: f.eks viewModel...
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+    // MapBox!
+    implementation("com.mapbox.maps:android:11.2.0")
+    implementation("com.mapbox.extension:maps-compose:11.2.0")
 }
