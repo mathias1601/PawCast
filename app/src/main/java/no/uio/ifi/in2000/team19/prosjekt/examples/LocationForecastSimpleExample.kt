@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team19.prosjekt.data
+package no.uio.ifi.in2000.team19.prosjekt.examples
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
