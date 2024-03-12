@@ -1,10 +1,12 @@
 package no.uio.ifi.in2000.team19.prosjekt.data
 
-import no.uio.ifi.in2000.team19.prosjekt.model.locationForecast.RelevantForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.RelevantForecast
 
 interface LocationForecastRepositoryInterface{
     //filterer alt eller det meste her
-    suspend fun getRelevantForecastData(latitude: String, longitude: String, height: String): RelevantForecast
+    suspend fun getRelevantForecastData(longitude: String, latitude: String, height: String): RelevantForecast
+    suspend fun getAdvice(latitude: String, longitude: String):List<Advice> // produserer en liste av Advice basert på LocationForecast for gitte kordinater
 }
 
 class LocationForecastRepository(
@@ -22,4 +24,5 @@ class LocationForecastRepository(
 
         return relevantForecast
     }
+
 }

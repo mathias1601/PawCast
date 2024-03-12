@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team19.prosjekt.model.locationForecast
+package no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast
 
 data class Units(
     val air_pressure_at_sea_level: String,

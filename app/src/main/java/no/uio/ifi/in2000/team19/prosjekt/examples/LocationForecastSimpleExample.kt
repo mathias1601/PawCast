@@ -7,7 +7,7 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.gson.gson
 import kotlinx.coroutines.runBlocking
-import no.uio.ifi.in2000.team19.prosjekt.model.locationForecast.LocationForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 
 
 fun main() = runBlocking{
