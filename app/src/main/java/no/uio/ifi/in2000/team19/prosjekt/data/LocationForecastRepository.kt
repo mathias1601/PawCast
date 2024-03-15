@@ -24,8 +24,8 @@ class LocationForecastRepository(
         val adviceForecast = AdviceForecast(temperature, windspeed)
 
         return adviceForecast
-    }
 
+=======
     override suspend fun getRelevantForecastData(latitude: String, longitude: String, height: String, nrHours : Int): List<RelevantForecast> {
         val all_data = locationForecastDataSource.getLocationForecast(latitude, longitude, height)
 
