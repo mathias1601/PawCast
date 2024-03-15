@@ -25,4 +25,8 @@ class LocationForecastRepository(
         return relevantForecast
     }
 
+    override suspend fun getAdvice(latitude: String, longitude: String): List<Advice> {
+        TODO("Not yet implemented")
+    }
+
 }
