@@ -1,3 +1,5 @@
+
+```kotlin
 package no.uio.ifi.in2000.team19.prosjekt.examples.RoomDataBase
 
 import android.os.Bundle
@@ -13,8 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.room.Room
-import com.example.testifiproxy.ui.theme.TestIfiProxyTheme
 import kotlinx.coroutines.flow.Flow
 
 class MainActivity : ComponentActivity() {
@@ -36,9 +36,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-
-
-
-
-
+```
