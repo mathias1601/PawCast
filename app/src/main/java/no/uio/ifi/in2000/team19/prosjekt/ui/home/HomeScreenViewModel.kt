@@ -37,6 +37,9 @@ class HomeScreenViewModel: ViewModel() {
 
     /*
     === Currently does not work, is not able to update adviceUiState ===
+
+    * Might be that _adviceUiState is a val / not a var
+
     fun reloadData(){
         _adviceUiState.value = AdviceUiState.Loading // Here to make sure UI knows its loading when also reloading the data, e.g by clicking home
         loadAllAdvice()
@@ -48,7 +51,7 @@ class HomeScreenViewModel: ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("vm", "loading all advice...")
             try {
-                //TODO change arguments later
+                //TODO change arguments to read from a settings database stored locally
                 val allAdvice = locationForecastRepository.getAdvice("10", "60", "0")
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
 
@@ -56,6 +59,5 @@ class HomeScreenViewModel: ViewModel() {
                 AdviceUiState.Error
             }
         }
-
     }
 }

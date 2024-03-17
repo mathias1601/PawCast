@@ -1,15 +1,10 @@
-package no.uio.ifi.in2000.team19.prosjekt.ui
+package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,35 +15,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
-import no.uio.ifi.in2000.team19.prosjekt.ui.home.AdviceUiState
-import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 
 
 @Composable
-fun HomeScreenManager(){
-    val viewModel: HomeScreenViewModel = viewModel()
+fun HomeScreenManager(viewModel: HomeScreenViewModel) {
+
+
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
 
 
     Scaffold(
         bottomBar = {
-            BottomAppBar {
-                    Row(
-                        Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Button(onClick = { /* TODO */ }) {
-                            Text(text = "Home")
-                        }
-                        Button(onClick = { /*TODO */ }) {
-                            Text(text = "Settings")
-                        }
-                    }
 
-            }
         }
     ) {innerPadding ->
 
@@ -68,8 +47,6 @@ fun HomeScreenManager(){
             }
         }
     }
-
-
 }
 
 @Composable
