@@ -1,17 +1,23 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -42,7 +48,7 @@ fun HomeScreenManager(viewModel: HomeScreenViewModel) {
                     CircularProgressIndicator()
                 }
                 is AdviceUiState.Error -> {
-                    //NoConnectionScreen()
+                    NoConnectionScreen()
                 }
             }
         }
@@ -50,14 +56,16 @@ fun HomeScreenManager(viewModel: HomeScreenViewModel) {
 }
 
 @Composable
-fun NoConnectionScreen(){}
+fun NoConnectionScreen() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        ExtendedFloatingActionButton(
+            text = { Text("Ingen internett-tilgang") },
+            icon = { Icon(Icons.Filled.Warning, contentDescription = "Advarsel") },
+            onClick = { /* TODO change later if we want to update */ }
+        )
+    }
 
-/*
-*
-* Card composable som viser innhold i Advice objekt.
-* Viser Advice fra listen hentet i HomeScreenViewModel
-*
-*/
+}
 
 @Composable
 fun HomeScreen(adviceUiState: AdviceUiState.Success) {
