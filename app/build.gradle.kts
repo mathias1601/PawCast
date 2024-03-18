@@ -85,4 +85,11 @@ dependencies {
     // MapBox!
     implementation("com.mapbox.maps:android:11.2.0")
     implementation("com.mapbox.extension:maps-compose:11.2.0")
+
+    // Nav Controller og navigation
+    val nav_version = "2.7.7"
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+
+    implementation("androidx.navigation:navigation-compose:$nav_version")
 }

@@ -26,7 +26,7 @@ class HomeScreenViewModel: ViewModel() {
 
     private val locationForecastRepository =
         LocationForecastRepository()
-
+        
 
     private var generalForecast: MutableList<GeneralForecast> = mutableListOf()
 
@@ -44,6 +44,9 @@ class HomeScreenViewModel: ViewModel() {
 
     /*
     === Currently does not work, is not able to update adviceUiState ===
+
+    * Might be that _adviceUiState is a val / not a var
+
     fun reloadData(){
         _adviceUiState.value = AdviceUiState.Loading // Here to make sure UI knows its loading when also reloading the data, e.g by clicking home
         loadAllAdvice()
@@ -53,7 +56,6 @@ class HomeScreenViewModel: ViewModel() {
     private fun loadAllAdvice() {
 
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("vm", "loading all advice...")
             try {
                 //TODO change arguments later
                 generalForecast =
@@ -65,6 +67,5 @@ class HomeScreenViewModel: ViewModel() {
                 AdviceUiState.Error
             }
         }
-
     }
 }
