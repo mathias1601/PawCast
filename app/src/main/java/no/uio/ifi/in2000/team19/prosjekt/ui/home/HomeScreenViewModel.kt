@@ -59,7 +59,7 @@ class HomeScreenViewModel: ViewModel() {
             try {
                 //TODO change arguments later
                 generalForecast =
-                    locationForecastRepository.getGeneralForecast("10", "60", "0", 10).toMutableList()
+                    locationForecastRepository.getGeneralForecast("60", "10", "0", 10).toMutableList()
                 val allAdvice = locationForecastRepository.getAdvice(generalForecast)
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
 

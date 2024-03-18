@@ -9,6 +9,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -22,6 +26,10 @@ import androidx.compose.ui.text.input.KeyboardType
 fun SettingsScreen(viewModel: SettingsScreenViewModel){
 
     val keyboardController = LocalSoftwareKeyboardController.current
+    val cordinates = viewModel.coordinates.collectAsState().value
+
+    var localLatitude by remember { mutableStateOf(cordinates.latitude) }
+    var localLongitude by remember { mutableStateOf(cordinates.longitude) }
 
     Column (
 
@@ -36,8 +44,8 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel){
 
         OutlinedTextField(
             label = { Text(text = "Latitude") },
-            value = viewModel.latitude.collectAsState().value,
-            onValueChange = {viewModel.setLatitude(it)},
+            value = localLatitude,
+            onValueChange = {localLatitude = it},
 
             singleLine = true,
 
@@ -45,12 +53,19 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel){
                 keyboardType = KeyboardType.Decimal,
                 imeAction = ImeAction.Done
             ),
+
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    keyboardController?.hide()
+                    viewModel.setLatitude(localLatitude)
+                }
+            )
         )
 
         OutlinedTextField(
             label = { Text(text = "Longitude") },
-            value = viewModel.longitude.collectAsState().value,
-            onValueChange = {viewModel.setLongitude(it)},
+            value = localLongitude,
+            onValueChange = {localLongitude = it},
 
             singleLine = true,
 
@@ -59,7 +74,10 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel){
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
-                onDone = { keyboardController?.hide()}
+                onDone = {
+                    keyboardController?.hide()
+                    viewModel.setLongitude(localLongitude)
+                }
             )
         )
     }

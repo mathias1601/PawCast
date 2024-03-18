@@ -64,7 +64,6 @@ fun NoConnectionScreen() {
             onClick = { /* TODO change later if we want to update */ }
         )
     }
-
 }
 
 @Composable

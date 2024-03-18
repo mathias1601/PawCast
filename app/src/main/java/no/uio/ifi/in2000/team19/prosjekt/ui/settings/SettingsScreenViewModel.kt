@@ -1,28 +1,40 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.settings
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsDatabase
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 
-class SettingsScreenViewModel : ViewModel() {
+class SettingsScreenViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _latitude = MutableStateFlow("60")
-    private val _longitude = MutableStateFlow("10")
+    private val repository: SettingsRepository
+    private val _coordinates: MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "", ""))
+    val coordinates = _coordinates.asStateFlow()
 
-    val latitude = _latitude.asStateFlow()
-    val longitude = _longitude.asStateFlow()
+    init {
+        val coordsDao = SettingsDatabase.getDatabase(application).coordsDao()
+        repository = SettingsRepository(coordsDao)
 
-    /* TODO: change set functions to call to repository and update database
-        - Currently reset to default values of 60 and 10 when user returns to screen. Easier to fix when implementing a database, imo.
+        viewModelScope.launch {
+            _coordinates.value = repository.getCoords()
+        }
+    }
 
-    *
-    */
-    
     fun setLatitude(newLatitude:String){
-        _latitude.value = newLatitude
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateCoords(coordinates.value.longitude, newLatitude)
+        }
     }
 
     fun setLongitude(newLongitude:String) {
-        _longitude.value = newLongitude
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateCoords(newLongitude, coordinates.value.latitude)
+        }
     }
 }
