@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 @Entity
 data class Cords(
     @PrimaryKey(autoGenerate = false) val id: Int,
-    @ColumnInfo(name = "longitude") val longitude: String,
-    @ColumnInfo(name = "latitude")val latitude: String,
+    @ColumnInfo(name = "longitude") var longitude: String,
+    @ColumnInfo(name = "latitude") var latitude: String,
 )

@@ -9,7 +9,7 @@ class SettingsRepository(private val coordsDao: coordsDao){
     suspend fun getCoords(): Cords {
 
         if (coordsDao.getCords() == null){
-            val defaultCoords = Cords(0, "61", "9")
+            val defaultCoords = Cords(0, "9", "61")
             coordsDao.insertCords(defaultCoords)
         }
         return coordsDao.getCords()!!

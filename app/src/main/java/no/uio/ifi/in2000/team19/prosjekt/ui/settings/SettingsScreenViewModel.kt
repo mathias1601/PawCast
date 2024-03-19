@@ -21,20 +21,22 @@ class SettingsScreenViewModel(application: Application) : AndroidViewModel(appli
         val coordsDao = SettingsDatabase.getDatabase(application).coordsDao()
         repository = SettingsRepository(coordsDao)
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _coordinates.value = repository.getCoords()
         }
     }
 
     fun setLatitude(newLatitude:String){
         viewModelScope.launch(Dispatchers.IO) {
-            repository.updateCoords(coordinates.value.longitude, newLatitude)
+            repository.updateCoords( newLatitude, coordinates.value.longitude)
+            coordinates.value.latitude = newLatitude
         }
     }
 
     fun setLongitude(newLongitude:String) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.updateCoords(newLongitude, coordinates.value.latitude)
+            repository.updateCoords(coordinates.value.latitude, newLongitude)
+            coordinates.value.longitude = newLongitude
         }
     }
 }

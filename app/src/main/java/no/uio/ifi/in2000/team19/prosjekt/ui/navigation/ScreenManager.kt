@@ -64,13 +64,13 @@ fun ScreenManager() {
         Column(
             Modifier.padding(innerPadding)
         ) {
+            val settingsScreenViewModel : SettingsScreenViewModel = viewModel()
             NavHost(navController = navController, startDestination = "home"){
                 composable("home") {
                     val homeScreenViewModel:HomeScreenViewModel = viewModel()
-                    HomeScreenManager(homeScreenViewModel) }
+                    HomeScreenManager(homeScreenViewModel, settingsScreenViewModel) }
 
                 composable("settings"){
-                    val settingsScreenViewModel : SettingsScreenViewModel = viewModel()
                     SettingsScreen(settingsScreenViewModel)
                 }
             }
