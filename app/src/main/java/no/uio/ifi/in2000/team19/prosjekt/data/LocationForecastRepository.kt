@@ -3,35 +3,16 @@ package no.uio.ifi.in2000.team19.prosjekt.data
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 
-interface LocationForecastRepositoryInterface{
-
-    suspend fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast
-    suspend fun getGeneralForecast(locationForecast: LocationForecast, nrHours: Int) : List<GeneralForecast>
-    suspend fun getAdvice(latitude: String, longitude: String, height: String): List<Advice>
-    fun createAdvice(forecast: AdviceForecast):List<Advice> // produserer en liste av Advice basert på LocationForecast for gitte kordinater
-}
 
 class LocationForecastRepository(
     private val locationForecastDataSource: LocationForecastDataSource = LocationForecastDataSource()
-) :LocationForecastRepositoryInterface {
+)  {
 
 
+    suspend fun getGeneralForecast(latitude: String, longitude: String, height: String, nrHours: Int): List<GeneralForecast> {
 
-    override suspend fun getAdvice(latitude: String, longitude: String, height: String): List<Advice> {
-        val locationForecastResponse = locationForecastDataSource.getLocationForecast(latitude, longitude, height)
-
-        val generalForecast = getGeneralForecast(locationForecastResponse, 10)
-        val adviceForecast = getAdviceForecastData(generalForecast[0]) // only get forecast for right now.
-
-        // val fakeAdviceForTestingForecast = AdviceForecast(temperature = "-10.0", windspeed = "10")
-
-        return createAdvice(adviceForecast)
-
-    }
-
-    override suspend fun getGeneralForecast(locationForecast: LocationForecast, nrHours : Int): List<GeneralForecast> {
+        val locationForecast = locationForecastDataSource.getLocationForecast(latitude, longitude, height)
 
         val forecastList = mutableListOf<GeneralForecast>()
 
@@ -46,13 +27,18 @@ class LocationForecastRepository(
     }
 
 
-    override suspend fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
-        return AdviceForecast(generalForecast.temperature, generalForecast.wind)
-
+    fun getAdvice(generalForecast:List<GeneralForecast>): List<Advice> {
+        val adviceForecast = getAdviceForecastData(generalForecast[0]) // only get forecast for right now.
+        // val fakeAdviceForTestingForecast = AdviceForecast(temperature = "-10.0", windspeed = "10")
+        return createAdvice(adviceForecast)
     }
 
 
-    override fun createAdvice(forecast: AdviceForecast): List<Advice> {
+    private fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
+        return AdviceForecast(generalForecast.temperature, generalForecast.wind)
+    }
+
+    private fun createAdvice(forecast: AdviceForecast): List<Advice> {
 
         val adviceList = mutableListOf<Advice>()
 

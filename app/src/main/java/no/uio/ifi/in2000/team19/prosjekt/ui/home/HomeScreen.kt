@@ -1,91 +1,109 @@
-package no.uio.ifi.in2000.team19.prosjekt.ui
+package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
-import androidx.compose.foundation.layout.Arrangement
+import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
-import no.uio.ifi.in2000.team19.prosjekt.ui.home.AdviceUiState
-import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 
 
 @Composable
-fun HomeScreenManager(){
-    val viewModel: HomeScreenViewModel = viewModel()
-    val adviceUiState = viewModel.adviceUiState.collectAsState().value
+fun HomeScreenManager(viewModel: HomeScreenViewModel) {
 
+
+    val adviceUiState = viewModel.adviceUiState.collectAsState().value
 
     Scaffold(
         bottomBar = {
-            BottomAppBar {
-                    Row(
-                        Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Button(onClick = { /* TODO */ }) {
-                            Text(text = "Home")
-                        }
-                        Button(onClick = { /*TODO */ }) {
-                            Text(text = "Settings")
-                        }
-                    }
 
-            }
         }
-    ) {innerPadding ->
+    ) { innerPadding ->
 
         Column(
             Modifier.padding(innerPadding)
         ) {
-            when(adviceUiState ) {
+            when (adviceUiState) {
                 is AdviceUiState.Success -> {
                     HomeScreen(adviceUiState)
                 }
+
                 is AdviceUiState.Loading -> {
                     CircularProgressIndicator()
                 }
+
                 is AdviceUiState.Error -> {
-                    //NoConnectionScreen()
+                    NoConnectionScreen()
                 }
             }
+
+            // Unsure of how we want to solve this
+            /*
+            when (weatherForecastUiState) {
+                is WeatherForecastUiState.Success ->
+                    WeatherForecast(weatherForecastUiState = weatherForecastUiState)
+
+                is WeatherForecastUiState.Loading ->
+                    CircularProgressIndicator()
+
+                is WeatherForecastUiState.Error ->
+                    NoConnectionScreen()
+
+            }
+
+             */
         }
     }
+}
 
+
+@Composable
+fun NoConnectionScreen() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        ExtendedFloatingActionButton(
+            text = { Text("Ingen internett-tilgang") },
+            icon = { Icon(Icons.Filled.Warning, contentDescription = "Advarsel") },
+            onClick = { /* TODO change later if we want to update */ }
+        )
+    }
 
 }
 
 @Composable
-fun NoConnectionScreen(){}
-
-/*
-*
-* Card composable som viser innhold i Advice objekt.
-* Viser Advice fra listen hentet i HomeScreenViewModel
-*
-*/
-
-@Composable
 fun HomeScreen(adviceUiState: AdviceUiState.Success) {
-
-    val advices = adviceUiState.allAdvice
 
     Column(
         modifier = Modifier
@@ -97,15 +115,19 @@ fun HomeScreen(adviceUiState: AdviceUiState.Success) {
         )
         LazyColumn(
         ) {
-            items(advices) { item ->
+            items(adviceUiState.allAdvice) { item ->
                 AdviceCard(item)
             }
         }
+
+        Spacer(modifier = Modifier.size(50.dp))
+
+        WeatherForecast(adviceUiState.weatherForecast)
     }
 }
 
 @Composable
-fun AdviceCard(advice: Advice){
+fun AdviceCard(advice: Advice) {
 
     Card(
         colors = CardDefaults.cardColors(
@@ -113,18 +135,102 @@ fun AdviceCard(advice: Advice){
         ),
         modifier = Modifier
             .padding(2.dp)
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(10.dp)
-        ){
+        ) {
             Text(text = advice.title)
             Text(text = advice.description)
             Text(text = "${advice.forecast.temperature} grader")
             Text(text = "${advice.forecast.windspeed} m/s")
         }
     }
+
+}
+
+
+@Composable
+fun WeatherForecast(weatherForecast: List<GeneralForecast>) {
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(1),
+        //columns = GridCells.Adaptive(minSize = 150.dp),
+        content = {
+            items(weatherForecast) { generalForecast ->
+                WeatherForecastCard(generalForecast = generalForecast)
+            }
+        }
+    )
+}
+
+@SuppressLint("DiscouragedApi")
+@Composable
+fun WeatherForecastCard(generalForecast: GeneralForecast) {
+
+    val newColor = Color(android.graphics.Color.parseColor("#ece9e4"))
+
+    val context = LocalContext.current
+    val drawableName = generalForecast.symbol
+    val drawableId = context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = newColor
+        ),
+        modifier = Modifier
+            .size(width = 350.dp, height = 75.dp)
+            .padding(9.dp)
+        //.height(23.dp)
+    ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxSize(),
+            //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Spacer(modifier = Modifier.size(15.dp))
+
+            Image(
+                painter = painterResource(id = drawableId),
+                contentDescription = "Værsymbol"
+            )
+
+            Spacer(modifier = Modifier.size(26.dp))
+
+            Text(
+                text = "${generalForecast.temperature}°C",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+            )
+
+            Spacer(modifier = Modifier.size(40.dp))
+
+            Text(
+                text = "${generalForecast.wind} m/s",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.size(35.dp))
+
+            Text(
+                text = generalForecast.time,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun WeatherForecastPreview() {
+    val generalForecast: GeneralForecast = GeneralForecast("22", "10", "clearsky_day", "12:32")
+    WeatherForecastCard(generalForecast)
 
 }
 
