@@ -17,26 +17,60 @@ import java.io.IOException
 
 
 sealed interface AdviceUiState{
-    data class  Success(val allAdvice:List<Advice>) : AdviceUiState
+    data class  Success(val allAdvice:List<Advice>, val weatherForecast: List<GeneralForecast>) : AdviceUiState
     data object Loading : AdviceUiState
     data object Error : AdviceUiState
 }
 
-class HomeScreenViewModel: ViewModel() {
+/*
+sealed interface WeatherForecastUiState {
+    data class Success(val weatherForecast: List<GeneralForecast>): WeatherForecastUiState
+    data object Loading: WeatherForecastUiState
+    data object Error: WeatherForecastUiState
+}
 
+ */
+
+
+class HomeScreenViewModel: ViewModel() {
 
     private val locationForecastRepository =
         LocationForecastRepository()
-        
-
-    private var generalForecast: MutableList<GeneralForecast> = mutableListOf()
 
 
     private val _adviceUiState: MutableStateFlow<AdviceUiState> =
         MutableStateFlow(AdviceUiState.Loading)
     var adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
 
+    //private val _weatherForecastUiState: MutableStateFlow<WeatherForecastUiState> = MutableStateFlow(WeatherForecastUiState.Loading)
+    //var weatherForecastUiState: StateFlow<WeatherForecastUiState> = _weatherForecastUiState.asStateFlow()
 
+    // Temporary variables, to make testing easier
+    private val latitude: String = "60"
+    private val longitude: String = "10"
+    private val height: String = "0"
+
+
+    init {
+        //loadAllAdvice()
+        loadWeatherForecast()
+        Log.d("vm", "VM done initializing")
+    }
+
+    private fun loadWeatherForecast() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val weatherForecast = locationForecastRepository.getGeneralForecast(latitude, longitude, height, 3)
+                //_weatherForecastUiState.value = WeatherForecastUiState.Success(weatherForecast)
+
+                val allAdvice = locationForecastRepository.getAdvice(weatherForecast)
+                _adviceUiState.value = AdviceUiState.Success(allAdvice, weatherForecast)
+            } catch (e: IOException) {
+                //WeatherForecastUiState.Error
+                AdviceUiState.Error
+            }
+        }
+    }
 
     /*
     === Currently does not work, is not able to update adviceUiState ===
@@ -49,6 +83,7 @@ class HomeScreenViewModel: ViewModel() {
     }
      */
 
+
     fun loadAllAdvice(latitude: String, longitude: String) {
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -56,6 +91,7 @@ class HomeScreenViewModel: ViewModel() {
                 //TODO change arguments later
                 generalForecast =
                     locationForecastRepository.getGeneralForecast(latitude, longitude, "0", 10).toMutableList()
+
                 val allAdvice = locationForecastRepository.getAdvice(generalForecast)
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
 
@@ -64,4 +100,5 @@ class HomeScreenViewModel: ViewModel() {
             }
         }
     }
+
 }

@@ -16,13 +16,14 @@ class LocationForecastRepository(
 
         val forecastList = mutableListOf<GeneralForecast>()
 
-        for(i in 2..(nrHours+2)) {
+        for( i in 2..(nrHours+2) ) {
             val temperature = locationForecast.properties.timeseries[i].data.instant.details.air_temperature.toString()
             val wind = locationForecast.properties.timeseries[i].data.instant.details.wind_speed.toString()
             val symbol = locationForecast.properties.timeseries[i].data.next_1_hours.summary.symbol_code
             val time = locationForecast.properties.timeseries[i].time
             forecastList.add(GeneralForecast(temperature, wind, symbol, time))
         }
+
         return forecastList
     }
 
@@ -38,25 +39,29 @@ class LocationForecastRepository(
         return AdviceForecast(generalForecast.temperature, generalForecast.wind)
     }
 
+
     private fun createAdvice(forecast: AdviceForecast): List<Advice> {
 
         val adviceList = mutableListOf<Advice>()
 
         if (forecast.temperature.toDouble() < 0) {
-            val a = Advice("Frozen", "It's really cold, likely frozen", "#FFFF00", forecast) //yellow colour
-            adviceList.add(a)
+            val advice = Advice("Frozen", "It's really cold, likely frozen", "#FFFF00", forecast) //yellow colour
+            adviceList.add(advice)
         }
-        var a : Advice? = null
-        var b = 0
+
+        var advice : Advice? = null
+        var adviceCount = 0
+
         when (forecast.windspeed.toDouble()) {
-            in 10.0..19.0 -> a = Advice("Gale",  "very windy u choose what u want to do with this info", "#FFFF00", forecast)
-            in 20.0..24.0 -> a = Advice("Strong Gale", "branches on trees can break, be careful, small animals flyy", "#FED8B1", forecast)
-            in 25.0..30.0 -> a = Advice("Storm", "many many wind, dont go out plis?", "#FED8B1", forecast)
-            else -> b = 1
+            in 10.0..19.0 -> advice = Advice("Gale",  "very windy u choose what u want to do with this info", "#FFFF00", forecast)
+            in 20.0..24.0 -> advice = Advice("Strong Gale", "branches on trees can break, be careful, small animals flyy", "#FED8B1", forecast)
+            in 25.0..30.0 -> advice = Advice("Storm", "many many wind, dont go out plis?", "#FED8B1", forecast)
+            else -> adviceCount = 1
         }
-        if (b == 0) {
-            if (a != null) {
-                adviceList.add(a)
+
+        if (adviceCount == 0) {
+            if (advice != null) {
+                adviceList.add(advice)
             }
         }
 
