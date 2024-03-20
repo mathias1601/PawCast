@@ -25,12 +25,12 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
 
 @Composable
-fun ScreenManager(){
+fun ScreenManager() {
+
 
     val viewModel:ScreenManagerViewModel = viewModel()
     val navBarItems = createBottomNavbarItems()
     val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
-
     val navController = rememberNavController()
 
 
@@ -64,21 +64,19 @@ fun ScreenManager(){
         Column(
             Modifier.padding(innerPadding)
         ) {
+            val settingsScreenViewModel : SettingsScreenViewModel = viewModel()
             NavHost(navController = navController, startDestination = "home"){
                 composable("home") {
                     val homeScreenViewModel:HomeScreenViewModel = viewModel()
-                    HomeScreenManager(homeScreenViewModel) }
+                    HomeScreenManager(homeScreenViewModel, settingsScreenViewModel) }
 
                 composable("settings"){
-                    val settingsScreenViewModel :SettingsScreenViewModel = viewModel()
                     SettingsScreen(settingsScreenViewModel)
-
                 }
             }
         }
     }
 }
-
 
 data class BottomNavBarItem (
     val title : String,

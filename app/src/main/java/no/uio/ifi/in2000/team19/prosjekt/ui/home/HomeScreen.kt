@@ -38,14 +38,23 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
+import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 
 
+
 @Composable
-fun HomeScreenManager(viewModel: HomeScreenViewModel) {
+fun HomeScreenManager(
+    viewModel: HomeScreenViewModel,
+    settingsViewModel: SettingsScreenViewModel
+) {
 
-
+    val coordsUiState = settingsViewModel.coordinates.collectAsState().value
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
+
+
+    viewModel.loadAllAdvice(coordsUiState.latitude, coordsUiState.longitude)
+
 
     Scaffold(
         bottomBar = {
@@ -99,7 +108,6 @@ fun NoConnectionScreen() {
             onClick = { /* TODO change later if we want to update */ }
         )
     }
-
 }
 
 @Composable
