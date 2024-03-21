@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 
-class ScreenManagerViewModel : ViewModel(){
+class ScreenManagerViewModel() : ViewModel(){
 
     private var _navBarSelectedIndex : MutableStateFlow<Int> = MutableStateFlow(0)
     var navBarSelectedIndex: StateFlow<Int> = _navBarSelectedIndex.asStateFlow()

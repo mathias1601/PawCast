@@ -34,23 +34,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
-import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
-
 
 
 @Composable
 fun HomeScreenManager(
-    viewModel: HomeScreenViewModel,
-    settingsViewModel: SettingsScreenViewModel
+    viewModel: HomeScreenViewModel = viewModel()
 ) {
 
-    val coordsUiState = settingsViewModel.coordinates.collectAsState().value
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
-
-
-    viewModel.loadWeatherForecast()
+    val cordsUiState = viewModel.cordsUiState.collectAsState().value
 
 
     Scaffold(
@@ -64,7 +60,7 @@ fun HomeScreenManager(
         ) {
             when (adviceUiState) {
                 is AdviceUiState.Success -> {
-                    HomeScreen(adviceUiState)
+                    HomeScreen(adviceUiState, cordsUiState)
                 }
 
                 is AdviceUiState.Loading -> {
@@ -108,7 +104,8 @@ fun NoConnectionScreen() {
 }
 
 @Composable
-fun HomeScreen(adviceUiState: AdviceUiState.Success) {
+fun HomeScreen(advice: AdviceUiState.Success, cords: Cords) {
+
 
     Column(
         modifier = Modifier
@@ -118,16 +115,17 @@ fun HomeScreen(adviceUiState: AdviceUiState.Success) {
         Text(
             text = "Anbefalinger"
         )
+        Text(text = "LAT: ${cords.latitude}, LONG: ${cords.longitude}")
         LazyColumn(
         ) {
-            items(adviceUiState.allAdvice) { item ->
+            items(advice.allAdvice) { item ->
                 AdviceCard(item)
             }
         }
 
         Spacer(modifier = Modifier.size(50.dp))
 
-        WeatherForecast(adviceUiState.weatherForecast)
+        WeatherForecast(advice.weatherForecast)
     }
 }
 
@@ -234,7 +232,7 @@ fun WeatherForecastCard(generalForecast: GeneralForecast) {
 @Preview
 @Composable
 fun WeatherForecastPreview() {
-    val generalForecast: GeneralForecast = GeneralForecast("22", "10", "clearsky_day", "12:32")
+    val generalForecast = GeneralForecast("22", "10", "clearsky_day", "12:32")
     WeatherForecastCard(generalForecast)
 
 }
