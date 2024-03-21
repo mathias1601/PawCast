@@ -5,13 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -27,10 +27,10 @@ import androidx.compose.ui.text.input.KeyboardType
 fun SettingsScreen(viewModel: SettingsScreenViewModel){
 
     val keyboardController = LocalSoftwareKeyboardController.current
-    val cordinates = viewModel.coordinates.collectAsState().value
+    val coordinates = viewModel.coordinates.collectAsState().value
 
-    var localLatitude by rememberSaveable { mutableStateOf(cordinates.latitude) }
-    var localLongitude by rememberSaveable { mutableStateOf(cordinates.longitude) }
+    var localLatitude by rememberSaveable { mutableStateOf(coordinates.latitude) }
+    var localLongitude by rememberSaveable { mutableStateOf(coordinates.longitude) }
 
     Column (
 
@@ -81,6 +81,13 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel){
                 }
             )
         )
+        
+        Button(onClick = {
+            viewModel.setLatitude(localLatitude)
+            viewModel.setLongitude(localLongitude)
+        }) {
+            Text(text = "Save")
+        }
     }
 
 

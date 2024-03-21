@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -9,6 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 
@@ -33,6 +34,7 @@ class HomeScreenViewModel: ViewModel() {
 
     private val locationForecastRepository =
         LocationForecastRepository()
+    private lateinit var settingsRepository : SettingsRepository
 
 
     private val _adviceUiState: MutableStateFlow<AdviceUiState> =
@@ -42,28 +44,26 @@ class HomeScreenViewModel: ViewModel() {
     //private val _weatherForecastUiState: MutableStateFlow<WeatherForecastUiState> = MutableStateFlow(WeatherForecastUiState.Loading)
     //var weatherForecastUiState: StateFlow<WeatherForecastUiState> = _weatherForecastUiState.asStateFlow()
 
-    // Temporary variables, to make testing easier
-    private val latitude: String = "60"
-    private val longitude: String = "10"
     private val height: String = "0"
+    lateinit var cords: Cords
 
+    fun initialize(repository: SettingsRepository) {
+        viewModelScope.launch(Dispatchers.IO) {
 
-    init {
-        //loadAllAdvice()
-        loadWeatherForecast()
-        Log.d("vm", "VM done initializing")
+            settingsRepository = repository
+            cords = settingsRepository.getCoords()
+            loadWeatherForecast()
+        }
     }
 
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val weatherForecast = locationForecastRepository.getGeneralForecast(latitude, longitude, height, 3)
-                //_weatherForecastUiState.value = WeatherForecastUiState.Success(weatherForecast)
-
+                val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.latitude, height, 3)
                 val allAdvice = locationForecastRepository.getAdvice(weatherForecast)
+                cords = settingsRepository.getCoords()
                 _adviceUiState.value = AdviceUiState.Success(allAdvice, weatherForecast)
             } catch (e: Exception) {
-                //WeatherForecastUiState.Error
                _adviceUiState.value = AdviceUiState.Error
             }
         }

@@ -29,6 +29,7 @@ fun ScreenManager() {
 
 
     val viewModel:ScreenManagerViewModel = viewModel()
+
     val navBarItems = createBottomNavbarItems()
     val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
     val navController = rememberNavController()
@@ -64,13 +65,18 @@ fun ScreenManager() {
         Column(
             Modifier.padding(innerPadding)
         ) {
-            val settingsScreenViewModel : SettingsScreenViewModel = viewModel()
+
+            val settingsRepository = viewModel.getSettingsRepository()
+
             NavHost(navController = navController, startDestination = "home"){
                 composable("home") {
                     val homeScreenViewModel:HomeScreenViewModel = viewModel()
-                    HomeScreenManager(homeScreenViewModel, settingsScreenViewModel) }
+                    homeScreenViewModel.initialize(settingsRepository)
+                    HomeScreenManager(homeScreenViewModel) }
 
                 composable("settings"){
+                    val settingsScreenViewModel : SettingsScreenViewModel = viewModel()
+                    settingsScreenViewModel.initialize(settingsRepository)
                     SettingsScreen(settingsScreenViewModel)
                 }
             }

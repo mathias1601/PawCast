@@ -36,17 +36,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
-import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
-
 
 
 @Composable
 fun HomeScreenManager(
     viewModel: HomeScreenViewModel,
-    settingsViewModel: SettingsScreenViewModel
 ) {
 
-    val coordsUiState = settingsViewModel.coordinates.collectAsState().value
+    // val coordsUiState = settingsViewModel.coordinates.collectAsState().value
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
 
 
@@ -64,7 +61,7 @@ fun HomeScreenManager(
         ) {
             when (adviceUiState) {
                 is AdviceUiState.Success -> {
-                    HomeScreen(adviceUiState)
+                    HomeScreen(adviceUiState, viewModel)
                 }
 
                 is AdviceUiState.Loading -> {
@@ -108,7 +105,7 @@ fun NoConnectionScreen() {
 }
 
 @Composable
-fun HomeScreen(adviceUiState: AdviceUiState.Success) {
+fun HomeScreen(adviceUiState: AdviceUiState.Success, viewModel: HomeScreenViewModel) {
 
     Column(
         modifier = Modifier
@@ -118,6 +115,7 @@ fun HomeScreen(adviceUiState: AdviceUiState.Success) {
         Text(
             text = "Anbefalinger"
         )
+        Text(text = "LAT: ${viewModel.cords.latitude}, LONG: ${viewModel.cords.longitude}")
         LazyColumn(
         ) {
             items(adviceUiState.allAdvice) { item ->
@@ -234,7 +232,7 @@ fun WeatherForecastCard(generalForecast: GeneralForecast) {
 @Preview
 @Composable
 fun WeatherForecastPreview() {
-    val generalForecast: GeneralForecast = GeneralForecast("22", "10", "clearsky_day", "12:32")
+    val generalForecast = GeneralForecast("22", "10", "clearsky_day", "12:32")
     WeatherForecastCard(generalForecast)
 
 }
