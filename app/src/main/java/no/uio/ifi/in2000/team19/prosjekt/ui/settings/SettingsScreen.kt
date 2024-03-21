@@ -9,10 +9,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -20,17 +21,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SettingsScreen(viewModel: SettingsScreenViewModel){
+fun SettingsScreen(
+    viewModel: SettingsScreenViewModel = viewModel()
+){
+
 
     val keyboardController = LocalSoftwareKeyboardController.current
-    val coordinates = viewModel.coordinates.collectAsState().value
+    val coordinates = viewModel.cordsUiState.collectAsState()
 
-    var localLatitude by rememberSaveable { mutableStateOf(coordinates.latitude) }
-    var localLongitude by rememberSaveable { mutableStateOf(coordinates.longitude) }
+    var localLatitude by remember { mutableStateOf("") }
+    var localLongitude by remember { mutableStateOf("") }
+
+    LaunchedEffect(coordinates.value) {
+        localLatitude = coordinates.value.latitude
+        localLongitude = coordinates.value.longitude
+    }
 
     Column (
 
@@ -43,6 +53,8 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel){
 
     ){
 
+        
+        Text(text = "${coordinates.value.latitude}, ${coordinates.value.longitude}")
         OutlinedTextField(
             label = { Text(text = "Latitude") },
             value = localLatitude,
@@ -58,7 +70,7 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel){
             keyboardActions = KeyboardActions(
                 onDone = {
                     keyboardController?.hide()
-                    viewModel.setLatitude(localLatitude)
+                    viewModel.setCoordinates(localLatitude, localLongitude)
                 }
             )
         )
@@ -77,14 +89,14 @@ fun SettingsScreen(viewModel: SettingsScreenViewModel){
             keyboardActions = KeyboardActions(
                 onDone = {
                     keyboardController?.hide()
-                    viewModel.setLongitude(localLongitude)
+                    viewModel.setCoordinates(localLatitude, localLongitude)
+
                 }
             )
         )
         
         Button(onClick = {
-            viewModel.setLatitude(localLatitude)
-            viewModel.setLongitude(localLongitude)
+            viewModel.setCoordinates(localLatitude, localLongitude)
         }) {
             Text(text = "Save")
         }

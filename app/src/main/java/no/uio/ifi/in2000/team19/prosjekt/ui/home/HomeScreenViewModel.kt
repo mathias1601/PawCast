@@ -1,7 +1,8 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsDatabase
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
@@ -28,46 +30,40 @@ sealed interface WeatherForecastUiState {
     data object Loading: WeatherForecastUiState
     data object Error: WeatherForecastUiState
 }
-
  */
 
 
-class HomeScreenViewModel: ViewModel() {
+class HomeScreenViewModel(application: Application): AndroidViewModel(application) {
+
+
 
     private val locationForecastRepository = LocationForecastRepository()
-    private lateinit var settingsRepository : SettingsRepository
-
 
     private val _adviceUiState: MutableStateFlow<AdviceUiState> = MutableStateFlow(AdviceUiState.Loading)
     var adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
 
-    //private val _weatherForecastUiState: MutableStateFlow<WeatherForecastUiState> = MutableStateFlow(WeatherForecastUiState.Loading)
-    //var weatherForecastUiState: StateFlow<WeatherForecastUiState> = _weatherForecastUiState.asStateFlow()
+    private val coordsDao = SettingsDatabase.getDatabase(application).coordsDao()
+    private val settingsRepository = SettingsRepository(coordsDao)
+
+    private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "69", "69"))
+    var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
 
     private val height: String = "0"
-    private var isInitialized = false
-    lateinit var cords: Cords
 
-    fun setRepository(repository: SettingsRepository){
-        settingsRepository = repository
-    }
-
-    fun initialize() {
-        if (!isInitialized) {
-            viewModelScope.launch(Dispatchers.IO) {
-                cords = settingsRepository.getCords()
-                loadWeatherForecast()
-                isInitialized = true
-            }
+    init {
+        loadWeatherForecast()
+        viewModelScope.launch(Dispatchers.IO) {
+            _cordsUiState.value = settingsRepository.getCords()
         }
+
     }
 
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                cords = settingsRepository.getCords()
+                val cords = settingsRepository.getCords()
                 Log.d("HSVM", cords.latitude + cords.longitude)
-                val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.latitude, height, 3)
+                val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, height, 3)
                 val allAdvice = locationForecastRepository.getAdvice(weatherForecast)
                 _adviceUiState.value = AdviceUiState.Success(allAdvice, weatherForecast)
             } catch (e: IOException) {
