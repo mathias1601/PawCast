@@ -14,6 +14,6 @@ interface coordsDao {
     @Delete
     fun deleteCords(cords: Cords)
 
-    @Query("SELECT * FROM cords WHERE id=0")
+    @Query("SELECT * FROM cords")
     fun getCords(): Cords?
 }

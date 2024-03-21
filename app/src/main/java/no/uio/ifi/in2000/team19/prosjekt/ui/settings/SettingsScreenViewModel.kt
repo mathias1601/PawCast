@@ -11,14 +11,17 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 
 class SettingsScreenViewModel() : ViewModel() {
 
-    private val _coordinates: MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "", ""))
+    private val _coordinates: MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "50", "50"))
     val coordinates = _coordinates.asStateFlow()
     private lateinit var settingsRepository : SettingsRepository
 
-    fun initialize(repository: SettingsRepository) {
+    fun setRepository(repository: SettingsRepository){
+        settingsRepository = repository
+    }
+
+    fun initialize() {
         viewModelScope.launch(Dispatchers.IO) {
-            settingsRepository = repository
-            _coordinates.value = settingsRepository.getCoords()
+            _coordinates.value = settingsRepository.getCords()
         }
     }
 

@@ -68,15 +68,20 @@ fun ScreenManager() {
 
             val settingsRepository = viewModel.getSettingsRepository()
 
+            val homeScreenViewModel:HomeScreenViewModel = viewModel()
+            homeScreenViewModel.setRepository(settingsRepository)
+
+            val settingsScreenViewModel : SettingsScreenViewModel = viewModel()
+            settingsScreenViewModel.setRepository(settingsRepository)
+
             NavHost(navController = navController, startDestination = "home"){
                 composable("home") {
-                    val homeScreenViewModel:HomeScreenViewModel = viewModel()
-                    homeScreenViewModel.initialize(settingsRepository)
+
+                    homeScreenViewModel.initialize()
                     HomeScreenManager(homeScreenViewModel) }
 
                 composable("settings"){
-                    val settingsScreenViewModel : SettingsScreenViewModel = viewModel()
-                    settingsScreenViewModel.initialize(settingsRepository)
+                    settingsScreenViewModel.initialize()
                     SettingsScreen(settingsScreenViewModel)
                 }
             }

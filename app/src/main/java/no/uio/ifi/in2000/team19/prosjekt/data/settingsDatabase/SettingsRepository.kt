@@ -6,7 +6,7 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.coordsDao
 
 class SettingsRepository(private val coordsDao: coordsDao){
 
-    suspend fun getCoords(): Cords {
+    suspend fun getCords(): Cords {
 
         if (coordsDao.getCords() == null){
             val defaultCoords = Cords(0, "9", "61")
