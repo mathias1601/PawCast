@@ -2,9 +2,10 @@ package no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase
 
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.coordsDao
+import javax.inject.Inject
 
 
-class SettingsRepository(private val coordsDao: coordsDao){
+class SettingsRepository @Inject constructor(private val coordsDao: coordsDao){
 
     suspend fun getCords(): Cords {
 
