@@ -94,6 +94,7 @@ dependencies {
 
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
+    //Room database
 
     val room_version = "2.6.1"
 
@@ -102,4 +103,18 @@ dependencies {
 
     kapt("androidx.room:room-compiler:$room_version")
     implementation ("androidx.room:room-ktx:$room_version")
+
+    //Dagger Hilt
+
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-compiler:2.51.1")
+}
+
+kapt {
+    correctErrorTypes = true
+    arguments {
+        arg("dagger.fastInit", "enabled")
+        arg("room.schemaLocation", "$projectDir/schemas")
+        // ... and so on with other options
+    }
 }
