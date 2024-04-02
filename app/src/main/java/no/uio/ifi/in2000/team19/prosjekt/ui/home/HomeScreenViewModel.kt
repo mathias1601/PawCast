@@ -3,7 +3,9 @@ package no.uio.ifi.in2000.team19.prosjekt.ui.home
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +18,7 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import java.io.IOException
+import javax.inject.Inject
 
 
 sealed interface AdviceUiState{
@@ -32,18 +35,15 @@ sealed interface WeatherForecastUiState {
 }
  */
 
-
-class HomeScreenViewModel(application: Application): AndroidViewModel(application) {
-
-
+@HiltViewModel
+class HomeScreenViewModel @Inject constructor(
+    private val settingsRepository: SettingsRepository,
+): ViewModel() {
 
     private val locationForecastRepository = LocationForecastRepository()
 
     private val _adviceUiState: MutableStateFlow<AdviceUiState> = MutableStateFlow(AdviceUiState.Loading)
     var adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
-
-    private val coordsDao = SettingsDatabase.getDatabase(application).coordsDao()
-    private val settingsRepository = SettingsRepository(coordsDao)
 
     private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "69", "69"))
     var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()

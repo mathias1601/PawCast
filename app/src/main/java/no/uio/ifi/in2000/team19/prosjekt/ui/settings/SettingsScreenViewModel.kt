@@ -2,7 +2,9 @@ package no.uio.ifi.in2000.team19.prosjekt.ui.settings
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,11 +13,12 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsDatabase
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
+import javax.inject.Inject
 
-class SettingsScreenViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val coordsDao = SettingsDatabase.getDatabase(application).coordsDao()
-    private val settingsRepository = SettingsRepository(coordsDao)
+@HiltViewModel
+class SettingsScreenViewModel @Inject constructor(
+    private val settingsRepository: SettingsRepository
+) : ViewModel() {
 
     private val _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "12", "34"))
     val cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
