@@ -37,7 +37,7 @@ sealed interface WeatherForecastUiState {
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository,
+    private val settingsRepository: SettingsRepository
 ): ViewModel() {
 
     private val locationForecastRepository = LocationForecastRepository()

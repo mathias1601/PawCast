@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team19.prosjekt.DepedencyInjection
+package no.uio.ifi.in2000.team19.prosjekt.depedencyInjection
 
 import android.content.Context
 import androidx.room.Room
@@ -8,8 +8,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsDatabase
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.coordsDao
 import javax.inject.Singleton
 
 @Module
