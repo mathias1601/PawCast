@@ -42,7 +42,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 
 @Composable
 fun HomeScreenManager(
-    viewModel: HomeScreenViewModel = viewModel()
+    viewModel: HomeScreenViewModel
 ) {
 
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
