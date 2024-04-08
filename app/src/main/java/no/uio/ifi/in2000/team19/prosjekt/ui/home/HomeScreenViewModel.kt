@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 
 sealed interface AdviceUiState{
-    data class  Success(val allAdvice:List<Advice>, val weatherForecast: List<GeneralForecast>) : AdviceUiState
+    data class  Success(val allAdvice:List<Advice>) : AdviceUiState
     data object Loading : AdviceUiState
     data object Error : AdviceUiState
 }
@@ -58,7 +58,7 @@ class HomeScreenViewModel @Inject constructor(
 
                 val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, height, 3)
                 val allAdvice = locationForecastRepository.getAdvice(weatherForecast)
-                _adviceUiState.value = AdviceUiState.Success(allAdvice, weatherForecast)
+                _adviceUiState.value = AdviceUiState.Success(allAdvice)
             } catch (e: IOException) {
                 _adviceUiState.value  = AdviceUiState.Error
             }
