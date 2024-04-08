@@ -5,8 +5,10 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Cloud
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
@@ -25,13 +27,15 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ScreenManager(
     settingsScreenViewModel: SettingsScreenViewModel,
     homeScreenViewModel: HomeScreenViewModel,
-    viewModel:ScreenManagerViewModel
+    viewModel:ScreenManagerViewModel,
+    weatherScreenViewModel: WeatherScreenViewModel
 ) {
 
 
@@ -83,7 +87,7 @@ fun ScreenManager(
                 }
 
                 composable("weather"){
-                    WeatherScreen()
+                    WeatherScreen(weatherScreenViewModel)
                 }
             }
         }
@@ -98,7 +102,6 @@ data class BottomNavBarItem (
 
 fun createBottomNavbarItems() : List<BottomNavBarItem> {
 
-    // en bottom navbar burde egentlig ha 3 items, men lager den med tanke på senere utvidelse.
 
     return listOf(
 
@@ -109,9 +112,17 @@ fun createBottomNavbarItems() : List<BottomNavBarItem> {
         ),
 
         BottomNavBarItem(
+            title = "weather",
+            selectedIcon = Icons.Filled.Cloud,
+            unselectedIcon = Icons.Outlined.Cloud
+        ),
+
+        BottomNavBarItem(
             title = "settings",
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings
-        )
+        ),
+
+
     )
 }
