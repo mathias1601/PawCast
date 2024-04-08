@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
@@ -24,9 +27,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -35,6 +41,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.component.shape.shader.color
+import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.model.lineSeries
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
@@ -125,7 +144,8 @@ fun HomeScreen(advice: AdviceUiState.Success, cords: Cords) {
 
         Spacer(modifier = Modifier.size(50.dp))
 
-        WeatherForecast(advice.weatherForecast)
+        //WeatherForecast(advice.weatherForecast)
+        ForecastGraph(weatherForecast = advice.weatherForecast)
     }
 }
 
@@ -167,6 +187,50 @@ fun WeatherForecast(weatherForecast: List<GeneralForecast>) {
         }
     )
 }
+
+@Composable
+fun ForecastGraph(weatherForecast: List<GeneralForecast>){
+
+
+    val modelProducer = remember { CartesianChartModelProducer.build() } // burde flyttes til viewmodel https://patrykandpatrick.com/vico/wiki/cartesian-charts/data (se første warning)
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.Default) {
+            modelProducer.tryRunTransaction {
+                lineSeries {
+                    series(
+                        x = listOf(1, 2),
+                        y = listOf(5, 6)
+                    )
+                }
+            }
+        }
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .shadow(elevation = 40.dp, shape = RoundedCornerShape(23.dp))
+    ){
+        Column (modifier = Modifier.padding(15.dp)){
+            CartesianChartHost(
+                chart =
+                rememberCartesianChart(
+                    rememberLineCartesianLayer(listOf(rememberLineSpec(DynamicShaders.color(Color(0xFF128DDF))))),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(guideline = null),
+                ),
+                modelProducer = modelProducer,
+                zoomState = rememberVicoZoomState(zoomEnabled = false),
+
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+    }
+}
+
+
 
 @SuppressLint("DiscouragedApi")
 @Composable
