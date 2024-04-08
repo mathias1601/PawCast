@@ -1,10 +1,7 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
-import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,9 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -34,10 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -56,17 +46,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 
 
 @Composable
 fun HomeScreenManager(
-    viewModel: HomeScreenViewModel = viewModel()
+    viewModel: HomeScreenViewModel
 ) {
 
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
     val cordsUiState = viewModel.cordsUiState.collectAsState().value
 
+
+    viewModel.loadWeatherForecast()
 
     Scaffold(
         bottomBar = {
@@ -91,21 +82,6 @@ fun HomeScreenManager(
                 }
             }
 
-            // Unsure of how we want to solve this
-            /*
-            when (weatherForecastUiState) {
-                is WeatherForecastUiState.Success ->
-                    WeatherForecast(weatherForecastUiState = weatherForecastUiState)
-
-                is WeatherForecastUiState.Loading ->
-                    CircularProgressIndicator()
-
-                is WeatherForecastUiState.Error ->
-                    NoConnectionScreen()
-
-            }
-
-             */
         }
     }
 }
