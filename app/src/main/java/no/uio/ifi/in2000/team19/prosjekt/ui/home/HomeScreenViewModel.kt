@@ -1,20 +1,14 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
-import android.app.Application
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsDatabase
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice

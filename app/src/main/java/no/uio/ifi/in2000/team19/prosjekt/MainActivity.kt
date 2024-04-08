@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.navigation.ScreenManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.navigation.ScreenManagerViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Team19prosjektoppgaveTheme
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
