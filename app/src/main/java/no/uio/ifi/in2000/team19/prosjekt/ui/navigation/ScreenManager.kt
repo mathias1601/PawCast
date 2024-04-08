@@ -15,19 +15,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenManager
+import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
 
 @Composable
-fun ScreenManager() {
+fun ScreenManager(
+    settingsScreenViewModel: SettingsScreenViewModel,
+    homeScreenViewModel: HomeScreenViewModel,
+    viewModel:ScreenManagerViewModel
+) {
 
 
-    val viewModel:ScreenManagerViewModel = viewModel()
 
     val navBarItems = createBottomNavbarItems()
     val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
@@ -68,11 +71,11 @@ fun ScreenManager() {
 
             NavHost(navController = navController, startDestination = "home"){
                 composable("home") {
-                    HomeScreenManager()
+                    HomeScreenManager(homeScreenViewModel)
                 }
 
                 composable("settings"){
-                    SettingsScreen()
+                    SettingsScreen(settingsScreenViewModel)
                 }
             }
         }

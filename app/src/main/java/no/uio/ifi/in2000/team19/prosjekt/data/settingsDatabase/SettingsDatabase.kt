@@ -13,23 +13,7 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.coordsDao
     version = 1
 )
 abstract class SettingsDatabase: RoomDatabase() {
-    abstract fun coordsDao(): coordsDao
+    abstract fun getCoordsDao(): coordsDao
 
-    companion object{
-        @Volatile
-        private var INSTANCE: SettingsDatabase? = null
-
-        fun getDatabase(context: Context) : SettingsDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    SettingsDatabase::class.java,
-                    "settingsDatabase"
-                ).build()
-                INSTANCE = instance
-                instance
-            }
-        }
-    }
 
 }
