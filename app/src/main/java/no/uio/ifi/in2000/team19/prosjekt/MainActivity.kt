@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    ScreenManager(settingsScreenViewModel, homeScreenViewModel)
+                    ScreenManager(settingsScreenViewModel, homeScreenViewModel, screenManagerViewModel)
                 }
             }
         }

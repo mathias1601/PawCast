@@ -3,10 +3,11 @@ package no.uio.ifi.in2000.team19.prosjekt.data
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import javax.inject.Inject
 
 
-class LocationForecastRepository(
-    private val locationForecastDataSource: LocationForecastDataSource = LocationForecastDataSource()
+class LocationForecastRepository @Inject constructor(
+    private val locationForecastDataSource: LocationForecastDataSource
 )  {
 
 

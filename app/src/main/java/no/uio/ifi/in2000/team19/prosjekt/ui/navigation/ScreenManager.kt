@@ -27,11 +27,11 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
 @Composable
 fun ScreenManager(
     settingsScreenViewModel: SettingsScreenViewModel,
-    homeScreenViewModel: HomeScreenViewModel
+    homeScreenViewModel: HomeScreenViewModel,
+    viewModel:ScreenManagerViewModel
 ) {
 
 
-    val viewModel:ScreenManagerViewModel = viewModel()
 
     val navBarItems = createBottomNavbarItems()
     val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value

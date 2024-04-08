@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsDatabase
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
@@ -38,12 +39,11 @@ sealed interface WeatherForecastUiState {
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val locationForecastRepository: LocationForecastRepository
 ): ViewModel() {
 
-    private val locationForecastRepository = LocationForecastRepository()
-
-    private val _adviceUiState: MutableStateFlow<AdviceUiState> = MutableStateFlow(AdviceUiState.Loading)
+    private var _adviceUiState: MutableStateFlow<AdviceUiState> = MutableStateFlow(AdviceUiState.Loading)
     var adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
 
     private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "69", "69"))
@@ -51,24 +51,21 @@ class HomeScreenViewModel @Inject constructor(
 
     private val height: String = "0"
 
-    init {
+    /*init {
         loadWeatherForecast()
-        viewModelScope.launch(Dispatchers.IO) {
-            _cordsUiState.value = settingsRepository.getCords()
-        }
 
-    }
+    }*/
 
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val cords = settingsRepository.getCords()
-                Log.d("HSVM", cords.latitude + cords.longitude)
+                _cordsUiState.value = cords
+
                 val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, height, 3)
                 val allAdvice = locationForecastRepository.getAdvice(weatherForecast)
                 _adviceUiState.value = AdviceUiState.Success(allAdvice, weatherForecast)
             } catch (e: IOException) {
-               Log.d("HSVM", e.toString())
                 _adviceUiState.value  = AdviceUiState.Error
             }
         }

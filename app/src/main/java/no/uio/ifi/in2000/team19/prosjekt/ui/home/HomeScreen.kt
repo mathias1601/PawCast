@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +50,8 @@ fun HomeScreenManager(
     val cordsUiState = viewModel.cordsUiState.collectAsState().value
 
 
+    viewModel.loadWeatherForecast()
+
     Scaffold(
         bottomBar = {
 
@@ -72,21 +75,6 @@ fun HomeScreenManager(
                 }
             }
 
-            // Unsure of how we want to solve this
-            /*
-            when (weatherForecastUiState) {
-                is WeatherForecastUiState.Success ->
-                    WeatherForecast(weatherForecastUiState = weatherForecastUiState)
-
-                is WeatherForecastUiState.Loading ->
-                    CircularProgressIndicator()
-
-                is WeatherForecastUiState.Error ->
-                    NoConnectionScreen()
-
-            }
-
-             */
         }
     }
 }
