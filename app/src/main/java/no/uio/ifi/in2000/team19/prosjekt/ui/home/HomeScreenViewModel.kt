@@ -12,7 +12,6 @@ import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import java.io.IOException
 import javax.inject.Inject
 
@@ -45,10 +44,6 @@ class HomeScreenViewModel @Inject constructor(
 
     private val height: String = "0"
 
-    /*init {
-        loadWeatherForecast()
-
-    }*/
 
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -64,16 +59,4 @@ class HomeScreenViewModel @Inject constructor(
             }
         }
     }
-
-    /*
-    === Currently does not work, is not able to update adviceUiState ===
-
-    * Might be that _adviceUiState is a val / not a var
-
-    fun reloadData(){
-        _adviceUiState.value = AdviceUiState.Loading // Here to make sure UI knows its loading when also reloading the data, e.g by clicking home
-        loadAllAdvice()
-    }
-     */
-
 }

@@ -1,12 +1,8 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.weather
 
-import android.net.http.HttpException
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -18,8 +14,8 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
-import no.uio.ifi.in2000.team19.prosjekt.ui.home.AdviceUiState
 import java.io.IOException
+import javax.inject.Inject
 
 sealed interface WeatherUiState {
     data class Success(
@@ -30,8 +26,10 @@ sealed interface WeatherUiState {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-class WeatherScreenViewModel : ViewModel() {
-    private val locationForecastRepository : LocationForecastRepository = LocationForecastRepository()
+class WeatherScreenViewModel @Inject constructor(
+    private val locationForecastRepository : LocationForecastRepository
+) : ViewModel() {
+
 
     //private var weatherUiState: WeatherUiState by mutableStateOf(WeatherUiState.Loading)
 
