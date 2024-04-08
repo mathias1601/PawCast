@@ -12,10 +12,11 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
+import javax.inject.Inject
 
 
-class LocationForecastRepository(
-    private val locationForecastDataSource: LocationForecastDataSource = LocationForecastDataSource()
+class LocationForecastRepository @Inject constructor(
+    private val locationForecastDataSource: LocationForecastDataSource
 )  {
 
     private var lastLocationForecast: LocationForecast? = null

@@ -27,7 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsScreenViewModel = viewModel()
+    viewModel: SettingsScreenViewModel
 ){
 
 

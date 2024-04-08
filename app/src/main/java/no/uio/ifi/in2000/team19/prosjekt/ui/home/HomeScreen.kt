@@ -34,7 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
@@ -42,12 +41,14 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 
 @Composable
 fun HomeScreenManager(
-    viewModel: HomeScreenViewModel = viewModel()
+    viewModel: HomeScreenViewModel
 ) {
 
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
     val cordsUiState = viewModel.cordsUiState.collectAsState().value
 
+
+    viewModel.loadWeatherForecast()
 
     Scaffold(
         bottomBar = {
@@ -72,21 +73,6 @@ fun HomeScreenManager(
                 }
             }
 
-            // Unsure of how we want to solve this
-            /*
-            when (weatherForecastUiState) {
-                is WeatherForecastUiState.Success ->
-                    WeatherForecast(weatherForecastUiState = weatherForecastUiState)
-
-                is WeatherForecastUiState.Loading ->
-                    CircularProgressIndicator()
-
-                is WeatherForecastUiState.Error ->
-                    NoConnectionScreen()
-
-            }
-
-             */
         }
     }
 }

@@ -6,8 +6,11 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class LocationForecastDataSource {
+@Singleton
+class LocationForecastDataSource @Inject constructor() {
 
     private val client = HttpClient {
         install(ContentNegotiation) {
@@ -22,8 +25,6 @@ class LocationForecastDataSource {
         val result = client.get(path)
 
         val forecast = result.body<LocationForecast>()
-
-        client.close()
 
         return forecast
     }
