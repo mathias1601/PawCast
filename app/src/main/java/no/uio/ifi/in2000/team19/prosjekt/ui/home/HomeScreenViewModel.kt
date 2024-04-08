@@ -19,7 +19,7 @@ import java.io.IOException
 
 
 sealed interface AdviceUiState{
-    data class  Success(val allAdvice:List<Advice>, val weatherForecast: List<GeneralForecast>) : AdviceUiState
+    data class  Success(val allAdvice:List<Advice>) : AdviceUiState
     data object Loading : AdviceUiState
     data object Error : AdviceUiState
 }
@@ -65,7 +65,7 @@ class HomeScreenViewModel(application: Application): AndroidViewModel(applicatio
                 Log.d("HSVM", cords.latitude + cords.longitude)
                 val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, height, 3)
                 val allAdvice = locationForecastRepository.getAdvice(weatherForecast)
-                _adviceUiState.value = AdviceUiState.Success(allAdvice, weatherForecast)
+                _adviceUiState.value = AdviceUiState.Success(allAdvice)
             } catch (e: IOException) {
                Log.d("HSVM", e.toString())
                 _adviceUiState.value  = AdviceUiState.Error

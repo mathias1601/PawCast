@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -22,7 +24,9 @@ import androidx.navigation.compose.rememberNavController
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
+import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ScreenManager() {
 
@@ -73,6 +77,10 @@ fun ScreenManager() {
 
                 composable("settings"){
                     SettingsScreen()
+                }
+
+                composable("weather"){
+                    WeatherScreen()
                 }
             }
         }
