@@ -6,3 +6,5 @@ data class GeneralForecast(
     val symbol : String,
     val time: String
 )
+
+//TODO add all relevant data
