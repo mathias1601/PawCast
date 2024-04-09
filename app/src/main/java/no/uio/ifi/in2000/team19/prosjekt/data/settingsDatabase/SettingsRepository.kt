@@ -10,7 +10,7 @@ class SettingsRepository @Inject constructor(private val coordsDao: coordsDao){
     suspend fun getCords(): Cords {
 
         if (coordsDao.getCords() == null){
-            val defaultCoords = Cords(0, "9", "61")
+            val defaultCoords = Cords(0, "60", "10")
             coordsDao.insertCords(defaultCoords)
         }
         return coordsDao.getCords()!!

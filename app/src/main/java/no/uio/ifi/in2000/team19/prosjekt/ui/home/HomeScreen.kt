@@ -183,7 +183,11 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
             CartesianChartHost(
                 chart =
                 rememberCartesianChart(
-                    rememberLineCartesianLayer(listOf(rememberLineSpec(DynamicShaders.color(Color(0xFF128DDF))))),
+                    rememberLineCartesianLayer(
+                        listOf(
+                            rememberLineSpec(
+                                DynamicShaders.color(Color(0xFF128DDF)))
+                        )),
                     startAxis = rememberStartAxis(),
                     bottomAxis = rememberBottomAxis(guideline = null),
                 ),

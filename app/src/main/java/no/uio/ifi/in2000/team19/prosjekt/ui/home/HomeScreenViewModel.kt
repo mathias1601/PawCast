@@ -1,13 +1,8 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.model.ExtraStore
 import com.patrykandpatrick.vico.core.model.lineSeries
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,8 +15,6 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepositor
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import java.io.IOException
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 
@@ -47,7 +40,6 @@ class HomeScreenViewModel @Inject constructor(
     private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "69", "69"))
     var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -61,27 +53,14 @@ class HomeScreenViewModel @Inject constructor(
 
                 /////////////////////////////////// GRAPH METHOD TO BE MOVED INTO REPOSITORY OR NEW DOMAIN LAYER///////////////////////////////////
 
-                val data =
-                    mapOf(
-                        LocalDate.parse("2022-07-01") to 2f,
-                        LocalDate.parse("2022-07-02") to 6f,
-                        LocalDate.parse("2022-07-04") to 4f,
-                    )
-                val xToDateMapKey = ExtraStore.Key<Map<Float, LocalDate>>()
+                val x = listOf(3, 5, 6)
+                val y = listOf(10, 4, 5)
 
-
-
-
-                val xToDates = data.keys.associateBy { it.toEpochDay().toFloat() }
                 _graphUiState.value.tryRunTransaction {
-                    lineSeries { series(xToDates.keys, data.values) }
-                    updateExtras { it[xToDateMapKey] = xToDates }
-                }
-
-                val dateTimeFormatter = DateTimeFormatter.ofPattern("d MMM")
-                AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, chartValues, _ ->
-                    (chartValues.model.extraStore[xToDateMapKey][x] ?: LocalDate.ofEpochDay(x.toLong()))
-                        .format(dateTimeFormatter)
+                    lineSeries {
+                        series(
+                        x=x,
+                        y=y) }
                 }
 
 
