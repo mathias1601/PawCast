@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="COLD">
+        <item> overskrift </item>
+
+        <item>
+            utdypende info
+            </item>
+
+        <item> kort info </item>
+    </string-array>

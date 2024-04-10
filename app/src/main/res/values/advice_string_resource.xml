@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="COLD">
+
+        <item><string-array name="advicenavn">
+
+            <item> overskrift </item>
+
+            <item>
+            utdypende info
+            </item>
+
+            <item> kort info </item>
+
+        </string-array>
+
+        </item>
+
+
+
+        <string-array name="advicenavn2">
+
+            <item> overskrift </item>
+
+            <item>
+            utdypende info
+            </item>
+
+            <item> kort info </item>
+
+        </string-array>
+
+    </string-array>
+
+    <string-array name="COLDSMALL">
+        <item>Ta på klær</item>
+        <item>Potesokker</item>
+    </string-array>
+
+</resources>
+
+
+
+<!--
+
+//array med advices
+//hvert item her er en egen array med overskrift, utdypende info og kort info (respectively)
+
+
+<string-array name="COLD"> //array med advices
+//hvert item her er en egen array med overskrift, utdypende info og kort info (respectively)
+<string-array name="advicenavn">
+
+    <item> overskrift </item>
+
+    <item>
+            utdypende info
+            </item>
+
+    <item> kort info </item>
+
+</string-array>
+</string-array>
+-->
+
+

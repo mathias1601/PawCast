@@ -1,7 +1,11 @@
 package no.uio.ifi.in2000.team19.prosjekt.data
 
+import android.content.Context
+import android.icu.lang.UCharacter.DecompositionType.SMALL
 import android.os.Build
 import androidx.annotation.RequiresApi
+import no.uio.ifi.in2000.team19.prosjekt.R
+import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
@@ -102,35 +106,180 @@ class LocationForecastRepository @Inject constructor(
 
 
     //Lager AdviceCards, og retunerer en liste av de
-    private fun createAdvice(forecast: AdviceForecast): List<Advice> {
+    private fun createAdvice(context: Context, categories: List<AdviceCategory>): List<Advice> {
 
         val adviceList = mutableListOf<Advice>()
 
-        if (forecast.temperature.toDouble() < 0) {
-            val advice = Advice("Frozen", "It's really cold, likely frozen", "#FFFF00", forecast) //yellow colour
+        if (categories[0].equals("SAFE")) {
+            val title = "Trygt"
+            val description = "Ingen varsler"
+            val shortAdvice = "Ingen varsler"
+
+            val advice = Advice(title, description, shortAdvice)
             adviceList.add(advice)
+            return adviceList
         }
 
-        var advice : Advice? = null
-        var adviceCount = 0
+        categories.forEach {category ->
 
-        when (forecast.windspeed.toDouble()) {
-            in 10.0..19.0 -> advice = Advice("Gale",  "very windy u choose what u want to do with this info", "#FFFF00", forecast)
-            in 20.0..24.0 -> advice = Advice("Strong Gale", "branches on trees can break, be careful, small animals flyy", "#FED8B1", forecast)
-            in 25.0..30.0 -> advice = Advice("Storm", "many many wind, dont go out plis?", "#FED8B1", forecast)
-            else -> adviceCount = 1
-        }
+            var adviceArray: Array<String>? = null
+            //val resId = context.resources.getIdentifier(category.toString(), "array", context.packageName)
+            //val adviceArray: Array<String> = context.resources.getStringArray(resId)
+            when (category.toString()) {
+                "COLD" -> adviceArray = context.resources.getStringArray(R.array.COLD)
+                "COLDSMALL" -> adviceArray = context.resources.getStringArray(R.array.COLDSMALL)
+                /*"COLDBIG" -> adviceArray = context.resources.getStringArray(R.array.COLDBIG)
+                "COLDFLAT" -> adviceArray = context.resources.getStringArray(R.array.COLDFLAT)
+                "VERYCOLD" -> adviceArray = context.resources.getStringArray(R.array.VERYCOLD)
+                "FREEZING" -> adviceArray = context.resources.getStringArray(R.array.FREEZING)
+                "SALT" -> adviceArray = context.resources.getStringArray(R.array.SALT)
+                "WARM" -> adviceArray = context.resources.getStringArray(R.array.WARM)
+                "WARMFLAT" -> adviceArray = context.resources.getStringArray(R.array.WARMFLAT)
+                "VERYWARM" -> adviceArray = context.resources.getStringArray(R.array.VERYWARM)
+                "HEATWAVE" -> adviceArray = context.resources.getStringArray(R.array.HEATWAVE)
+                "RAIN" -> adviceArray = context.resources.getStringArray(R.array.RAIN)
+                "THUNDER" -> adviceArray = context.resources.getStringArray(R.array.THUNDER)
+                "SNOW" -> adviceArray = context.resources.getStringArray(R.array.SNOW)
+                "SUNBURN" -> adviceArray = context.resources.getStringArray(R.array.SUNBURN)
+                "TICK" -> adviceArray = context.resources.getStringArray(R.array.TICK)
+                "VIPER" -> adviceArray = context.resources.getStringArray(R.array.VIPER)
 
-        if (adviceCount == 0) {
-            if (advice != null) {
+                 */
+            }
+
+            var counter = 0
+            while  (counter < adviceArray!!.size){
+
+                val title = adviceArray?.get(counter).toString()
+                val description = adviceArray?.get(counter+1).toString()
+                val shortAdvice = adviceArray?.get(counter+2).toString()
+
+                val advice = Advice(title, description, shortAdvice)
                 adviceList.add(advice)
+
+                counter+=3
+
+            }
+
+
+
+
+        }
+
+
+        return adviceList
+    }
+
+    private fun getCategory(adviceForecast: AdviceForecast, typeOfDog: Dog): List<AdviceCategory> {
+
+        var categoryList = mutableListOf<AdviceCategory>()
+
+        val weatherLimitsMap = mapOf(
+            AdviceCategory.COLD to listOf(-5.0, 0.0),
+            AdviceCategory.VERYCOLD to listOf(-15.0, -5.0),
+            AdviceCategory.FREEZING to listOf(-70.0, -15.0),
+            AdviceCategory.SALT to listOf(-8.0, 4.0),
+            AdviceCategory.WARM to listOf(15.0, 23.0),
+            AdviceCategory.VERYWARM to listOf(23.0, 30.0),
+            AdviceCategory.HEATWAVE to listOf(30.0, 70.0),
+            AdviceCategory.CAR to listOf(18.0, 70.0)
+        )
+
+        weatherLimitsMap.forEach { (category, limits) ->
+            if (adviceForecast.temperature in limits[0] .. limits[1]) {
+                categoryList.add(category)
             }
         }
 
-        if (adviceList.isEmpty()) {
-            adviceList.add(Advice("Safe", "Nothing wrong", "#008000", forecast)) // true green color
+        if (AdviceCategory.WARM in categoryList && typeOfDog == FLAT) {
+            categoryList.add(AdviceCategory.WARMFLAT)
         }
 
-        return adviceList
+        if (AdviceCategory.COLD in categoryList && typeOfDog == SMALL) {
+            categoryList.add(AdviceCategory.COLDSMALL)
+        }
+
+        if (adviceForecast.UVindex >= 2.5) {
+            categoryList.add(AdviceCategory.SUNBURN)
+        }
+
+        //TODO find right number
+        if (adviceForecast.thunderprobability >= 50) {
+            categoryList.add(AdviceCategory.THUNDER)
+        }
+
+        //TODO find right number
+        if (adviceForecast.downpour >= 50) {
+            categoryList.add(AdviceCategory.RAIN)
+        }
+
+        //Finne datoen i dag og sjekke om den er innenfor en range hvor flått og hoggorm er aktive
+
+
+
+        /*
+        AdviceCategory.SAFE to listOf()
+
+        AdviceCategory.SNOW to listOf()
+
+        Hvordan vite om det snør?????
+
+        AdviceCategory.SUNBURN to listOf()
+        AdviceCategory.THUNDER to listOf()
+        AdviceCategory.TICK to listOf()
+        AdviceCategory.VIPER to listOf()
+        AdviceCategory.RAIN to listOf(),
+
+         */
+        /*if (adviceForecast.temperature > -5 && adviceForecast.temperature <= 0) {
+            categoryList.add(AdviceCategory.COLD)
+        }
+
+        if (adviceForecast.temperature > -15 && adviceForecast.temperature <= -5) {
+            categoryList.add(AdviceCategory.VERYCOLD)
+        }
+
+        if (adviceForecast.temperature <= -15) {
+            categoryList.add(AdviceCategory.FREEZING)
+        }
+
+        if (adviceForecast.temperature >= -8 && adviceForecast.temperature <= +4) {
+            categoryList.add(AdviceCategory.SALT)
+        }
+
+        if (adviceForecast.temperature in 15.0..23.0) {
+            categoryList.add(AdviceCategory.WARM)
+
+            if (typeOfDog == FLAT) {
+                categoryList.add(AdviceCategory.WARMFLAT)
+            }
+        }
+
+        if (adviceForecast.temperature >= 18) {
+            categoryList.add(AdviceCategory.CAR)
+        }
+
+        if (adviceForecast.temperature > 23 && adviceForecast.temperature <= 30) {
+            categoryList.add(AdviceCategory.VERYWARM)
+
+            /*if (typeOfDog == WHITENAKED) {
+                categoryList.add(AdviceCategory.WHITENAKED)
+            }
+
+             */
+        }
+
+        if (adviceForecast.temperature > 30) {
+            categoryList.add(AdviceCategory.)
+        }
+
+         */
+
+
+        if (categoryList.size == 0) {
+            categoryList.add(AdviceCategory.SAFE)
+        }
+
+        return categoryList
     }
 }
