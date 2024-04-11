@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import java.io.IOException
 import javax.inject.Inject
@@ -39,6 +40,9 @@ class HomeScreenViewModel @Inject constructor(
 
     private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "69", "69"))
     var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
+
+    private var _userInfoUiState:MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0, "loading", "loading", listOf()))
+    var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {

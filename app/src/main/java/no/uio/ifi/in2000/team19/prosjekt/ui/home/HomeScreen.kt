@@ -124,6 +124,7 @@ fun HomeScreen(
         Spacer(modifier = Modifier.size(50.dp))
 
         ForecastGraph(graphUiState)
+        Text(text = "heisann")
     }
 }
 
