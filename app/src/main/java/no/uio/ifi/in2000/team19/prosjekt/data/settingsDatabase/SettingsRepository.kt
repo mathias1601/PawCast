@@ -29,12 +29,8 @@ class SettingsRepository @Inject constructor(
         coordsDao.deleteCords(cords)
     }
 
-    suspend fun getUserInfo(): UserInfo {
-        if (userInfoDao.getUserInfo() == null) {
-            val default = UserInfo(0, "emptyDb", "emptyDb", false, false, false)
-            updateUserInfo(default)
-        }
-        return userInfoDao.getUserInfo()!!
+    suspend fun getUserInfo(): UserInfo? {
+        return userInfoDao.getUserInfo()
     }
 
     suspend fun updateUserInfo(userInfo: UserInfo) {

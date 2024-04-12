@@ -34,25 +34,38 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
 fun ScreenManager(
     settingsScreenViewModel: SettingsScreenViewModel,
     homeScreenViewModel: HomeScreenViewModel,
-    viewModel:ScreenManagerViewModel,
+    viewModel: ScreenManagerViewModel,
     weatherScreenViewModel: WeatherScreenViewModel
 ) {
 
+    viewModel.initialize()
 
+    val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
+    if (userInfoUiState == null){
+        //Composable
+    } else {
+        Main(viewModel, settingsScreenViewModel, homeScreenViewModel, weatherScreenViewModel)
+    }
 
+}
+
+@Composable
+fun Main(
+    viewModel: ScreenManagerViewModel,
+    settingsScreenViewModel: SettingsScreenViewModel,
+    homeScreenViewModel: HomeScreenViewModel,
+    weatherScreenViewModel: WeatherScreenViewModel
+) {
     val navBarItems = createBottomNavbarItems()
     val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
     val navController = rememberNavController()
-
-
-
     Scaffold(
         bottomBar = {
             NavigationBar {
                 navBarItems.forEachIndexed { index, item ->
                     NavigationBarItem(
                         selected = (index == navBarSelectedItemIndex),
-                        onClick = { 
+                        onClick = {
                             viewModel.updateNavBarSelectedIndex(index)
                             navController.navigate(item.title)
                         },
@@ -66,7 +79,7 @@ fun ScreenManager(
                                 contentDescription = item.title
                             )
 
-                         })
+                        })
                 }
             }
         }
