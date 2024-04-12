@@ -104,7 +104,7 @@ fun HomeScreen(
     advice: AdviceUiState.Success,
     cords: Cords,
     graphUiState: CartesianChartModelProducer,
-    userInfoUiState: UserInfo
+    userInfoUiState: UserInfo?
 ) {
 
 
@@ -127,7 +127,6 @@ fun HomeScreen(
         Spacer(modifier = Modifier.size(50.dp))
 
         ForecastGraph(graphUiState)
-        Text(text = userInfoUiState.userName)
     }
 }
 

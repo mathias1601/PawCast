@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "5ab3108a3f0cd88d0d7832ac08f73d64",
+    "identityHash": "839c8ba0da1ceabe6980546f56a39dde",
     "entities": [
       {
         "tableName": "Cords",
@@ -38,7 +38,7 @@
       },
       {
         "tableName": "UserInfo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userName` TEXT NOT NULL, `dogName` TEXT NOT NULL, `isBig` INTEGER NOT NULL, `isShortNosed` INTEGER NOT NULL, `isLongHaired` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userName` TEXT NOT NULL, `dogName` TEXT NOT NULL, `isBig` INTEGER NOT NULL, `isShortNosed` INTEGER NOT NULL, `isLongHaired` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -78,7 +78,7 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
             "id"
           ]
@@ -90,7 +90,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5ab3108a3f0cd88d0d7832ac08f73d64')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '839c8ba0da1ceabe6980546f56a39dde')"
     ]
   }
 }

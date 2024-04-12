@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -41,14 +42,12 @@ fun ScreenManager(
     viewModel.initialize()
 
     val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
-    if (userInfoUiState == null){
-        //Composable
-    } else {
-        Main(viewModel, settingsScreenViewModel, homeScreenViewModel, weatherScreenViewModel)
-    }
+    Main(viewModel, settingsScreenViewModel, homeScreenViewModel, weatherScreenViewModel)
+
 
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Main(
     viewModel: ScreenManagerViewModel,
@@ -61,26 +60,30 @@ fun Main(
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
-            NavigationBar {
-                navBarItems.forEachIndexed { index, item ->
-                    NavigationBarItem(
-                        selected = (index == navBarSelectedItemIndex),
-                        onClick = {
-                            viewModel.updateNavBarSelectedIndex(index)
-                            navController.navigate(item.title)
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = if (index == navBarSelectedItemIndex){
-                                    item.selectedIcon
-                                } else {
-                                    item.unselectedIcon
-                                },
-                                contentDescription = item.title
-                            )
+            if (false) {
+                NavigationBar {
+                    navBarItems.forEachIndexed { index, item ->
+                        NavigationBarItem(
+                            selected = (index == navBarSelectedItemIndex),
+                            onClick = {
+                                viewModel.updateNavBarSelectedIndex(index)
+                                navController.navigate(item.title)
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = if (index == navBarSelectedItemIndex){
+                                        item.selectedIcon
+                                    } else {
+                                        item.unselectedIcon
+                                    },
+                                    contentDescription = item.title
+                                )
 
-                        })
-                }
+                            }
+                        )
+                    }
+            }
+
             }
         }
     ) {innerPadding ->
@@ -89,7 +92,7 @@ fun Main(
             Modifier.padding(innerPadding)
         ) {
 
-
+            Text(text = "heo")
             NavHost(navController = navController, startDestination = "home"){
                 composable("home") {
                     HomeScreenManager(homeScreenViewModel)
