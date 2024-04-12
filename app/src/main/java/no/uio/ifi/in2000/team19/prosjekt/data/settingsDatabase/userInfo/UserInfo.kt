@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class UserInfo(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = false) val id: Int,
     @ColumnInfo(name = "userName") var userName: String,
     @ColumnInfo(name = "dogName") var dogName: String,
     @ColumnInfo(name = "isBig") var isBig: Boolean,

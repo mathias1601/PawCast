@@ -30,6 +30,10 @@ class SettingsRepository @Inject constructor(
     }
 
     suspend fun getUserInfo(): UserInfo {
+        if (userInfoDao.getUserInfo() == null) {
+            val default = UserInfo(0, "emptyDb", "emptyDb", false, false, false)
+            updateUserInfo(default)
+        }
         return userInfoDao.getUserInfo()!!
     }
 

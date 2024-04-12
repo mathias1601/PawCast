@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7b6cef6113ddbd85b57869536b493185",
+    "identityHash": "5ab3108a3f0cd88d0d7832ac08f73d64",
     "entities": [
       {
         "tableName": "Cords",
@@ -38,7 +38,7 @@
       },
       {
         "tableName": "UserInfo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userName` TEXT NOT NULL, `dogName` TEXT NOT NULL, `dogTypes` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userName` TEXT NOT NULL, `dogName` TEXT NOT NULL, `isBig` INTEGER NOT NULL, `isShortNosed` INTEGER NOT NULL, `isLongHaired` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -59,9 +59,21 @@
             "notNull": true
           },
           {
-            "fieldPath": "dogTypes",
-            "columnName": "dogTypes",
-            "affinity": "TEXT",
+            "fieldPath": "isBig",
+            "columnName": "isBig",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isShortNosed",
+            "columnName": "isShortNosed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isLongHaired",
+            "columnName": "isLongHaired",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -78,7 +90,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7b6cef6113ddbd85b57869536b493185')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5ab3108a3f0cd88d0d7832ac08f73d64')"
     ]
   }
 }

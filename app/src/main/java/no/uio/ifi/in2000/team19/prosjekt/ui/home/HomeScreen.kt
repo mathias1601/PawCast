@@ -41,6 +41,7 @@ import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherForecastCard
@@ -54,6 +55,7 @@ fun HomeScreenManager(
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
     val cordsUiState = viewModel.cordsUiState.collectAsState().value
     val graphUiState = viewModel.graphUiState.collectAsState().value
+    val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
 
 
     viewModel.loadWeatherForecast()
@@ -69,7 +71,7 @@ fun HomeScreenManager(
         ) {
             when (adviceUiState) {
                 is AdviceUiState.Success -> {
-                    HomeScreen(adviceUiState, cordsUiState, graphUiState)
+                    HomeScreen(adviceUiState, cordsUiState, graphUiState, userInfoUiState)
                 }
 
                 is AdviceUiState.Loading -> {
@@ -101,7 +103,8 @@ fun NoConnectionScreen() {
 fun HomeScreen(
     advice: AdviceUiState.Success,
     cords: Cords,
-    graphUiState: CartesianChartModelProducer
+    graphUiState: CartesianChartModelProducer,
+    userInfoUiState: UserInfo
 ) {
 
 
@@ -124,7 +127,7 @@ fun HomeScreen(
         Spacer(modifier = Modifier.size(50.dp))
 
         ForecastGraph(graphUiState)
-        Text(text = "heisann")
+        Text(text = userInfoUiState.userName)
     }
 }
 
