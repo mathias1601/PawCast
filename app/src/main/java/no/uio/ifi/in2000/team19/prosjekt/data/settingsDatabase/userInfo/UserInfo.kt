@@ -9,5 +9,8 @@ data class UserInfo(
     @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo(name = "userName") var userName: String,
     @ColumnInfo(name = "dogName") var dogName: String,
-    @ColumnInfo(name = "dogTypes") var dogTypes: String,
+    @ColumnInfo(name = "isBig") var isBig: Boolean,
+    @ColumnInfo(name = "isShortNosed") var isShortNosed: Boolean,
+    @ColumnInfo(name = "isLongHaired") var isLongHaired: Boolean,
+
 )
