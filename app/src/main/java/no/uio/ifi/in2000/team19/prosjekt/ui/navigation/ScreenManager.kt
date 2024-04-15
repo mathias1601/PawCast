@@ -27,6 +27,8 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
+import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupManager
+import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
 
@@ -36,15 +38,18 @@ fun ScreenManager(
     settingsScreenViewModel: SettingsScreenViewModel,
     homeScreenViewModel: HomeScreenViewModel,
     viewModel: ScreenManagerViewModel,
-    weatherScreenViewModel: WeatherScreenViewModel
+    weatherScreenViewModel: WeatherScreenViewModel,
+    setupScreenViewModel: SetupScreenViewModel
 ) {
 
     viewModel.initialize()
 
     val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
-    Main(viewModel, settingsScreenViewModel, homeScreenViewModel, weatherScreenViewModel)
+    when (userInfoUiState) {
+        null -> SetupManager(setupScreenViewModel)
+        else -> Main(viewModel, settingsScreenViewModel, homeScreenViewModel, weatherScreenViewModel)
 
-
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
