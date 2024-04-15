@@ -12,9 +12,11 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 import javax.inject.Inject
 
@@ -30,18 +32,30 @@ class LocationForecastRepository @Inject constructor(
         lastLocationForecast = locationForecastDataSource.getLocationForecast(latitude, longitude, height)
         return lastLocationForecast as LocationForecast
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getGeneralForecast(latitude: String, longitude: String, height: String, nrHours: Int): List<GeneralForecast> {
 
         val locationForecast = fetchLocationForecast(latitude, longitude, height)
 
+        val updatedAt = locationForecast.properties.meta.updated_at
+        val dateTime = ZonedDateTime.parse(updatedAt, DateTimeFormatter.ISO_DATE_TIME)
+        val hour = dateTime.toLocalDateTime().withMinute(0).withSecond(0).withNano(0).hour
+
+        val now = LocalDateTime.now()
+        val hourRounded = now.truncatedTo(ChronoUnit.HOURS).hour
+
+        var startingHour = hour - hourRounded
+
         val forecastList = mutableListOf<GeneralForecast>()
 
-        for( i in 2..(nrHours+2) ) {
-            val temperature = locationForecast.properties.timeseries[i].data.instant.details.air_temperature.toString()
-            val wind = locationForecast.properties.timeseries[i].data.instant.details.wind_speed.toString()
-            val symbol = locationForecast.properties.timeseries[i].data.next_1_hours.summary.symbol_code
-            val time = locationForecast.properties.timeseries[i].time
+        for( i in 0 until nrHours) {
+            val temperature = locationForecast.properties.timeseries[startingHour].data.instant.details.air_temperature.toString()
+            val wind = locationForecast.properties.timeseries[startingHour].data.instant.details.wind_speed.toString()
+            val symbol = locationForecast.properties.timeseries[startingHour].data.next_1_hours.summary.symbol_code
+            val time = locationForecast.properties.timeseries[startingHour].time
             forecastList.add(GeneralForecast(temperature, wind, symbol, time))
+
+            startingHour += 1
         }
 
         return forecastList
@@ -128,8 +142,8 @@ class LocationForecastRepository @Inject constructor(
             when (category.toString()) {
                 "COLD" -> adviceArray = context.resources.getStringArray(R.array.COLD)
                 "COLDSMALL" -> adviceArray = context.resources.getStringArray(R.array.COLDSMALL)
-                /*"COLDBIG" -> adviceArray = context.resources.getStringArray(R.array.COLDBIG)
-                "COLDFLAT" -> adviceArray = context.resources.getStringArray(R.array.COLDFLAT)
+                "COLDBIG" -> adviceArray = context.resources.getStringArray(R.array.COLDBIG)
+                //"COLDFLAT" -> adviceArray = context.resources.getStringArray(R.array.COLDFLAT)
                 "VERYCOLD" -> adviceArray = context.resources.getStringArray(R.array.VERYCOLD)
                 "FREEZING" -> adviceArray = context.resources.getStringArray(R.array.FREEZING)
                 "SALT" -> adviceArray = context.resources.getStringArray(R.array.SALT)
@@ -144,7 +158,7 @@ class LocationForecastRepository @Inject constructor(
                 "TICK" -> adviceArray = context.resources.getStringArray(R.array.TICK)
                 "VIPER" -> adviceArray = context.resources.getStringArray(R.array.VIPER)
 
-                 */
+
             }
 
             var counter = 0
@@ -191,11 +205,11 @@ class LocationForecastRepository @Inject constructor(
             }
         }
 
-        if (AdviceCategory.WARM in categoryList && typeOfDog == FLAT) {
+        if (AdviceCategory.WARM in categoryList && typeOfDog == typeOfDog.FLAT) {
             categoryList.add(AdviceCategory.WARMFLAT)
         }
 
-        if (AdviceCategory.COLD in categoryList && typeOfDog == SMALL) {
+        if (AdviceCategory.COLD in categoryList && typeOfDog == typeOfDog.SMALL) {
             categoryList.add(AdviceCategory.COLDSMALL)
         }
 
