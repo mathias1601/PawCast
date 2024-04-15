@@ -9,26 +9,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 
 @Composable
 fun SetupManager(
-    viewModel: SetupScreenViewModel
+    viewModel: SetupScreenViewModel,
+    id: String,
+    navController: NavHostController
 ) {
 
-    val setupIndex = viewModel.setupIndex.collectAsState().value
+    val userInfo = viewModel.userInfo.collectAsState().value
 
     Scaffold {innerPadding ->
         Column (
             modifier = Modifier
                 .padding(innerPadding)
         ) {
-            Row () {
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Left")
-                }
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Right")
-                }
+            Text(text = id)
+            when (id) {
+                "0" -> StageOne(viewModel,id,navController)
             }
 
         }
@@ -37,6 +36,13 @@ fun SetupManager(
 }
 
 @Composable
-fun SetupScreen(setupScreenViewModel: SetupScreenViewModel) {
-
+fun StageOne(setupScreenViewModel: SetupScreenViewModel, id:String, navController:NavHostController) {
+    Row () {
+        Button(onClick = {navController.navigate("setup/${id.toInt()-1}")}) {
+            Text(text = "Left")
+        }
+        Button(onClick = {navController.navigate("setup/${id.toInt()+1}")}) {
+            Text(text = "Right")
+        }
+    }
 }

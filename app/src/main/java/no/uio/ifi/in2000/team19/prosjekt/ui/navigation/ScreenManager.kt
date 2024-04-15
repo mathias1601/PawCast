@@ -44,25 +44,12 @@ fun ScreenManager(
 
     viewModel.initialize()
 
-    val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
-    when (userInfoUiState) {
-        null -> SetupManager(setupScreenViewModel)
-        else -> Main(viewModel, settingsScreenViewModel, homeScreenViewModel, weatherScreenViewModel)
+    val navController = rememberNavController()
 
-    }
-}
+    val userInfoUiState = viewModel.userInfoUiState.collectAsState().value //remove?
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun Main(
-    viewModel: ScreenManagerViewModel,
-    settingsScreenViewModel: SettingsScreenViewModel,
-    homeScreenViewModel: HomeScreenViewModel,
-    weatherScreenViewModel: WeatherScreenViewModel
-) {
     val navBarItems = createBottomNavbarItems()
     val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
-    val navController = rememberNavController()
     Scaffold(
         bottomBar = {
             if (false) {
@@ -87,7 +74,7 @@ fun Main(
                             }
                         )
                     }
-            }
+                }
 
             }
         }
@@ -98,9 +85,14 @@ fun Main(
         ) {
 
             Text(text = "heo")
+
             NavHost(navController = navController, startDestination = "home"){
                 composable("home") {
-                    HomeScreenManager(homeScreenViewModel)
+                    if (userInfoUiState == null) {
+                        navController.navigate("setup/0")
+                    } else {
+                        HomeScreenManager(homeScreenViewModel)
+                    }
                 }
 
                 composable("settings"){
@@ -110,10 +102,17 @@ fun Main(
                 composable("weather"){
                     WeatherScreen(weatherScreenViewModel)
                 }
+                composable("setup/{stage}"){backStackEntry ->
+                    val id = backStackEntry.arguments?.getString("stage")!!
+                    SetupManager(viewModel = setupScreenViewModel, id=id, navController=navController)
+                }
             }
+
+
         }
     }
 }
+
 
 data class BottomNavBarItem (
     val title : String,
