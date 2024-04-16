@@ -4,5 +4,6 @@ data class WeatherForDay(
     val lowestTemperature: String,
     val highestTemperature: String,
     val symbol: String,
-    val day: String
+    val day: String,
+    val time: String
 )

@@ -5,7 +5,7 @@ data class WeatherForecast(
     val wind: String,
     val symbol : String,
     val time: String,
-    val downpour: String
+    val percipitation: String
 )
 
 //Kun data relatert til WeatherForecast; tid, temperatur, wind og symbolkode

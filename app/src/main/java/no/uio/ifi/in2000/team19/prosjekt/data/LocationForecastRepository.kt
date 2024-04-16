@@ -4,12 +4,14 @@ import android.content.Context
 import android.icu.lang.UCharacter.DecompositionType.SMALL
 import android.os.Build
 import androidx.annotation.RequiresApi
+import dagger.hilt.android.qualifiers.ApplicationContext
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -22,7 +24,8 @@ import javax.inject.Inject
 
 
 class LocationForecastRepository @Inject constructor(
-    private val locationForecastDataSource: LocationForecastDataSource
+    private val locationForecastDataSource: LocationForecastDataSource,
+    @ApplicationContext private val context: Context
 )  {
 
     private var lastLocationForecast: LocationForecast? = null
@@ -33,7 +36,7 @@ class LocationForecastRepository @Inject constructor(
         return lastLocationForecast as LocationForecast
     }
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getGeneralForecast(latitude: String, longitude: String, height: String, nrHours: Int): List<GeneralForecast> {
+    suspend fun getGeneralForecast(latitude: String, longitude: String, height: String, nrHours: Int): List<WeatherForecast> {
 
         val locationForecast = fetchLocationForecast(latitude, longitude, height)
 
@@ -46,14 +49,15 @@ class LocationForecastRepository @Inject constructor(
 
         var startingHour = hour - hourRounded
 
-        val forecastList = mutableListOf<GeneralForecast>()
+        val forecastList = mutableListOf<WeatherForecast>()
 
         for( i in 0 until nrHours) {
             val temperature = locationForecast.properties.timeseries[startingHour].data.instant.details.air_temperature.toString()
             val wind = locationForecast.properties.timeseries[startingHour].data.instant.details.wind_speed.toString()
             val symbol = locationForecast.properties.timeseries[startingHour].data.next_1_hours.summary.symbol_code
             val time = locationForecast.properties.timeseries[startingHour].time
-            forecastList.add(GeneralForecast(temperature, wind, symbol, time))
+            val percipitation = locationForecast.properties.timeseries[startingHour].data.next_1_hours.details.precipitation_amount.toString()
+            forecastList.add(WeatherForecast(temperature, wind, symbol, time, percipitation))
 
             startingHour += 1
         }
@@ -81,7 +85,7 @@ class LocationForecastRepository @Inject constructor(
 
         val forecastList = mutableListOf<WeatherForDay>()
 
-        for(i in 0 until nrDays) {
+        for (i in 0 until nrDays) {
 
             val thisDay = today.plusDays(i.toLong() + 1)
             val dayOfWeek = thisDay.dayOfWeek
@@ -97,7 +101,7 @@ class LocationForecastRepository @Inject constructor(
             val symbolWarm = locationForecast.properties.timeseries[warmestTime].data.next_1_hours.summary.symbol_code
             val temperatureCold = locationForecast.properties.timeseries[coldestTime].data.instant.details.air_temperature.toString()
 
-            forecastList.add(WeatherForDay(temperatureCold, temperatureWarm, symbolWarm, dayOfWeekString))
+            forecastList.add(WeatherForDay(temperatureCold, temperatureWarm, symbolWarm, dayOfWeekString, ""))
 
             dayInTime += 24
         }
@@ -120,7 +124,7 @@ class LocationForecastRepository @Inject constructor(
 
 
     //Lager AdviceCards, og retunerer en liste av de
-    private fun createAdvice(context: Context, categories: List<AdviceCategory>): List<Advice> {
+    private fun createAdvice(categories: List<AdviceCategory>): List<Advice> {
 
         val adviceList = mutableListOf<Advice>()
 
@@ -164,7 +168,7 @@ class LocationForecastRepository @Inject constructor(
             var counter = 0
             while  (counter < adviceArray!!.size){
 
-                val title = adviceArray?.get(counter).toString()
+                val title = adviceArray.get(counter).toString()
                 val description = adviceArray?.get(counter+1).toString()
                 val shortAdvice = adviceArray?.get(counter+2).toString()
 
@@ -184,7 +188,7 @@ class LocationForecastRepository @Inject constructor(
         return adviceList
     }
 
-    private fun getCategory(adviceForecast: AdviceForecast, typeOfDog: Dog): List<AdviceCategory> {
+    private fun getCategory(adviceForecast: AdviceForecast, typeOfDog: String): List<AdviceCategory> {
 
         var categoryList = mutableListOf<AdviceCategory>()
 
@@ -205,11 +209,11 @@ class LocationForecastRepository @Inject constructor(
             }
         }
 
-        if (AdviceCategory.WARM in categoryList && typeOfDog == typeOfDog.FLAT) {
+        if (AdviceCategory.WARM in categoryList && typeOfDog == "FLAT") {
             categoryList.add(AdviceCategory.WARMFLAT)
         }
 
-        if (AdviceCategory.COLD in categoryList && typeOfDog == typeOfDog.SMALL) {
+        if (AdviceCategory.COLD in categoryList && typeOfDog == "SMALL") {
             categoryList.add(AdviceCategory.COLDSMALL)
         }
 
