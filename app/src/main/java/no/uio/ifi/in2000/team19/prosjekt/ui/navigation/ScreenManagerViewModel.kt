@@ -20,7 +20,7 @@ class ScreenManagerViewModel @Inject constructor(
     private var _navBarSelectedIndex : MutableStateFlow<Int> = MutableStateFlow(0)
     var navBarSelectedIndex: StateFlow<Int> = _navBarSelectedIndex.asStateFlow()
 
-    private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(null)
+    private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(null) //Blir ikke oppdatert :((
     var userInfoUiState: StateFlow<UserInfo?> = _userInfoUiState.asStateFlow()
 
     fun updateNavBarSelectedIndex(newIndex:Int){

@@ -46,7 +46,7 @@ fun ScreenManager(
 
     val navController = rememberNavController()
 
-    val userInfoUiState = viewModel.userInfoUiState.collectAsState().value //remove?
+    val userInfoUiState = viewModel.userInfoUiState.collectAsState().value //Henter alltid null????
 
     val navBarItems = createBottomNavbarItems()
     val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
@@ -86,6 +86,7 @@ fun ScreenManager(
 
             Text(text = "heo")
 
+            //Sjekk kun for når man åpner appen
             NavHost(navController = navController, startDestination = "home"){
                 composable("home") {
                     if (userInfoUiState == null) {
