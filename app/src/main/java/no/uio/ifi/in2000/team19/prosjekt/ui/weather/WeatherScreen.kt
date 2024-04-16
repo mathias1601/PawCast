@@ -29,7 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.NoConnectionScreen
-
+/*
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel = viewModel()) {
@@ -184,3 +184,5 @@ fun WeatherForecastCardForDays(weatherForDay: WeatherForDay) {
     }
     
 }
+
+ */

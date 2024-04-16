@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,13 +48,14 @@ class HomeScreenViewModel @Inject constructor(
     private val height: String = "0"
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val cords = settingsRepository.getCords()
                 _cordsUiState.value = cords
 
-                val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, height, 3)
+                val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, height, 3, 1)
                 val allAdvice = locationForecastRepository.getAdvice(weatherForecast)
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
             } catch (e: IOException) {
@@ -69,6 +72,8 @@ class HomeScreenViewModel @Inject constructor(
     //we are using AdviceForecast because we only need temp, percipitation and UVLimit
 
     //parameter: a list of (advice) forecast objects that each represent one hour of the day
+
+    /*
     fun forecastGraphFunction(forecasts: List<AdviceForecast>): List<List<Int>> {
 
         var overallRatingList = mutableListOf<Int>()
@@ -172,4 +177,6 @@ class HomeScreenViewModel @Inject constructor(
 
         return 0
     }
+
+     */
 }

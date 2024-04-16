@@ -36,11 +36,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    //ScreenManager(settingsScreenViewModel, homeScreenViewModel, screenManagerViewModel)
+                    ScreenManager(settingsScreenViewModel, homeScreenViewModel, screenManagerViewModel)
 
-                    val adviceArray: Array<String> = resources.getStringArray(R.array.COLD)
 
-                    println(adviceArray)
                 }
             }
         }

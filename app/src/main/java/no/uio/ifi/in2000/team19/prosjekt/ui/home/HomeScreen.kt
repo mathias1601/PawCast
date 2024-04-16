@@ -1,6 +1,8 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,6 +60,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreenManager(
     viewModel: HomeScreenViewModel
@@ -139,9 +142,8 @@ fun HomeScreen(advice: AdviceUiState.Success, cords: Cords) {
 fun AdviceCard(advice: Advice) {
 
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = Color(android.graphics.Color.parseColor(advice.color))
-        ),
+        //colors = CardDefaults.cardColors(
+           //containerColor = Color(android.graphics.Color.parseColor(advice.color))
         modifier = Modifier
             .padding(2.dp)
     ) {
@@ -152,27 +154,14 @@ fun AdviceCard(advice: Advice) {
         ) {
             Text(text = advice.title)
             Text(text = advice.description)
-            Text(text = "${advice.forecast.temperature} grader")
-            Text(text = "${advice.forecast.windspeed} m/s")
+
         }
     }
 
 }
 
 
-@Composable
-fun WeatherForecast(weatherForecast: List<GeneralForecast>) {
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
-        //columns = GridCells.Adaptive(minSize = 150.dp),
-        content = {
-            items(weatherForecast) { generalForecast ->
-                WeatherForecastCard(generalForecast = generalForecast)
-            }
-        }
-    )
-}
 
 @Composable
 fun ForecastGraph(){
@@ -218,72 +207,6 @@ fun ForecastGraph(){
 
 
 
-@SuppressLint("DiscouragedApi")
-@Composable
-fun WeatherForecastCard(generalForecast: GeneralForecast) {
 
-    val newColor = Color(android.graphics.Color.parseColor("#ece9e4"))
 
-    val context = LocalContext.current
-    val drawableName = generalForecast.symbol
-    val drawableId = context.resources.getIdentifier(drawableName, "drawable", context.packageName)
-
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = newColor
-        ),
-        modifier = Modifier
-            .size(width = 350.dp, height = 75.dp)
-            .padding(9.dp)
-        //.height(23.dp)
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize(),
-            //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Spacer(modifier = Modifier.size(15.dp))
-
-            Image(
-                painter = painterResource(id = drawableId),
-                contentDescription = "Værsymbol"
-            )
-
-            Spacer(modifier = Modifier.size(26.dp))
-
-            Text(
-                text = "${generalForecast.temperature}°C",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-            )
-
-            Spacer(modifier = Modifier.size(40.dp))
-
-            Text(
-                text = "${generalForecast.wind} m/s",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.size(35.dp))
-
-            Text(
-                text = generalForecast.time,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun WeatherForecastPreview() {
-    val generalForecast = GeneralForecast("22", "10", "clearsky_day", "12:32")
-    WeatherForecastCard(generalForecast)
-
-}
 

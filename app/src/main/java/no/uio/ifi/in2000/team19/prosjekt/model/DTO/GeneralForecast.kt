@@ -1,14 +1,14 @@
 package no.uio.ifi.in2000.team19.prosjekt.model.DTO
 
-data class GeneralForecast(
-    val temperature:Float,
-    val wind: Float,
+data class GeneralForecast (
+    val temperature:Double,
+    val wind: Double? = null,
     val symbol : String,
     val time: String,
-    val downpour: Float,
-    val thunderprobability: Float,
-    val UVindex: Float
-)
+    val percipitation: Double,
+    val thunderprobability: Double,
+    val UVindex: Double
+) : forecastSuper()
 
 //TODO add all relevant data
 

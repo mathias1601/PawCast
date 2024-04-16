@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.data
 
 import android.content.Context
-import android.icu.lang.UCharacter.DecompositionType.SMALL
 import android.os.Build
 import androidx.annotation.RequiresApi
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -11,7 +10,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.forecastSuper
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -25,7 +24,7 @@ import javax.inject.Inject
 
 class LocationForecastRepository @Inject constructor(
     private val locationForecastDataSource: LocationForecastDataSource,
-    @ApplicationContext private val context: Context
+    private val context: Context
 )  {
 
     private var lastLocationForecast: LocationForecast? = null
@@ -36,7 +35,9 @@ class LocationForecastRepository @Inject constructor(
         return lastLocationForecast as LocationForecast
     }
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getGeneralForecast(latitude: String, longitude: String, height: String, nrHours: Int): List<WeatherForecast> {
+    suspend fun getGeneralForecast(latitude: String, longitude: String, height: String, nrHours: Int, nrDays: Int): List<List<forecastSuper>> {
+
+        var forecastLists = mutableListOf<List<forecastSuper>>()
 
         val locationForecast = fetchLocationForecast(latitude, longitude, height)
 
@@ -47,29 +48,35 @@ class LocationForecastRepository @Inject constructor(
         val now = LocalDateTime.now()
         val hourRounded = now.truncatedTo(ChronoUnit.HOURS).hour
 
-        var startingHour = hour - hourRounded
+        var startingHour = hourRounded - hour
 
-        val forecastList = mutableListOf<WeatherForecast>()
-
+        val genForecastList = mutableListOf<GeneralForecast>()
+        //if (nrHours <= 3)
         for( i in 0 until nrHours) {
-            val temperature = locationForecast.properties.timeseries[startingHour].data.instant.details.air_temperature.toString()
-            val wind = locationForecast.properties.timeseries[startingHour].data.instant.details.wind_speed.toString()
+            val temperature = locationForecast.properties.timeseries[startingHour].data.instant.details.air_temperature
+            val wind = locationForecast.properties.timeseries[startingHour].data.instant.details.wind_speed
             val symbol = locationForecast.properties.timeseries[startingHour].data.next_1_hours.summary.symbol_code
             val time = locationForecast.properties.timeseries[startingHour].time
-            val percipitation = locationForecast.properties.timeseries[startingHour].data.next_1_hours.details.precipitation_amount.toString()
-            forecastList.add(WeatherForecast(temperature, wind, symbol, time, percipitation))
+            val percipitation = locationForecast.properties.timeseries[startingHour].data.next_1_hours.details.precipitation_amount
+            val thunderprobability = locationForecast.properties.timeseries[startingHour].data.next_1_hours.details.probability_of_thunder
+            val UVindex = locationForecast.properties.timeseries[startingHour].data.instant.details.ultraviolet_index_clear_sky
+            genForecastList.add(GeneralForecast(temperature, wind, symbol, time, percipitation, thunderprobability, UVindex))
 
             startingHour += 1
         }
 
-        return forecastList
+        val dayForecastList = getWeatherForecastForDays(locationForecast, latitude, longitude, height, nrDays)
+
+        forecastLists.add(genForecastList)
+        forecastLists.add(dayForecastList)
+
+        return forecastLists
     }
 
     //Also possible to do this in the same function. An If-check to see if you want to get for days or hours.
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getGeneralForecastForDays(latitude: String, longitude: String, height: String, nrDays: Int): List<WeatherForDay> {
+    suspend fun getWeatherForecastForDays(locationForecast: LocationForecast, latitude: String, longitude: String, height: String, nrDays: Int): List<WeatherForDay> {
 
-        val locationForecast = fetchLocationForecast(latitude, longitude, height)
 
         val updatedAt = locationForecast.properties.meta.updated_at
         val dateTime = ZonedDateTime.parse(updatedAt, DateTimeFormatter.ISO_DATE_TIME)
@@ -110,30 +117,41 @@ class LocationForecastRepository @Inject constructor(
     }
 
     //Returnerer en liste av Advice-objekter
-    fun getAdvice(generalForecast:List<GeneralForecast>): List<Advice> {
-        val adviceForecast = getAdviceForecastData(generalForecast[0]) // only get forecast for right now.
+    fun getAdvice(generalForecast: List<List<forecastSuper>>): List<Advice> {
+
+
+        val firstForecast = generalForecast[0][0]
+        val adviceForecast = when (firstForecast) {
+            is GeneralForecast -> getAdviceForecastData(firstForecast)
+            else -> return emptyList()  // Eller en annen passende feilhåndtering
+        }
+        //var genF: AdviceForecast
+        //when (generalForecast[0][0]) {
+        //    is GeneralForecast -> genF = getAdviceForecastData(generalForecast[0][0])
+        //}
+        //val adviceForecast = getAdviceForecastData(generalForecast[0][0]) // only get forecast for right now.
         // val fakeAdviceForTestingForecast = AdviceForecast(temperature = "-10.0", windspeed = "10")
-        return createAdvice(adviceForecast)
+        val categories = getCategory(adviceForecast, "SMALL")
+        return createAdvice(categories)
     }
 
 
     //Gjør om fra GeneralForecast til AdviceForecast (fjerner unødvendig dsta)
     private fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
-        return AdviceForecast(generalForecast.temperature, generalForecast.wind)
+        return AdviceForecast(generalForecast.temperature, generalForecast.thunderprobability, generalForecast.percipitation, generalForecast.UVindex, generalForecast.time)
     }
 
 
     //Lager AdviceCards, og retunerer en liste av de
     private fun createAdvice(categories: List<AdviceCategory>): List<Advice> {
 
-        val adviceList = mutableListOf<Advice>()
+        var adviceList = mutableListOf<Advice>()
 
-        if (categories[0].equals("SAFE")) {
-            val title = "Trygt"
-            val description = "Ingen varsler"
-            val shortAdvice = "Ingen varsler"
+        if (categories[0] == AdviceCategory.SAFE) {
+            val safeArray = context.resources.getStringArray(R.array.SAFE)
 
-            val advice = Advice(title, description, shortAdvice)
+
+            val advice = Advice(safeArray[0], safeArray[1], safeArray[2])
             adviceList.add(advice)
             return adviceList
         }
@@ -166,17 +184,19 @@ class LocationForecastRepository @Inject constructor(
             }
 
             var counter = 0
-            while  (counter < adviceArray!!.size){
+            if (adviceArray != null) {
+                while  (counter < adviceArray.size){
 
-                val title = adviceArray.get(counter).toString()
-                val description = adviceArray?.get(counter+1).toString()
-                val shortAdvice = adviceArray?.get(counter+2).toString()
+                    val title = adviceArray?.get(counter).toString()
+                    val description = adviceArray?.get(counter+1).toString()
+                    val shortAdvice = adviceArray?.get(counter+2).toString()
 
-                val advice = Advice(title, description, shortAdvice)
-                adviceList.add(advice)
+                    val advice = Advice(title, description, shortAdvice)
+                    adviceList.add(advice)
 
-                counter+=3
+                    counter+=3
 
+                }
             }
 
 
@@ -227,7 +247,7 @@ class LocationForecastRepository @Inject constructor(
         }
 
         //TODO find right number
-        if (adviceForecast.downpour >= 50) {
+        if (adviceForecast.percipitation >= 0.1) {
             categoryList.add(AdviceCategory.RAIN)
         }
 

@@ -14,13 +14,13 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.forecastSuper
 import java.io.IOException
 import javax.inject.Inject
-
+/*
 sealed interface WeatherUiState {
     data class Success(
-        val weatherHours: List<GeneralForecast>,
-        val weatherDays: List<WeatherForDay>): WeatherUiState
+        val weatherForDaysAndHours: List<List<forecastSuper>>)
     data object Loading: WeatherUiState
     data object Error: WeatherUiState
 }
@@ -49,17 +49,17 @@ class WeatherScreenViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
 
             try {
-                val weatherHoursDeferred = async {locationForecastRepository.getGeneralForecast(latitude, longitude, height, 3)}
+                val weatherHoursDeferred = async {locationForecastRepository.getGeneralForecast(latitude, longitude, height, 3, 1)}
                 Log.d("Debug", "Loader vær for timer")
 
 
-                val weatherDaysDeferred = async {locationForecastRepository.getGeneralForecastForDays(latitude,longitude, height, 2)}
-                Log.d("Debug", "Loader vær for dager")
+                //val weatherDaysDeferred = async {locationForecastRepository.getGeneralForecastForDays(latitude,longitude, height, 2)}
+                //Log.d("Debug", "Loader vær for dager")
 
                 val weatherHours = weatherHoursDeferred.await()
-                val weatherDays = weatherDaysDeferred.await()
+                //val weatherDays = weatherDaysDeferred.await()
                 //weatherUiState = WeatherUiState.Success(weatherHours, weatherDays)
-                _weatherUiState.value = WeatherUiState.Success(weatherHours, weatherDays)
+                _weatherUiState.value = WeatherUiState.Success(weatherHours)
             } catch (e: IOException) {
                 _weatherUiState.value = WeatherUiState.Error
             }
@@ -69,3 +69,5 @@ class WeatherScreenViewModel @Inject constructor(
     //fun fetchWeatherUiState(): WeatherUiState = weatherUiState
 
 }
+
+ */

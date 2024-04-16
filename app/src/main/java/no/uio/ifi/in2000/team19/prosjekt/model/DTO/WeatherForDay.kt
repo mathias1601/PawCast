@@ -6,4 +6,4 @@ data class WeatherForDay(
     val symbol: String,
     val day: String,
     val time: String
-)
+) : forecastSuper()
