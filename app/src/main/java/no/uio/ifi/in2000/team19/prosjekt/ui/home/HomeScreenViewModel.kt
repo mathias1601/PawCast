@@ -41,7 +41,7 @@ class HomeScreenViewModel @Inject constructor(
     private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "69", "69"))
     var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
 
-    private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false))
+    private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false))
     var userInfoUiState: StateFlow<UserInfo?> = _userInfoUiState.asStateFlow()
 
     fun loadWeatherForecast() {
@@ -69,9 +69,6 @@ class HomeScreenViewModel @Inject constructor(
                         x=x,
                         y=y) }
                 }
-
-
-
 
             } catch (e: IOException) {
                 _adviceUiState.value  = AdviceUiState.Error

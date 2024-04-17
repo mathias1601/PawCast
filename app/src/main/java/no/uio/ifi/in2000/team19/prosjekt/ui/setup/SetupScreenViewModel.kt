@@ -19,26 +19,37 @@ class SetupScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
 ): ViewModel() {
 
-    private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"undefined", "undefined", false,false,false))
+    private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"undefined", "undefined", false,false,false, false, false, false))
     var userInfo: StateFlow<UserInfo> = _userInfo.asStateFlow()
 
     fun updateUserName(userName: String){
-        _userInfo.value.userName = userName
-        Log.d("SETUP_DEBUG", userName)
+        val updatedUserName = _userInfo.value.copy(userName = userName)
+        _userInfo.value = updatedUserName
+        Log.d("SETUP_DEBUG", _userInfo.value.userName)
 
     }
     fun updateDogName(dogName: String){
-        _userInfo.value.dogName = dogName
-        Log.d("SETUP_DEBUG", dogName)
+        val updatedDogName = _userInfo.value.copy(dogName = dogName)
+        _userInfo.value = updatedDogName
+        Log.d("SETUP_DEBUG", _userInfo.value.dogName)
     }
-    fun updateSize(size: Boolean) {
-        _userInfo.value.isBig = size
+    fun updateAge(newValue: Boolean) {
+        _userInfo.value.isSenior = newValue
     }
-    fun updateNose(nose: Boolean){
-        _userInfo.value.isShortNosed = nose
+    fun updateNose(newValue: Boolean){
+        _userInfo.value.isShortNosed = newValue
     }
-    fun updateHair(hair: Boolean){
-        _userInfo.value.isLongHaired = hair
+    fun updateLongHair(newValue: Boolean){
+        _userInfo.value.isLongHaired = newValue
+    }
+    fun updateThinHair(newValue: Boolean) {
+        _userInfo.value.isThinHaired = newValue
+    }
+    fun updateLightHair(newValue: Boolean) {
+        _userInfo.value.isLightHaired = newValue
+    }
+    fun updateThin(newValue: Boolean) {
+        _userInfo.value.isThin = newValue
     }
     fun saveUserInfo() {
         viewModelScope.launch(Dispatchers.IO) {

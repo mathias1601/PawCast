@@ -46,6 +46,7 @@ fun NameScreen(viewModel: SetupScreenViewModel, id:String, navController:NavHost
 
     var userName by remember { mutableStateOf("")}
     var dogName by remember { mutableStateOf("")}
+
     Column () {
         OutlinedTextField(
             value = userName,
@@ -77,7 +78,7 @@ fun CategoriesScreen(viewModel: SetupScreenViewModel, id: String, navController:
     }
     Button(onClick = {
         viewModel.saveUserInfo()
-        navController.navigate("home")
+        navController.navigate("home") //If sjekken i HomeScreen gir null
     }) {
         Text(text = "Right")
     }

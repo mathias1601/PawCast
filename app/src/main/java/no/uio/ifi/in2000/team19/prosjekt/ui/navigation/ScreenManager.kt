@@ -50,9 +50,10 @@ fun ScreenManager(
 
     val navBarItems = createBottomNavbarItems()
     val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
+
     Scaffold(
         bottomBar = {
-            if (false) {
+
                 NavigationBar {
                     navBarItems.forEachIndexed { index, item ->
                         NavigationBarItem(
@@ -70,13 +71,11 @@ fun ScreenManager(
                                     },
                                     contentDescription = item.title
                                 )
-
                             }
                         )
                     }
                 }
 
-            }
         }
     ) {innerPadding ->
 
