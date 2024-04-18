@@ -40,6 +40,13 @@ class HomeScreenViewModel @Inject constructor(
     private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "69", "69"))
     var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
 
+
+    private val height: String = "0"
+
+    init {
+        loadWeatherForecast()
+    }
+
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
