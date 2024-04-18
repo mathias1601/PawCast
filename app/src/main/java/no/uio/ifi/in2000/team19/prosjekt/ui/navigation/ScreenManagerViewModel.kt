@@ -31,6 +31,9 @@ class ScreenManagerViewModel @Inject constructor(
             val userInfo = settingsRepository.getUserInfo()
             _userInfoUiState.value = userInfo
         }
-
+    }
+    fun checkifDbIsNull(): Boolean {
+        initialize()
+        return userInfoUiState.value == null
     }
 }

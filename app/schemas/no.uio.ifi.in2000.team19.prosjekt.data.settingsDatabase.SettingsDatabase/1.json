@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "cbfd505ec992489003a03578294779db",
+    "identityHash": "b6fb085cab83132b19a3cc2926cadd9a",
     "entities": [
       {
         "tableName": "Cords",
@@ -38,7 +38,7 @@
       },
       {
         "tableName": "UserInfo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userName` TEXT NOT NULL, `dogName` TEXT NOT NULL, `isSenior` INTEGER NOT NULL, `isShortNosed` INTEGER NOT NULL, `isLongHaired` INTEGER NOT NULL, `isThinHaired` INTEGER NOT NULL, `isLightHaired` INTEGER NOT NULL, `isThin` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userName` TEXT NOT NULL, `dogName` TEXT NOT NULL, `isSenior` INTEGER NOT NULL, `isPuppy` INTEGER NOT NULL, `isFlatNosed` INTEGER NOT NULL, `isLongHaired` INTEGER NOT NULL, `isThinHaired` INTEGER NOT NULL, `isLightHaired` INTEGER NOT NULL, `isThin` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -65,8 +65,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "isShortNosed",
-            "columnName": "isShortNosed",
+            "fieldPath": "isPuppy",
+            "columnName": "isPuppy",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFlatNosed",
+            "columnName": "isFlatNosed",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -108,7 +114,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cbfd505ec992489003a03578294779db')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b6fb085cab83132b19a3cc2926cadd9a')"
     ]
   }
 }

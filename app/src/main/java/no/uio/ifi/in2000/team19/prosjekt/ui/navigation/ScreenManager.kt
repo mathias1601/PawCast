@@ -88,7 +88,7 @@ fun ScreenManager(
             //Sjekk kun for når man åpner appen
             NavHost(navController = navController, startDestination = "home"){
                 composable("home") {
-                    if (userInfoUiState == null) {
+                    if (viewModel.checkifDbIsNull()) {
                         navController.navigate("setup/0")
                     } else {
                         HomeScreenManager(homeScreenViewModel)
