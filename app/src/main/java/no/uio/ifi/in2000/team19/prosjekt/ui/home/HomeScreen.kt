@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +29,6 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,12 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
@@ -64,6 +57,7 @@ import kotlinx.coroutines.withContext
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherForecastCard
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,6 +68,7 @@ fun HomeScreenManager(
 
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
     val cordsUiState = viewModel.cordsUiState.collectAsState().value
+    val graphUiState = viewModel.graphUiState.collectAsState().value
 
     val isRefreshing by remember {
         mutableStateOf(false)
@@ -82,8 +77,13 @@ fun HomeScreenManager(
 
     Box() {
 
-        Scaffold(
-            bottomBar = {
+        Column(
+            Modifier.padding(innerPadding)
+        ) {
+            when (adviceUiState) {
+                is AdviceUiState.Success -> {
+                    HomeScreen(adviceUiState, cordsUiState, graphUiState)
+                }
 
             }
         ) { innerPadding ->
@@ -129,7 +129,11 @@ fun NoConnectionScreen() {
 }
 
 @Composable
-fun HomeScreen(advice: AdviceUiState.Success, cords: Cords) {
+fun HomeScreen(
+    advice: AdviceUiState.Success,
+    cords: Cords,
+    graphUiState: CartesianChartModelProducer
+) {
 
 
     Column(
@@ -150,8 +154,7 @@ fun HomeScreen(advice: AdviceUiState.Success, cords: Cords) {
 
         Spacer(modifier = Modifier.size(50.dp))
 
-        //WeatherForecast(advice.weatherForecast)
-        ForecastGraph()
+        ForecastGraph(graphUiState)
     }
 }
 
@@ -195,23 +198,11 @@ fun WeatherForecast(weatherForecast: List<GeneralForecast>) {
 }
 
 @Composable
-fun ForecastGraph(){
+fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
 
 
-    val modelProducer = remember { CartesianChartModelProducer.build() } // burde flyttes til viewmodel https://patrykandpatrick.com/vico/wiki/cartesian-charts/data (se første warning)
+     // burde flyttes til viewmodel https://patrykandpatrick.com/vico/wiki/cartesian-charts/data (se første warning)
 
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.Default) {
-            modelProducer.tryRunTransaction {
-                lineSeries {
-                    series(
-                        x = listOf(1, 2),
-                        y = listOf(5, 6)
-                    )
-                }
-            }
-        }
-    }
 
     Card(
         modifier = Modifier
@@ -223,11 +214,15 @@ fun ForecastGraph(){
             CartesianChartHost(
                 chart =
                 rememberCartesianChart(
-                    rememberLineCartesianLayer(listOf(rememberLineSpec(DynamicShaders.color(Color(0xFF128DDF))))),
+                    rememberLineCartesianLayer(
+                        listOf(
+                            rememberLineSpec(
+                                DynamicShaders.color(Color(0xFF128DDF)))
+                        )),
                     startAxis = rememberStartAxis(),
                     bottomAxis = rememberBottomAxis(guideline = null),
                 ),
-                modelProducer = modelProducer,
+                modelProducer = graphUiState,
                 zoomState = rememberVicoZoomState(zoomEnabled = false),
 
                 modifier = Modifier.fillMaxSize(),
@@ -235,76 +230,4 @@ fun ForecastGraph(){
         }
     }
 }
-
-
-
-@SuppressLint("DiscouragedApi")
-@Composable
-fun WeatherForecastCard(generalForecast: GeneralForecast) {
-
-    val newColor = Color(android.graphics.Color.parseColor("#ece9e4"))
-
-    val context = LocalContext.current
-    val drawableName = generalForecast.symbol
-    val drawableId = context.resources.getIdentifier(drawableName, "drawable", context.packageName)
-
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = newColor
-        ),
-        modifier = Modifier
-            .size(width = 350.dp, height = 75.dp)
-            .padding(9.dp)
-        //.height(23.dp)
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize(),
-            //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Spacer(modifier = Modifier.size(15.dp))
-
-            Image(
-                painter = painterResource(id = drawableId),
-                contentDescription = "Værsymbol"
-            )
-
-            Spacer(modifier = Modifier.size(26.dp))
-
-            Text(
-                text = "${generalForecast.temperature}°C",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-            )
-
-            Spacer(modifier = Modifier.size(40.dp))
-
-            Text(
-                text = "${generalForecast.wind} m/s",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.size(35.dp))
-
-            Text(
-                text = generalForecast.time,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun WeatherForecastPreview() {
-    val generalForecast = GeneralForecast("22", "10", "clearsky_day", "12:32")
-    WeatherForecastCard(generalForecast)
-
-}
-
 

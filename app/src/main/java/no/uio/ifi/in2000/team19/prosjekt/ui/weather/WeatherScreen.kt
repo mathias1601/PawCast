@@ -7,6 +7,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,14 +27,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.NoConnectionScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel = viewModel()) {
+fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
 
     val weatherUiState = weatherScreenViewModel.weatherUiState.collectAsState().value
 
@@ -75,7 +76,8 @@ fun WeatherForecastCard(generalForecast: GeneralForecast) {
             containerColor = newColor
         ),
         modifier = Modifier
-            .size(width = 350.dp, height = 75.dp)
+            .fillMaxWidth()
+            .height(100.dp)
             .padding(9.dp)
         //.height(23.dp)
     ) {
@@ -138,7 +140,8 @@ fun WeatherForecastCardForDays(weatherForDay: WeatherForDay) {
             containerColor = newColor
         ),
         modifier = Modifier
-            .size(width = 350.dp, height = 75.dp)
+            .fillMaxWidth()
+            .height(100.dp)
             .padding(9.dp)
         //.height(23.dp)
     ) {

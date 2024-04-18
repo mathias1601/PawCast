@@ -2,6 +2,8 @@ package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.model.lineSeries
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,13 +24,6 @@ sealed interface AdviceUiState{
     data object Error : AdviceUiState
 }
 
-/*
-sealed interface WeatherForecastUiState {
-    data class Success(val weatherForecast: List<GeneralForecast>): WeatherForecastUiState
-    data object Loading: WeatherForecastUiState
-    data object Error: WeatherForecastUiState
-}
- */
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
@@ -36,11 +31,15 @@ class HomeScreenViewModel @Inject constructor(
     private val locationForecastRepository: LocationForecastRepository
 ): ViewModel() {
 
+    private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
+    var graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
+
     private var _adviceUiState: MutableStateFlow<AdviceUiState> = MutableStateFlow(AdviceUiState.Loading)
     var adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
 
     private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "69", "69"))
     var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
+
 
     private val height: String = "0"
 
@@ -54,9 +53,26 @@ class HomeScreenViewModel @Inject constructor(
                 val cords = settingsRepository.getCords()
                 _cordsUiState.value = cords
 
-                val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, height, 3)
-                val allAdvice = locationForecastRepository.getAdvice(weatherForecast)
+                val generalForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, "0", 3)
+                val allAdvice = locationForecastRepository.getAdvice(generalForecast)
+
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
+
+                /////////////////////////////////// GRAPH METHOD TO BE MOVED INTO REPOSITORY OR NEW DOMAIN LAYER///////////////////////////////////
+
+                val x = listOf(3, 5, 6)
+                val y = listOf(10, 4, 5)
+
+                _graphUiState.value.tryRunTransaction {
+                    lineSeries {
+                        series(
+                        x=x,
+                        y=y) }
+                }
+
+
+
+
             } catch (e: IOException) {
                 _adviceUiState.value  = AdviceUiState.Error
             }
