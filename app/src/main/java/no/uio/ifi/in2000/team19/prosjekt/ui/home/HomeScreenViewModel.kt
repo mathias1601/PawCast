@@ -44,6 +44,9 @@ class HomeScreenViewModel @Inject constructor(
 
     private val height: String = "0"
 
+    init {
+        loadWeatherForecast()
+    }
 
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
