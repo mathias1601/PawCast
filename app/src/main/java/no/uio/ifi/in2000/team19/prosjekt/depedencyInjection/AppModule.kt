@@ -48,4 +48,5 @@ object AppModule {
     fun provideLocationForecastDataSource(): LocationForecastDataSource {
         return LocationForecastDataSource()
     }
+
 }

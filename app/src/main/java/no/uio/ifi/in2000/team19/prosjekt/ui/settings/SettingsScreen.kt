@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.settings
 
+
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,9 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.lifecycle.viewmodel.compose.viewModel
+import no.uio.ifi.in2000.team19.prosjekt.R
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -37,10 +40,27 @@ fun SettingsScreen(
     var localLatitude by remember { mutableStateOf("") }
     var localLongitude by remember { mutableStateOf("") }
 
+
+    val mapboxAccessToken = stringResource( id = R.string.mapbox_access_token)
+
+
     LaunchedEffect(coordinates.value) {
         localLatitude = coordinates.value.latitude
         localLongitude = coordinates.value.longitude
+
+
+        viewModel.searchForLocation("Paris Eiffel Tower",
+            onResult = { results ->
+                Log.d("SearchApiExample", results.toString())
+            },
+            onError = { e ->
+                Log.d("SearchApiExample", e.toString())
+            }
+        )
+
+
     }
+
 
     Column (
 
