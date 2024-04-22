@@ -29,7 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.NoConnectionScreen
-/*
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel = viewModel()) {
@@ -40,8 +40,9 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel = viewModel()) 
         is WeatherUiState.Loading -> CircularProgressIndicator()
         is WeatherUiState.Error -> NoConnectionScreen()
         is WeatherUiState.Success -> {
-            val weatherHours = weatherUiState.weatherHours
-            val weatherDays = weatherUiState.weatherDays
+            val weatherHours = weatherUiState.weather[0]
+            val weatherDays = weatherUiState.weather[1]
+            val weatherMean = weatherUiState.weather[2]
 
             LazyColumn {
 
@@ -113,7 +114,7 @@ fun WeatherForecastCard(generalForecast: GeneralForecast) {
             Spacer(modifier = Modifier.size(35.dp))
 
             Text(
-                text = generalForecast.time,
+                text = generalForecast.hour,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
             )
@@ -184,5 +185,3 @@ fun WeatherForecastCardForDays(weatherForDay: WeatherForDay) {
     }
     
 }
-
- */

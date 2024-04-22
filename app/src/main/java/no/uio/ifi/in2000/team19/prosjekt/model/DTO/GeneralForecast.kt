@@ -4,7 +4,8 @@ data class GeneralForecast (
     val temperature:Double,
     val wind: Double? = null,
     val symbol : String,
-    val time: String,
+    val hour: String,
+    val date: String,
     val percipitation: Double,
     val thunderprobability: Double,
     val UVindex: Double
