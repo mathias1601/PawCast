@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.navigation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,20 +8,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.dataStore.DataStoreRepository
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import javax.inject.Inject
 
-sealed class SetupState {
-    data object Loading: SetupState()
-    data object Success : SetupState()
-    data object Error: SetupState()
-
-    data object SuccessButIsNull: SetupState()
-}
 
 @HiltViewModel
 class ScreenManagerViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository,
     private val dataStoreRepository: DataStoreRepository
 ) : ViewModel(){
 
@@ -46,7 +36,6 @@ class ScreenManagerViewModel @Inject constructor(
                 if (completed){
                     _startDestination.value = "home"
                 } else {
-                    Log.d("TAG", "Setup is not complected. Setting start dest. ")
                     _startDestination.value = "setup/0"
                 }
 
