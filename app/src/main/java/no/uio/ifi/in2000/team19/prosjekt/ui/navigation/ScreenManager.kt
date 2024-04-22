@@ -15,17 +15,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.runBlocking
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreen
@@ -47,17 +43,18 @@ fun ScreenManager(
 ) {
 
     val navController = rememberNavController()
-
-    val userInfoUiState = viewModel.userInfo.collectAsState().value //Henter alltid null????
-
     val navBarItems = createBottomNavbarItems()
-    val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
 
-    viewModel.initialize()
+    val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
+    val startDestination = viewModel.startDestination.collectAsState().value
+    val isLoading = viewModel.isLoading.collectAsState().value
+
 
     Scaffold(
-        bottomBar = {
 
+
+        bottomBar = {
+            if (startDestination == "home" || startDestination == "weather" || startDestination == "settings")  {
                 NavigationBar {
                     navBarItems.forEachIndexed { index, item ->
                         NavigationBarItem(
@@ -68,7 +65,7 @@ fun ScreenManager(
                             },
                             icon = {
                                 Icon(
-                                    imageVector = if (index == navBarSelectedItemIndex){
+                                    imageVector = if (index == navBarSelectedItemIndex) {
                                         item.selectedIcon
                                     } else {
                                         item.unselectedIcon
@@ -80,25 +77,22 @@ fun ScreenManager(
                     }
                 }
 
+            }
+
         }
     ) {innerPadding ->
 
         Column(
             Modifier.padding(innerPadding)
         ) {
+                //Sjekk kun for når man åpner appen
+            NavHost(
+                navController = navController,
+                startDestination = startDestination
 
-            //Sjekk kun for når man åpner appen
-            NavHost(navController = navController, startDestination = "home"){
+            ){
                 composable("home") {
-
-                    viewModel.initialize()
-                    when (userInfoUiState) {
-                        is SetupState.Loading -> Text(text = "laster...")
-                        is SetupState.SuccessButIsNull -> navController.navigate("setup/0")
-                        is SetupState.Success -> HomeScreenManager(viewModel = homeScreenViewModel)
-                        is SetupState.Error -> Text(text = "error...")
-                    }
-
+                    HomeScreenManager(viewModel = homeScreenViewModel)
                 }
 
                 composable("settings"){
@@ -108,13 +102,12 @@ fun ScreenManager(
                 composable("weather"){
                     WeatherScreen(weatherScreenViewModel)
                 }
-                composable("setup/{stage}"){backStackEntry ->
-                    val id = backStackEntry.arguments?.getString("stage")!!
+
+                composable("setup/{STAGE}"){backStackEntry ->
+                    val id = backStackEntry.arguments?.getString("STAGE") ?: "0"
                     SetupManager(viewModel = setupScreenViewModel, id=id, navController=navController)
                 }
             }
-
-
         }
     }
 }
@@ -148,7 +141,6 @@ fun createBottomNavbarItems() : List<BottomNavBarItem> {
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings
         ),
-
 
     )
 }

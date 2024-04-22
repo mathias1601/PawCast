@@ -7,7 +7,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -77,8 +76,11 @@ fun CategoriesScreen(viewModel: SetupScreenViewModel, id: String, navController:
         Text(text = "Left")
     }
     Button(onClick = {
-        viewModel.saveUserInfo()
-        navController.navigate("home") //If sjekken i HomeScreen gir null
+
+        viewModel.saveUserInfo() // save user info to DB
+        viewModel.saveSetupState(isCompleted = true) // store info that setup is completed so next app launch doesnt ask for setup.
+        // navController.popBackStack() // removes history from backstack. Stops user from being able to click back, navigating the user back to setup 👎
+        navController.navigate("home")
     }) {
         Text(text = "Right")
     }

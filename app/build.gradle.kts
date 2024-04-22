@@ -115,6 +115,8 @@ dependencies {
     // Extended icons pack for more choice. Needed for cloud icon for navbar
     implementation("androidx.compose.material:material-icons-extended:1.6.5")
 
+    // DataStore. Storing preferences to local storage (used to remember if user has completed setup)
+    implementation("androidx.datastore:datastore-preferences:1.1.0")
 
 }
 

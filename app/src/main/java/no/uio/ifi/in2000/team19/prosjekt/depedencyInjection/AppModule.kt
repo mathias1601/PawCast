@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastDataSource
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
+import no.uio.ifi.in2000.team19.prosjekt.data.dataStore.DataStoreRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsDatabase
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.coordsDao
@@ -52,5 +53,11 @@ object AppModule {
     @Provides
     fun provideLocationForecastDataSource(): LocationForecastDataSource {
         return LocationForecastDataSource()
+    }
+
+    @Singleton
+    @Provides
+    fun provideDataStoreRepository( @ApplicationContext context: Context ): DataStoreRepository {
+        return DataStoreRepository(context)
     }
 }

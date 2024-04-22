@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team19.prosjekt.data.dataStore.DataStoreRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import java.io.IOException
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SetupScreenViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val dataStoreRepository: DataStoreRepository
 ): ViewModel() {
 
     private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"undefined", "undefined", false,false,false, false, false, false, false, false))
@@ -52,6 +54,7 @@ class SetupScreenViewModel @Inject constructor(
     fun updateThin(newValue: Boolean) {
         _userInfo.value.isThin = newValue
     }
+
     fun saveUserInfo() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -61,6 +64,12 @@ class SetupScreenViewModel @Inject constructor(
                 println(e)
                 Log.d("SETUP_DEBUG", e.toString())
             }
+        }
+    }
+
+    fun saveSetupState(isCompleted:Boolean){
+        viewModelScope.launch (Dispatchers.IO){
+            dataStoreRepository.saveSetupState(isCompleted)
         }
     }
 }
