@@ -32,6 +32,7 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ScreenManager(
@@ -46,7 +47,7 @@ fun ScreenManager(
 
     val navController = rememberNavController()
 
-    val userInfoUiState = viewModel.userInfoUiState.collectAsState().value //Henter alltid null????
+    val userInfoUiState = viewModel.userInfo.collectAsState().value //Henter alltid null????
 
     val navBarItems = createBottomNavbarItems()
     val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
@@ -83,15 +84,14 @@ fun ScreenManager(
             Modifier.padding(innerPadding)
         ) {
 
-            Text(text = "heo")
-
             //Sjekk kun for når man åpner appen
             NavHost(navController = navController, startDestination = "home"){
                 composable("home") {
-                    if (viewModel.checkifDbIsNull()) {
-                        navController.navigate("setup/0")
-                    } else {
-                        HomeScreenManager(homeScreenViewModel)
+                    when (userInfoUiState) {
+                        is SetupState.Loading -> Text(text="laster...")
+                        is SetupState.SuccessButIsNull -> navController.navigate("setup/0")
+                        is SetupState.Success -> HomeScreenManager(viewModel = homeScreenViewModel)
+                        is SetupState.Error -> Text(text="error...")
                     }
                 }
 

@@ -14,12 +14,13 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import java.io.IOException
 import javax.inject.Inject
 
+
 @HiltViewModel
 class SetupScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
 ): ViewModel() {
 
-    private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"undefined", "undefined", false,false,false, false, false, false, false))
+    private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"undefined", "undefined", false,false,false, false, false, false, false, false))
     var userInfo: StateFlow<UserInfo> = _userInfo.asStateFlow()
 
     fun updateUserName(userName: String){
