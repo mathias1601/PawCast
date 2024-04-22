@@ -17,12 +17,15 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.runBlocking
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreen
@@ -43,14 +46,14 @@ fun ScreenManager(
     setupScreenViewModel: SetupScreenViewModel
 ) {
 
-    viewModel.initialize()
-
     val navController = rememberNavController()
 
     val userInfoUiState = viewModel.userInfo.collectAsState().value //Henter alltid null????
 
     val navBarItems = createBottomNavbarItems()
     val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
+
+    viewModel.initialize()
 
     Scaffold(
         bottomBar = {
@@ -87,12 +90,15 @@ fun ScreenManager(
             //Sjekk kun for når man åpner appen
             NavHost(navController = navController, startDestination = "home"){
                 composable("home") {
+
+                    viewModel.initialize()
                     when (userInfoUiState) {
-                        is SetupState.Loading -> Text(text="laster...")
+                        is SetupState.Loading -> Text(text = "laster...")
                         is SetupState.SuccessButIsNull -> navController.navigate("setup/0")
                         is SetupState.Success -> HomeScreenManager(viewModel = homeScreenViewModel)
-                        is SetupState.Error -> Text(text="error...")
+                        is SetupState.Error -> Text(text = "error...")
                     }
+
                 }
 
                 composable("settings"){
