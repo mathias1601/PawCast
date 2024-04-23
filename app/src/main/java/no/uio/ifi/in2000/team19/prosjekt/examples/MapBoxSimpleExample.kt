@@ -1,15 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.examples
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.mapbox.geojson.Point
-import com.mapbox.maps.MapboxExperimental
-import com.mapbox.maps.extension.compose.MapboxMap
-import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
-
+/* Mangler dependencies. Derfor kommentert ut.
 
 @OptIn(MapboxExperimental::class)
 @Composable
@@ -30,3 +21,5 @@ fun MapBoxSimpleExample(){
         },
     )
 }
+
+*/

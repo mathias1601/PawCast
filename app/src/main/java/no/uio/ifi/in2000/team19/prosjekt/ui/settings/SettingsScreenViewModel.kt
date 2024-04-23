@@ -2,6 +2,14 @@ package no.uio.ifi.in2000.team19.prosjekt.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mapbox.search.ResponseInfo
+import com.mapbox.search.SearchEngine
+import com.mapbox.search.SearchEngineSettings
+import com.mapbox.search.SearchOptions
+import com.mapbox.search.SearchSelectionCallback
+import com.mapbox.search.common.AsyncOperationTask
+import com.mapbox.search.result.SearchResult
+import com.mapbox.search.result.SearchSuggestion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,24 +27,31 @@ class SettingsScreenViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
-    private val _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "12", "34"))
+    private val _cordsUiState: MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "12", "34"))
     val cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
 
+
     init {
-        viewModelScope.launch (Dispatchers.IO) {
-            _cordsUiState.value = settingsRepository.getCords()
-        }
-    }
-    fun setCoordinates(newLatitude:String, newLongitude: String){
         viewModelScope.launch(Dispatchers.IO) {
-            settingsRepository.updateCoords( newLatitude, newLongitude)
+            _cordsUiState.value = settingsRepository.getCords()
+
+        }
+    }
+
+    fun setCoordinates(newLatitude: String, newLongitude: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsRepository.updateCoords(newLatitude, newLongitude)
             _cordsUiState.value = settingsRepository.getCords()
         }
     }
+
 
     fun clearDataStore(){
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreRepository.clearDataStore()
         }
     }
+
+    ////////////////// MAPBOX SEARCH ///////////////////////////////////
+
 }
