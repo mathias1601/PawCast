@@ -1,8 +1,5 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
-import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,7 +22,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,12 +44,9 @@ import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.model.lineSeries
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
@@ -75,26 +68,15 @@ fun HomeScreenManager(
     }
     val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast()})
 
-    Box() {
+    Scaffold() { innerPadding ->
 
-        Column(
-            Modifier.padding(innerPadding)
-        ) {
-            when (adviceUiState) {
-                is AdviceUiState.Success -> {
-                    HomeScreen(adviceUiState, cordsUiState, graphUiState)
-                }
-
-            }
-        ) { innerPadding ->
-
-            Column(
+            Box(
                 Modifier.padding(innerPadding)
                         .pullRefresh(state),
             ) {
                 when (adviceUiState) {
                     is AdviceUiState.Success -> {
-                        HomeScreen(adviceUiState, cordsUiState)
+                        HomeScreen(adviceUiState, cordsUiState, graphUiState)
                     }
 
                     is AdviceUiState.Loading -> {
@@ -106,7 +88,6 @@ fun HomeScreenManager(
                     }
                 }
 
-            }
             PullRefreshIndicator(
                 refreshing = isRefreshing, state = state,
                 modifier = Modifier
@@ -115,6 +96,7 @@ fun HomeScreenManager(
         }
     }
 }
+
 
 
 @Composable
@@ -230,4 +212,3 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
         }
     }
 }
-
