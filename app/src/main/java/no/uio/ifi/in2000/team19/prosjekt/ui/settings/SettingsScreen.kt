@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.settings
 
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,17 +46,6 @@ fun SettingsScreen(
     LaunchedEffect(coordinates.value) {
         localLatitude = coordinates.value.latitude
         localLongitude = coordinates.value.longitude
-
-
-        viewModel.searchForLocation("Paris Eiffel Tower",
-            onResult = { results ->
-                Log.d("SearchApiExample", results.toString())
-            },
-            onError = { e ->
-                Log.d("SearchApiExample", e.toString())
-            }
-        )
-
 
     }
 
