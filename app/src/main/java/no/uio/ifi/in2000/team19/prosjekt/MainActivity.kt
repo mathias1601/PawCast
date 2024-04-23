@@ -16,6 +16,8 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.navigation.ScreenManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.navigation.ScreenManagerViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Team19prosjektoppgaveTheme
+import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -24,6 +26,7 @@ class MainActivity : ComponentActivity() {
     private val screenManagerViewModel: ScreenManagerViewModel by viewModels()
 
     private val homeScreenViewModel: HomeScreenViewModel by viewModels()
+    //private val weatherScreenViewModel: WeatherScreenViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +39,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ScreenManager(settingsScreenViewModel, homeScreenViewModel, screenManagerViewModel)
+                    //ScreenManager(settingsScreenViewModel, homeScreenViewModel, screenManagerViewModel)
+                    WeatherScreen(weatherScreenViewModel)
 
 
                 }

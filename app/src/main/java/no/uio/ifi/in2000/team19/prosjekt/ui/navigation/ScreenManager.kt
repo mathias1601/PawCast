@@ -24,6 +24,8 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
+import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreen
+
 //import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -83,7 +85,7 @@ fun ScreenManager(
                 }
 
                 //composable("weather"){
-                  //  WeatherScreen()
+                //    WeatherScreen()
                 //}
             }
         }

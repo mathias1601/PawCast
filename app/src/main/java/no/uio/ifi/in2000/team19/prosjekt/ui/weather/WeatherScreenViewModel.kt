@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +28,7 @@ sealed interface WeatherUiState {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
+@HiltViewModel
 class WeatherScreenViewModel @Inject constructor(
     private val locationForecastRepository : LocationForecastRepository
 ) : ViewModel() {

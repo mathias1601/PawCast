@@ -38,14 +38,17 @@ class LocationForecastRepository @Inject constructor(
 
         val locationForecast = fetchLocationForecast(latitude, longitude, height)
 
-        val updatedAt = locationForecast.properties.meta.updated_at
-        val dateTime = ZonedDateTime.parse(updatedAt, DateTimeFormatter.ISO_DATE_TIME)
+        val start = locationForecast.properties.timeseries[0].time
+        val dateTime = ZonedDateTime.parse(start, DateTimeFormatter.ISO_DATE_TIME)
         val hour = dateTime.toLocalDateTime().withMinute(0).withSecond(0).withNano(0).hour
 
         val now = LocalDateTime.now()
         val nowRounded = now.truncatedTo(ChronoUnit.HOURS).hour
 
         var startingHour = nowRounded - hour
+
+        val startForDays = nowRounded - startingHour
+        val startForMean = startingHour
 
         val lastHour = 23 - hour
 
@@ -73,8 +76,8 @@ class LocationForecastRepository @Inject constructor(
             startingHour += 1
         }
 
-        val dayForecastList = getWeatherForecastForDays(locationForecast, nrDays, startingHour)
-        val meanHours = getWeatherForecastHours(locationForecast, startingHour, 2)
+        val dayForecastList = getWeatherForecastForDays(locationForecast, nrDays, startForDays)
+        val meanHours = getWeatherForecastHours(locationForecast, startForDays, 2)
 
         forecastLists.add(genForecastList)
         forecastLists.add(dayForecastList)
@@ -92,7 +95,7 @@ class LocationForecastRepository @Inject constructor(
         //val hour = dateTime.toLocalDateTime().withMinute(0).withSecond(0).withNano(0).hour
 
         //var dayInTime = 24 - hour
-        var theHour = startingHour
+        var theHour = 24 - startingHour
 
         var warmestTime: Int
         var coldestTime: Int
@@ -179,7 +182,8 @@ class LocationForecastRepository @Inject constructor(
             else -> return emptyList()  // Eller en annen passende feilhåndtering
         }
 
-        val categories = getCategory(adviceForecast, "SMALL")
+        val dog = getUserInfo()
+        val categories = getCategory(adviceForecast, dog)
         return createAdvice(categories)
     }
 
@@ -246,18 +250,15 @@ class LocationForecastRepository @Inject constructor(
 
                 }
             }
-
-
-
-
         }
-
 
         return adviceList
     }
 
-    private fun getCategory(adviceForecast: AdviceForecast, typeOfDog: String): List<AdviceCategory> {
+    private fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<AdviceCategory> {
 
+        //TODO userinfo er nullable???
+        if (typeOfDog != null)
         var categoryList = mutableListOf<AdviceCategory>()
 
         val weatherLimitsMap = mapOf(
