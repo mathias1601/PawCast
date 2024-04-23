@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -99,6 +98,11 @@ fun SettingsScreen(
             viewModel.setCoordinates(localLatitude, localLongitude)
         }) {
             Text(text = "Save")
+        }
+        
+        
+        Button(onClick = { viewModel.clearDataStore() }) {
+            Text(text = "Reset so next time show setup")
         }
     }
 

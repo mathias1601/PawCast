@@ -5,8 +5,10 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Cloud
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
@@ -24,73 +26,92 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
+import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupManager
+import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
 
-//import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ScreenManager(
     settingsScreenViewModel: SettingsScreenViewModel,
     homeScreenViewModel: HomeScreenViewModel,
-    viewModel:ScreenManagerViewModel
+    viewModel: ScreenManagerViewModel,
+    weatherScreenViewModel: WeatherScreenViewModel,
+    setupScreenViewModel: SetupScreenViewModel
 ) {
 
-
-
-    val navBarItems = createBottomNavbarItems()
-    val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
     val navController = rememberNavController()
+    val navBarItems = createBottomNavbarItems()
 
+    val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
+    val startDestination = viewModel.startDestination.collectAsState().value
+    val isLoading = viewModel.isLoading.collectAsState().value
 
 
     Scaffold(
-        bottomBar = {
-            NavigationBar {
-                navBarItems.forEachIndexed { index, item ->
-                    NavigationBarItem(
-                        selected = (index == navBarSelectedItemIndex),
-                        onClick = { 
-                            viewModel.updateNavBarSelectedIndex(index)
-                            navController.navigate(item.title)
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = if (index == navBarSelectedItemIndex){
-                                    item.selectedIcon
-                                } else {
-                                    item.unselectedIcon
-                                },
-                                contentDescription = item.title
-                            )
 
-                         })
+
+        bottomBar = {
+            if (startDestination == "home" || startDestination == "weather" || startDestination == "settings")  {
+                NavigationBar {
+                    navBarItems.forEachIndexed { index, item ->
+                        NavigationBarItem(
+                            selected = (index == navBarSelectedItemIndex),
+                            onClick = {
+                                viewModel.updateNavBarSelectedIndex(index)
+                                navController.navigate(item.title)
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = if (index == navBarSelectedItemIndex) {
+                                        item.selectedIcon
+                                    } else {
+                                        item.unselectedIcon
+                                    },
+                                    contentDescription = item.title
+                                )
+                            }
+                        )
+                    }
                 }
+
             }
+
         }
     ) {innerPadding ->
 
         Column(
             Modifier.padding(innerPadding)
         ) {
+                //Sjekk kun for når man åpner appen
+            NavHost(
+                navController = navController,
+                startDestination = startDestination
 
-
-            NavHost(navController = navController, startDestination = "home"){
+            ){
                 composable("home") {
-                    HomeScreenManager(homeScreenViewModel)
+                    HomeScreenManager(viewModel = homeScreenViewModel)
                 }
 
                 composable("settings"){
                     SettingsScreen(settingsScreenViewModel)
                 }
 
-                //composable("weather"){
-                //    WeatherScreen()
-                //}
+                composable("weather"){
+                    WeatherScreen(weatherScreenViewModel)
+                }
+
+                composable("setup/{STAGE}"){backStackEntry ->
+                    val id = backStackEntry.arguments?.getString("STAGE") ?: "0"
+                    SetupManager(viewModel = setupScreenViewModel, id=id, navController=navController)
+                }
             }
         }
     }
 }
+
 
 data class BottomNavBarItem (
     val title : String,
@@ -100,7 +121,6 @@ data class BottomNavBarItem (
 
 fun createBottomNavbarItems() : List<BottomNavBarItem> {
 
-    // en bottom navbar burde egentlig ha 3 items, men lager den med tanke på senere utvidelse.
 
     return listOf(
 
@@ -111,9 +131,16 @@ fun createBottomNavbarItems() : List<BottomNavBarItem> {
         ),
 
         BottomNavBarItem(
+            title = "weather",
+            selectedIcon = Icons.Filled.Cloud,
+            unselectedIcon = Icons.Outlined.Cloud
+        ),
+
+        BottomNavBarItem(
             title = "settings",
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings
-        )
+        ),
+
     )
 }

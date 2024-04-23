@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.forecastSuper
@@ -30,7 +31,8 @@ sealed interface WeatherUiState {
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class WeatherScreenViewModel @Inject constructor(
-    private val locationForecastRepository : LocationForecastRepository
+    private val locationForecastRepository : LocationForecastRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
 
@@ -38,10 +40,6 @@ class WeatherScreenViewModel @Inject constructor(
 
     private val _weatherUiState: MutableStateFlow<WeatherUiState> = MutableStateFlow(WeatherUiState.Loading)
     var weatherUiState: StateFlow<WeatherUiState> = _weatherUiState.asStateFlow()
-
-    private val longitude: String = "10"
-    private val latitude: String = "60"
-    private val height: String = "0"
 
     init {
         loadWeather()
@@ -51,12 +49,14 @@ class WeatherScreenViewModel @Inject constructor(
     private fun loadWeather() {
         viewModelScope.launch(Dispatchers.IO) {
 
+            val cords = settingsRepository.getCords()
+
             try {
-                val weatherForecast = locationForecastRepository.getGeneralForecast(latitude, longitude, height, 3, 2)
+                val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.latitude, "0", 3, 2)
                 Log.d("Debug", "Loader vær for timer")
 
 
-                //val weatherDaysDeferred = async {locationForecastRepository.getGeneralForecastForDays(latitude,longitude, height, 2)}
+                //val weatherDaysDeferred = async {locationForecastRepository.getGeneralForecastForDays(cords.latitude,cords.longitude, "0", 2)}
                 //Log.d("Debug", "Loader vær for dager")
 
 
