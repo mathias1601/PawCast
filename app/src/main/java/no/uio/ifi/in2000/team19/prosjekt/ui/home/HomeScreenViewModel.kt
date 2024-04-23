@@ -45,6 +45,12 @@ class HomeScreenViewModel @Inject constructor(
     private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false))
     var userInfoUiState: StateFlow<UserInfo?> = _userInfoUiState.asStateFlow()
 
+    private val height: String = "0"
+
+    init {
+        loadWeatherForecast()
+    }
+
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
             try {

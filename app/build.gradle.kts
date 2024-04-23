@@ -112,8 +112,12 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-compiler:2.51.1")
 
+    //Pull to refresh
+    implementation("eu.bambooapps:compose-material3-pullrefresh:1.1.1")
+    
     // Extended icons pack for more choice. Needed for cloud icon for navbar
     implementation("androidx.compose.material:material-icons-extended:1.6.5")
+
 
     // DataStore. Storing preferences to local storage (used to remember if user has completed setup)
     implementation("androidx.datastore:datastore-preferences:1.1.0")
