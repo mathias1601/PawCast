@@ -19,7 +19,7 @@ class SettingsScreenViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
-    private val _cordsUiState: MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "12", "34"))
+    private val _cordsUiState: MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "12", "34"))
     val cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
 
 
@@ -27,13 +27,6 @@ class SettingsScreenViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _cordsUiState.value = settingsRepository.getCords()
 
-        }
-    }
-
-    fun setCoordinates(newLatitude: String, newLongitude: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            settingsRepository.updateCoords(newLatitude, newLongitude)
-            _cordsUiState.value = settingsRepository.getCords()
         }
     }
 
@@ -45,7 +38,6 @@ class SettingsScreenViewModel @Inject constructor(
     }
 
     ////////////////// MAPBOX SEARCH ///////////////////////////////////
-
 
 
 

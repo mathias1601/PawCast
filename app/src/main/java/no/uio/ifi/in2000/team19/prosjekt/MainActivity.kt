@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.navigation.ScreenManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.navigation.ScreenManagerViewModel
+import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Team19prosjektoppgaveTheme
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
     private val homeScreenViewModel: HomeScreenViewModel by viewModels()
     private val weatherScreenViewModel:WeatherScreenViewModel by viewModels()
     private val setupScreenViewModel: SetupScreenViewModel by viewModels()
+    private val searchLocationViewModel : SearchLocationViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +46,8 @@ class MainActivity : ComponentActivity() {
                         settingsScreenViewModel = settingsScreenViewModel,
                         homeScreenViewModel= homeScreenViewModel,
                         weatherScreenViewModel = weatherScreenViewModel,
-                        setupScreenViewModel=setupScreenViewModel
+                        setupScreenViewModel=setupScreenViewModel,
+                        searchLocationViewModel = searchLocationViewModel
                         )
                 }
             }

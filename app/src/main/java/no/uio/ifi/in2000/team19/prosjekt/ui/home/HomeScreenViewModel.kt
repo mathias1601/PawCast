@@ -38,7 +38,7 @@ class HomeScreenViewModel @Inject constructor(
     private var _adviceUiState: MutableStateFlow<AdviceUiState> = MutableStateFlow(AdviceUiState.Loading)
     var adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
 
-    private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "69", "69"))
+    private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "69", "69"))
     var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
 
     //Kommer mby ikke til å bruke dette
