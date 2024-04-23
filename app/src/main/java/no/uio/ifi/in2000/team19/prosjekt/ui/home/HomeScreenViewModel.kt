@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import java.io.IOException
 import javax.inject.Inject
@@ -40,11 +41,24 @@ class HomeScreenViewModel @Inject constructor(
     private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "69", "69"))
     var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
 
+    //Kommer mby ikke til å bruke dette
+    private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false))
+    var userInfoUiState: StateFlow<UserInfo?> = _userInfoUiState.asStateFlow()
+
+    private val height: String = "0"
+
+    init {
+        loadWeatherForecast()
+    }
+
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val cords = settingsRepository.getCords()
                 _cordsUiState.value = cords
+
+                val userInfo = settingsRepository.getUserInfo()
+                _userInfoUiState.value = userInfo
 
                 val generalForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, "0", 3)
                 val allAdvice = locationForecastRepository.getAdvice(generalForecast)
@@ -62,9 +76,6 @@ class HomeScreenViewModel @Inject constructor(
                         x=x,
                         y=y) }
                 }
-
-
-
 
             } catch (e: IOException) {
                 _adviceUiState.value  = AdviceUiState.Error

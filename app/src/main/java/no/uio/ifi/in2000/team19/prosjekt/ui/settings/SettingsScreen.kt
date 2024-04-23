@@ -120,8 +120,10 @@ fun SettingsScreen(
         }) {
             Text(text = "Save")
         }
+        
+        
+        Button(onClick = { viewModel.clearDataStore() }) {
+            Text(text = "Reset so next time show setup")
+        }
     }
-
-
-
 }
