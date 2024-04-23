@@ -26,60 +26,73 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
+import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupManager
+import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ScreenManager(
     settingsScreenViewModel: SettingsScreenViewModel,
     homeScreenViewModel: HomeScreenViewModel,
-    viewModel:ScreenManagerViewModel,
-    weatherScreenViewModel: WeatherScreenViewModel
+    viewModel: ScreenManagerViewModel,
+    weatherScreenViewModel: WeatherScreenViewModel,
+    setupScreenViewModel: SetupScreenViewModel
 ) {
 
-
-
-    val navBarItems = createBottomNavbarItems()
-    val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
     val navController = rememberNavController()
+    val navBarItems = createBottomNavbarItems()
 
+    val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
+    val startDestination = viewModel.startDestination.collectAsState().value
+    val isLoading = viewModel.isLoading.collectAsState().value
 
 
     Scaffold(
-        bottomBar = {
-            NavigationBar {
-                navBarItems.forEachIndexed { index, item ->
-                    NavigationBarItem(
-                        selected = (index == navBarSelectedItemIndex),
-                        onClick = { 
-                            viewModel.updateNavBarSelectedIndex(index)
-                            navController.navigate(item.title)
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = if (index == navBarSelectedItemIndex){
-                                    item.selectedIcon
-                                } else {
-                                    item.unselectedIcon
-                                },
-                                contentDescription = item.title
-                            )
 
-                         })
+
+        bottomBar = {
+            if (startDestination == "home" || startDestination == "weather" || startDestination == "settings")  {
+                NavigationBar {
+                    navBarItems.forEachIndexed { index, item ->
+                        NavigationBarItem(
+                            selected = (index == navBarSelectedItemIndex),
+                            onClick = {
+                                viewModel.updateNavBarSelectedIndex(index)
+                                navController.navigate(item.title)
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = if (index == navBarSelectedItemIndex) {
+                                        item.selectedIcon
+                                    } else {
+                                        item.unselectedIcon
+                                    },
+                                    contentDescription = item.title
+                                )
+                            }
+                        )
+                    }
                 }
+
             }
+
         }
     ) {innerPadding ->
 
         Column(
             Modifier.padding(innerPadding)
         ) {
+                //Sjekk kun for når man åpner appen
+            NavHost(
+                navController = navController,
+                startDestination = startDestination
 
-
-            NavHost(navController = navController, startDestination = "home"){
+            ){
                 composable("home") {
-                    HomeScreenManager(homeScreenViewModel)
+                    HomeScreenManager(viewModel = homeScreenViewModel)
                 }
 
                 composable("settings"){
@@ -89,10 +102,16 @@ fun ScreenManager(
                 composable("weather"){
                     WeatherScreen(weatherScreenViewModel)
                 }
+
+                composable("setup/{STAGE}"){backStackEntry ->
+                    val id = backStackEntry.arguments?.getString("STAGE") ?: "0"
+                    SetupManager(viewModel = setupScreenViewModel, id=id, navController=navController)
+                }
             }
         }
     }
 }
+
 
 data class BottomNavBarItem (
     val title : String,
@@ -122,7 +141,6 @@ fun createBottomNavbarItems() : List<BottomNavBarItem> {
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings
         ),
-
 
     )
 }

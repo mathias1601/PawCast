@@ -19,12 +19,16 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -40,12 +44,16 @@ import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
+import eu.bambooapps.material3.pullrefresh.pullRefresh
+import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherForecastCard
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenManager(
     viewModel: HomeScreenViewModel
@@ -55,35 +63,40 @@ fun HomeScreenManager(
     val cordsUiState = viewModel.cordsUiState.collectAsState().value
     val graphUiState = viewModel.graphUiState.collectAsState().value
 
+    val isRefreshing by remember {
+        mutableStateOf(false)
+    }
+    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast()})
 
-    viewModel.loadWeatherForecast()
+    Scaffold() { innerPadding ->
 
-    Scaffold(
-        bottomBar = {
+            Box(
+                Modifier.padding(innerPadding)
+                        .pullRefresh(state),
+            ) {
+                when (adviceUiState) {
+                    is AdviceUiState.Success -> {
+                        HomeScreen(adviceUiState, cordsUiState, graphUiState)
+                    }
 
-        }
-    ) { innerPadding ->
+                    is AdviceUiState.Loading -> {
+                        CircularProgressIndicator()
+                    }
 
-        Column(
-            Modifier.padding(innerPadding)
-        ) {
-            when (adviceUiState) {
-                is AdviceUiState.Success -> {
-                    HomeScreen(adviceUiState, cordsUiState, graphUiState)
+                    is AdviceUiState.Error -> {
+                        NoConnectionScreen()
+                    }
                 }
 
-                is AdviceUiState.Loading -> {
-                    CircularProgressIndicator()
-                }
-
-                is AdviceUiState.Error -> {
-                    NoConnectionScreen()
-                }
-            }
-
+            PullRefreshIndicator(
+                refreshing = isRefreshing, state = state,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+            )
         }
     }
 }
+
 
 
 @Composable

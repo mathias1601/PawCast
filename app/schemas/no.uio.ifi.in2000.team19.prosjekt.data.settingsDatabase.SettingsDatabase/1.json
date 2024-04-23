@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "92425ac23e71d2a4a497f9b7004d634d",
+    "identityHash": "5ac06f4128a0e3612ea0c2440838d091",
     "entities": [
       {
         "tableName": "Cords",
@@ -35,12 +35,92 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "UserInfo",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userName` TEXT NOT NULL, `dogName` TEXT NOT NULL, `isSenior` INTEGER NOT NULL, `isAdult` INTEGER NOT NULL, `isPuppy` INTEGER NOT NULL, `isFlatNosed` INTEGER NOT NULL, `isLongHaired` INTEGER NOT NULL, `isThinHaired` INTEGER NOT NULL, `isLightHaired` INTEGER NOT NULL, `isThin` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userName",
+            "columnName": "userName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dogName",
+            "columnName": "dogName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isSenior",
+            "columnName": "isSenior",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isAdult",
+            "columnName": "isAdult",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPuppy",
+            "columnName": "isPuppy",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFlatNosed",
+            "columnName": "isFlatNosed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isLongHaired",
+            "columnName": "isLongHaired",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isThinHaired",
+            "columnName": "isThinHaired",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isLightHaired",
+            "columnName": "isLightHaired",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isThin",
+            "columnName": "isThin",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '92425ac23e71d2a4a497f9b7004d634d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5ac06f4128a0e3612ea0c2440838d091')"
     ]
   }
 }
