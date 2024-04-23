@@ -117,7 +117,6 @@ class SearchLocationViewModel @Inject constructor(
                     shortName = response.value!!.name,
                     detailedName = response.value!!.address!!.formattedAddress!!,
                 )
-                // TODO: Er det heeelt sikkert at det aldri er nullable?
             }
 
             updateSearchBoxToRepresentStoredLocation()
