@@ -29,6 +29,7 @@ sealed interface AdviceUiState{
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
@@ -45,7 +46,7 @@ class HomeScreenViewModel @Inject constructor(
     var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
 
     //Kommer mby ikke til å bruke dette
-    private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false))
+    private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false))
     var userInfoUiState: StateFlow<UserInfo?> = _userInfoUiState.asStateFlow()
 
     private val height: String = "0"
@@ -65,7 +66,7 @@ class HomeScreenViewModel @Inject constructor(
                 _userInfoUiState.value = userInfo
 
                 val generalForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, "0", 3, 1)
-                val allAdvice = locationForecastRepository.getAdvice(generalForecast)
+                val allAdvice = locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
 
                 /////////////////////////////////// GRAPH METHOD TO BE MOVED INTO REPOSITORY OR NEW DOMAIN LAYER///////////////////////////////////

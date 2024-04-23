@@ -2,8 +2,10 @@ package no.uio.ifi.in2000.team19.prosjekt.data
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import no.uio.ifi.in2000.team19.prosjekt.R
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
@@ -77,7 +79,7 @@ class LocationForecastRepository @Inject constructor(
         }
 
         val dayForecastList = getWeatherForecastForDays(locationForecast, nrDays, startForDays)
-        val meanHours = getWeatherForecastHours(locationForecast, startForDays, 2)
+        //val meanHours = getWeatherForecastHours(locationForecast, startForDays, 2)
 
         forecastLists.add(genForecastList)
         forecastLists.add(dayForecastList)
@@ -173,7 +175,7 @@ class LocationForecastRepository @Inject constructor(
     }
 
     //Returnerer en liste av Advice-objekter
-    fun getAdvice(generalForecast: List<List<forecastSuper>>): List<Advice> {
+    fun getAdvice(generalForecast: List<List<forecastSuper>>, typeOfDog: UserInfo?): List<Advice> {
 
 
         val firstForecast = generalForecast[0][0]
@@ -182,8 +184,8 @@ class LocationForecastRepository @Inject constructor(
             else -> return emptyList()  // Eller en annen passende feilhåndtering
         }
 
-        val dog = getUserInfo()
-        val categories = getCategory(adviceForecast, dog)
+        //val dog = getUserInfoDao()
+        val categories = getCategory(adviceForecast, typeOfDog)
         return createAdvice(categories)
     }
 
@@ -197,7 +199,7 @@ class LocationForecastRepository @Inject constructor(
     //Lager AdviceCards, og retunerer en liste av de
     private fun createAdvice(categories: List<AdviceCategory>): List<Advice> {
 
-        var adviceList = mutableListOf<Advice>()
+        val adviceList = mutableListOf<Advice>()
 
         if (categories[0] == AdviceCategory.SAFE) {
             val safeArray = context.resources.getStringArray(R.array.SAFE)
@@ -214,16 +216,16 @@ class LocationForecastRepository @Inject constructor(
             //val resId = context.resources.getIdentifier(category.toString(), "array", context.packageName)
             //val adviceArray: Array<String> = context.resources.getStringArray(resId)
             when (category.toString()) {
+                "COOL" -> adviceArray = context.resources.getStringArray(R.array.COOL)
+                "COOLOTHER" -> adviceArray = context.resources.getStringArray(R.array.COOLOTHER)
                 "COLD" -> adviceArray = context.resources.getStringArray(R.array.COLD)
-                "COLDSMALL" -> adviceArray = context.resources.getStringArray(R.array.COLDSMALL)
-                "COLDBIG" -> adviceArray = context.resources.getStringArray(R.array.COLDBIG)
-                //"COLDFLAT" -> adviceArray = context.resources.getStringArray(R.array.COLDFLAT)
-                "VERYCOLD" -> adviceArray = context.resources.getStringArray(R.array.VERYCOLD)
+                "COLDOTHER" -> adviceArray = context.resources.getStringArray(R.array.COLDOTHER)
                 "FREEZING" -> adviceArray = context.resources.getStringArray(R.array.FREEZING)
                 "SALT" -> adviceArray = context.resources.getStringArray(R.array.SALT)
                 "WARM" -> adviceArray = context.resources.getStringArray(R.array.WARM)
                 "WARMFLAT" -> adviceArray = context.resources.getStringArray(R.array.WARMFLAT)
                 "VERYWARM" -> adviceArray = context.resources.getStringArray(R.array.VERYWARM)
+                "VERYWARMFLAT" -> adviceArray = context.resources.getStringArray(R.array.VERYWARMFLAT)
                 "HEATWAVE" -> adviceArray = context.resources.getStringArray(R.array.HEATWAVE)
                 "RAIN" -> adviceArray = context.resources.getStringArray(R.array.RAIN)
                 "THUNDER" -> adviceArray = context.resources.getStringArray(R.array.THUNDER)
@@ -255,15 +257,20 @@ class LocationForecastRepository @Inject constructor(
         return adviceList
     }
 
-    private fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<AdviceCategory> {
+    private fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo?): List<AdviceCategory> {
 
         //TODO userinfo er nullable???
-        if (typeOfDog != null)
+        //if (typeOfDog != null)
         var categoryList = mutableListOf<AdviceCategory>()
 
+        if (typeOfDog == null) {
+            categoryList.add(AdviceCategory.SAFE)
+            return categoryList
+        }
+
         val weatherLimitsMap = mapOf(
-            AdviceCategory.COLD to listOf(-5.0, 0.0),
-            AdviceCategory.VERYCOLD to listOf(-15.0, -5.0),
+            AdviceCategory.COOL to listOf(-5.0, 0.0),
+            AdviceCategory.COLD to listOf(-15.0, -5.0),
             AdviceCategory.FREEZING to listOf(-70.0, -15.0),
             AdviceCategory.SALT to listOf(-8.0, 4.0),
             AdviceCategory.WARM to listOf(15.0, 23.0),
@@ -278,21 +285,51 @@ class LocationForecastRepository @Inject constructor(
             }
         }
 
-        if (AdviceCategory.WARM in categoryList && typeOfDog == "FLAT") {
-            categoryList.add(AdviceCategory.WARMFLAT)
+        if (typeOfDog!!.isThin ||
+            typeOfDog.isPuppy ||
+            typeOfDog.isShortHaired ||
+            typeOfDog.isSenior ||
+            typeOfDog.isThinHaired) {
+
+            if (AdviceCategory.COOL in categoryList) {
+                categoryList.add(AdviceCategory.COOLOTHER)
+                Log.i("KATEGORIER", "Legger til coolother")
+            }
+
+            if (AdviceCategory.COLD in categoryList) {
+                categoryList.add(AdviceCategory.COLDOTHER)
+                Log.i("KATEGORIER", "Legger til coldother")
+            }
         }
 
-        if (AdviceCategory.COLD in categoryList && typeOfDog == "SMALL") {
-            categoryList.add(AdviceCategory.COLDSMALL)
+
+        if (typeOfDog.isFlatNosed) {
+
+            if (AdviceCategory.WARM in categoryList) {
+                categoryList.add(AdviceCategory.WARMFLAT)
+                Log.i("KATEGORIER", "Legger til warmflat")
+            }
+
+            if (AdviceCategory.VERYWARM in categoryList) {
+                categoryList.add(AdviceCategory.VERYWARMFLAT)
+                Log.i("KATEGORIER", "Legger til verywarmflat")
+            }
         }
 
-        if (adviceForecast.UVindex >= 2.5) {
+
+
+        if (adviceForecast.UVindex >= 3 && (
+                    typeOfDog.isThinHaired ||
+                    typeOfDog.isLightHaired ||
+                    typeOfDog.isShortHaired)) {
             categoryList.add(AdviceCategory.SUNBURN)
+            Log.i("KATEGORIER", "Legger til sunburn")
         }
 
         //TODO find right number
         if (adviceForecast.thunderprobability >= 50) {
             categoryList.add(AdviceCategory.THUNDER)
+            Log.i("KATEGORIER", "Legger til thunder")
         }
 
         //TODO find right number

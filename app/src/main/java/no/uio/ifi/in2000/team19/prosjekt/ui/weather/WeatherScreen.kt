@@ -32,6 +32,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.forecastSuper
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.NoConnectionScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
 
+/*
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
@@ -263,5 +264,7 @@ fun WeatherForecastMean(weatherForDay: forecastSuper) {
         }
     }
 }
+
+ */
 
 

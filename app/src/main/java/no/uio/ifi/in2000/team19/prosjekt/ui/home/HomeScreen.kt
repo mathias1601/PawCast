@@ -1,7 +1,7 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
-import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,15 +11,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -51,10 +47,10 @@ import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
-import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherForecastCard
 
 
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenManager(
     viewModel: HomeScreenViewModel
@@ -198,76 +194,5 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
             )
         }
     }
-}
-
-
-
-@SuppressLint("DiscouragedApi")
-@Composable
-fun WeatherForecastCard(generalForecast: GeneralForecast) {
-
-    val newColor = Color(android.graphics.Color.parseColor("#ece9e4"))
-
-    val context = LocalContext.current
-    val drawableName = generalForecast.symbol
-    val drawableId = context.resources.getIdentifier(drawableName, "drawable", context.packageName)
-
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = newColor
-        ),
-        modifier = Modifier
-            .size(width = 350.dp, height = 75.dp)
-            .padding(9.dp)
-        //.height(23.dp)
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize(),
-            //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Spacer(modifier = Modifier.size(15.dp))
-
-            Image(
-                painter = painterResource(id = drawableId),
-                contentDescription = "Værsymbol"
-            )
-
-            Spacer(modifier = Modifier.size(26.dp))
-
-            Text(
-                text = "${generalForecast.temperature}°C",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-            )
-
-            Spacer(modifier = Modifier.size(40.dp))
-
-            Text(
-                text = "${generalForecast.wind} m/s",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.size(35.dp))
-
-            Text(
-                text = generalForecast.time,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun WeatherForecastPreview() {
-    val generalForecast = GeneralForecast("22", "10", "clearsky_day", "12:32")
-    WeatherForecastCard(generalForecast)
-
 }
 

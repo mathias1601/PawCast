@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="COLDSMALL">
-        <item> Kaldt for små hunder </item>
+    <string-array name="COLDOTHER">
+        <item> Kaldt for ANDRE hunder </item>
 
         <item>
             utdypende info

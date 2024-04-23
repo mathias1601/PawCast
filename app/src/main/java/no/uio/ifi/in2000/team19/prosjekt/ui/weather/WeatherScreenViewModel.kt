@@ -20,6 +20,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.forecastSuper
 import java.io.IOException
 import javax.inject.Inject
 
+/*
 sealed interface WeatherUiState {
     data class Success(
         val weather: List<List<forecastSuper>>) : WeatherUiState
@@ -72,3 +73,5 @@ class WeatherScreenViewModel @Inject constructor(
 
 }
 
+
+ */

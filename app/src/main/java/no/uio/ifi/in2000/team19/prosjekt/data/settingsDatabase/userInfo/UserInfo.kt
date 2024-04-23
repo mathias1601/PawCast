@@ -20,6 +20,8 @@ data class UserInfo(
 
     @ColumnInfo(name = "isLongHaired") var isLongHaired: Boolean,
 
+    @ColumnInfo(name = "isShortHaired") var isShortHaired: Boolean,
+
     @ColumnInfo(name = "isThinHaired") var isThinHaired: Boolean,
 
     @ColumnInfo(name = "isLightHaired") var isLightHaired: Boolean,

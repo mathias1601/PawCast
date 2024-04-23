@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="VERYCOLD">
-        <item> Veldig kaldt </item>
+    <string-array name="COOL">
+        <item> Kaldt </item>
 
         <item>
             utdypende info

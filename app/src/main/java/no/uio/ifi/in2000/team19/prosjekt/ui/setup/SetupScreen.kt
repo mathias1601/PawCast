@@ -63,6 +63,7 @@ fun NameScreen(viewModel: SetupScreenViewModel, id:String, navController:NavHost
         Button(onClick = {
             viewModel.updateUserName(userName)
             viewModel.updateDogName(dogName)
+            viewModel.updateLightHaired(true)
             navController.navigate("setup/${id.toInt()+1}")
         }) {
             Text(text = "Right")

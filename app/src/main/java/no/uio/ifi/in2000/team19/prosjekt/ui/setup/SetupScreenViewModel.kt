@@ -22,7 +22,7 @@ class SetupScreenViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ): ViewModel() {
 
-    private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"undefined", "undefined", false,false,false, false, false, false, false, false))
+    private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"undefined", "undefined", false,false,false, false, false, false, false, false, false))
     var userInfo: StateFlow<UserInfo> = _userInfo.asStateFlow()
 
     fun updateUserName(userName: String){
@@ -42,13 +42,17 @@ class SetupScreenViewModel @Inject constructor(
     fun updateNose(newValue: Boolean){
         _userInfo.value.isFlatNosed = newValue
     }
-    fun updateLongHair(newValue: Boolean){
+    fun updateLongHaired(newValue: Boolean){
         _userInfo.value.isLongHaired = newValue
     }
-    fun updateThinHair(newValue: Boolean) {
+
+    fun updateShortHaired(newValue: Boolean) {
+        _userInfo.value.isShortHaired = newValue
+    }
+    fun updateThinHaired(newValue: Boolean) {
         _userInfo.value.isThinHaired = newValue
     }
-    fun updateLightHair(newValue: Boolean) {
+    fun updateLightHaired(newValue: Boolean) {
         _userInfo.value.isLightHaired = newValue
     }
     fun updateThin(newValue: Boolean) {
