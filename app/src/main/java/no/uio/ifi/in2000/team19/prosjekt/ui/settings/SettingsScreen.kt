@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.settings
 
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,8 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import no.uio.ifi.in2000.team19.prosjekt.R
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -36,10 +39,16 @@ fun SettingsScreen(
     var localLatitude by remember { mutableStateOf("") }
     var localLongitude by remember { mutableStateOf("") }
 
+
+    val mapboxAccessToken = stringResource( id = R.string.mapbox_access_token)
+
+
     LaunchedEffect(coordinates.value) {
         localLatitude = coordinates.value.latitude
         localLongitude = coordinates.value.longitude
+
     }
+
 
     Column (
 
@@ -105,7 +114,4 @@ fun SettingsScreen(
             Text(text = "Reset so next time show setup")
         }
     }
-
-
-
 }

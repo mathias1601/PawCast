@@ -55,6 +55,7 @@ object AppModule {
         return LocationForecastDataSource()
     }
 
+
     @Singleton
     @Provides
     fun provideDataStoreRepository( @ApplicationContext context: Context ): DataStoreRepository {
