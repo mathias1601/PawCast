@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.setup
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,15 +12,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +37,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -125,7 +132,7 @@ fun OnboardingScreenOne(viewModel: SetupScreenViewModel, id:String, navControlle
                 viewModel.updateDogName(dogName)
                 navController.navigate("setup/${id.toInt()+1}")
             }) {
-                Text(text = "Right")
+                Text(text = "Neste")
             }
         }
         //Skal også kunne skrive inn adresse en eller annen gang i setup
@@ -171,7 +178,7 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
 
             }
         }
-        Text(text="Nese")
+        Text(text="Snute")
         Row (
             modifier = Modifier
                 .fillMaxWidth()
@@ -223,7 +230,7 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
                     navController.navigate("setup/${id.toInt()+1}")
                 }
             ) {
-                Text(text = "Right")
+                Text(text = "Neste")
             }
         }
     }
@@ -242,6 +249,7 @@ fun CheckboxButton(
         ),
         border = BorderStroke(1.dp, Color.Black),
         modifier = Modifier
+            .padding(8.dp)
             .clickable { onClick(isChecked) }
 
     ) {
@@ -259,50 +267,109 @@ fun CheckboxButton(
 @Composable
 fun OnboardingScreenThree(viewModel: SetupScreenViewModel, id: String, navController: NavHostController) {
 
+
     val furOptions = listOf("Tynn", "Tykk", "Kort", "Lang", "Lys", "Mørk")
+    val selectedOptions = listOf(false, false, false, false, false, false)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-    ){
+    ) {
+        Text(text = "Pels")
 
-        Row() {
-            furOptions.forEach{text ->
-                CategoryButton(
+        //Viser ikke alle buttons :((( Gidder ikke fikse rn
+        Row(modifier = Modifier
+            .fillMaxWidth()
+        ) {
+            furOptions.forEachIndexed { id, text ->
+                //Composable
+                FilterChip(
                     text = text,
-                    onClick = {
-
-                    }
+                    isSelected = selectedOptions[id]
                 )
             }
         }
+
         Button(
             modifier = Modifier
                 .fillMaxWidth(),
             onClick = {
+                furOptions.forEachIndexed { id, text ->
+                    when (text) {
+                        "Tynn" -> viewModel.updateThinHair(selectedOptions[id])
+                        "Tykk" -> viewModel.updateThickHair(selectedOptions[id])
+                        "Kort" -> viewModel.updateShortHair(selectedOptions[id])
+                        "Lang" -> viewModel.updateLongHair(selectedOptions[id])
+                        "Lys" -> viewModel.updateLightHair(selectedOptions[id])
+                        "Mørk" -> viewModel.updateDarkHair(selectedOptions[id])
+
+                    }
+                }
                 viewModel.saveUserInfo() // save user info to DB
                 viewModel.saveSetupState(isCompleted = true) // store info that setup is completed so next app launch doesnt ask for setup.
                 // navController.popBackStack() // removes history from backstack. Stops user from being able to click back, navigating the user back to setup 👎
                 navController.navigate("home")
             }) {
             Text(
-                text = "Right"
-
+                text = "Fullfør"
             )
         }
-
     }
-
 }
 
+/*
 @Composable
 fun CategoryButton(
     text: String,
+    isChecked: Boolean,
     modifier: Modifier = Modifier,
-    onClick: (Boolean) -> Unit
+    onClick: () -> Unit
 ) {
-    Button(onClick = { /*TODO*/ }) {
-        
+    Button(
+        modifier = modifier
+            .padding(8.dp),
+        onClick = onClick
+    ) {
+        Text(text = text)
     }
+
+
 }
+*/
+
+
+@Composable
+fun FilterChip(
+    text: String,
+    isSelected: Boolean,
+    modifier: Modifier = Modifier
+) {
+    var selected by remember { mutableStateOf(false)}
+    var optionSelect = isSelected
+
+    FilterChip(
+        modifier = modifier
+            .padding(8.dp),
+        onClick = {
+            selected = !selected
+            optionSelect = !optionSelect
+            },
+        label = {
+            Text(text=text)
+        },
+        selected = selected,
+        leadingIcon = if (selected) {
+            {
+                Icon(
+                    imageVector = Icons.Filled.Done,
+                    contentDescription = "Done icon",
+                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                )
+            }
+        } else {
+            null
+        },
+    )
+}
+
 
