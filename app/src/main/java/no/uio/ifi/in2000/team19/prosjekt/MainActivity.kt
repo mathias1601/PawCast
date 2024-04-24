@@ -30,8 +30,12 @@ class MainActivity : ComponentActivity() {
     private val setupScreenViewModel: SetupScreenViewModel by viewModels()
     private val searchLocationViewModel : SearchLocationViewModel by viewModels()
 
+
+
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
 

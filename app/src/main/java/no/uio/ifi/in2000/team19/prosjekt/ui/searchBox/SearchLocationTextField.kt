@@ -1,22 +1,29 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.searchBox
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -34,6 +41,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mapbox.search.autocomplete.PlaceAutocompleteSuggestion
@@ -44,9 +52,15 @@ fun SearchLocationTextField(
     viewModel: SearchLocationViewModel
 ){
     val searchQuery = viewModel.searchFieldValue.collectAsState().value
+    val showSavedConfirmation = viewModel.showSavedConfirmation.collectAsState().value
+
     var isTextFieldFocused by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+
+
 
     Column(
         modifier = Modifier
@@ -68,8 +82,11 @@ fun SearchLocationTextField(
 
             keyboardActions = KeyboardActions(
                 onDone = {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
                     viewModel.pickTopResult()
                     viewModel.updateSearchBoxToRepresentStoredLocation()
+
                 }
             ),
 
@@ -80,9 +97,13 @@ fun SearchLocationTextField(
                 viewModel.searchLocation(query)
 
             },
-            label = {Text("Search for location")},
+            label = {Text("Søk etter lokasjon")},
             leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = "Location Search-field") }
         )
+        
+        if (showSavedConfirmation){
+            Text(text = "✅ Endringer lagret")
+        }
 
 
         val searchState: SearchState = viewModel.searchState.collectAsState().value
@@ -102,19 +123,31 @@ fun SearchLocationTextField(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.LightGray)
+                    .background(Color.White)
+                    .border(
+                        border = BorderStroke(1.dp, Color.LightGray),
+                        shape = RoundedCornerShape(
+                            bottomEnd = 20.dp,
+                            bottomStart = 20.dp
+
+                        )
+                    )
                     .padding(10.dp)
             ) {
 
-            }
-            when (searchState) {
-                is SearchState.Loading -> Loading()
-                is SearchState.NoSuggestions -> NoSuggestions()
-                is SearchState.Error -> Error()
-                is SearchState.Suggestions -> SearchSuggestions(searchState.suggestions, viewModel, focusManager)
-                is SearchState.Idle -> Idle()
-                else ->  { /* Do nothing. Should never get here. */}
-            }
+                // Not implemented location handling as it needs permissions. 😭
+                // UseUserLocation(viewModel = viewModel, focusManager = focusManager)
+
+                when (searchState) {
+                    is SearchState.Loading -> TextScreenBox { Loading() }
+                    is SearchState.NoSuggestions -> TextScreenBox { NoSuggestions() }
+                    is SearchState.Error -> TextScreenBox { Error() }
+                    is SearchState.Suggestions -> SearchSuggestions(searchState.suggestions, viewModel, focusManager)
+                    is SearchState.Idle -> TextScreenBox { Idle() }
+                    else ->  { /* Do nothing. Should never get here. */}
+
+                }
+}
         }
     }
 }
@@ -122,49 +155,43 @@ fun SearchLocationTextField(
 @Preview(showBackground = true)
 @Composable
 fun Loading(){
+    CircularProgressIndicator()
+    Text(text = "Laster inn resultater")
+}
+
+@Composable
+fun TextScreenBox(composable: @Composable () -> Unit){
     Column(
-        Modifier.height(300.dp).background(Color.LightGray).padding(horizontal = 40.dp).fillMaxWidth(),
+        Modifier
+            .height(100.dp)
+            .padding(horizontal = 40.dp)
+            .fillMaxWidth(),
+        
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CircularProgressIndicator()
-        Text(text = "Laster inn resultater")
+        composable()
     }
 }
 
 
 @Composable
 fun Idle(){
-    Column(
-        Modifier.height(300.dp).background(Color.LightGray).padding(horizontal = 40.dp).fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Begynn å skrive for å se resultater")
-    }
+    Text(text = "\uD83D\uDD0D")
+    Text(text = "Begynn å skrive for å se resultater", textAlign = TextAlign.Center)
 }
 
 
 @Composable
 fun Error(){
-    Column(
-        Modifier.height(300.dp).background(Color.LightGray).padding(horizontal = 40.dp).fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "En feil skjedde")
-    }
+    Text(text = "\uD83D\uDC80")
+    Text(text = "En feil skjedde")
 }
 
 @Composable
 fun NoSuggestions(){
-    Column(
-        Modifier.height(300.dp).background(Color.LightGray).padding(horizontal = 40.dp).fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Ingen resultater")
-    }
+    Text(text = "🌧️")
+    Text(text = "Ingen resultater") 
 }
 
 
@@ -182,6 +209,7 @@ fun SearchSuggestions(
             .heightIn(max = 300.dp)
 
     ){
+
         items(suggestions) { suggestion ->
             SearchSuggestion(suggestion, viewModel, focusManager)
         }
@@ -202,6 +230,9 @@ fun SearchSuggestion(
             .fillMaxWidth()
             .height(75.dp)
         ,
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
         onClick = {
 
             keyboardController?.hide()
@@ -216,12 +247,15 @@ fun SearchSuggestion(
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
             ,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+
         ) {
 
             Row {
 
                 Icon(imageVector = Icons.Filled.Place, contentDescription = "icon of Place")
+
+                Spacer(modifier = Modifier.width(10.dp))
 
                 if (suggestion.formattedAddress == null){
                     Text(text = suggestion.name, maxLines = 1)
@@ -235,3 +269,45 @@ fun SearchSuggestion(
     }
 }
 
+// When user clicks should get users location and set it. But is unfinnished.
+@Composable
+fun UseUserLocation(
+    viewModel: SearchLocationViewModel,
+    focusManager: FocusManager,
+) {
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(75.dp)
+        ,
+
+        onClick = {
+
+            keyboardController?.hide()
+            focusManager.clearFocus()
+            // viewModel.selectSearchLocation(suggestion)
+
+        }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+            ,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Row {
+
+                Icon(imageVector = Icons.Filled.MyLocation, contentDescription = "icon of Place")
+                Text(text = "Bruk din lokasjon")
+            }
+
+
+        }
+    }
+}
