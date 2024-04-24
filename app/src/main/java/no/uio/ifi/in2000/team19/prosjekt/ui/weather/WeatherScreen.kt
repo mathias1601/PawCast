@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,7 +33,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.forecastSuper
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.NoConnectionScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
 
-/*
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
@@ -223,48 +224,65 @@ fun WeatherForecastMean(weatherForDay: forecastSuper) {
             //.height(23.dp)
         ) {
 
-            Row(
-                modifier = Modifier
-                    .fillMaxSize(),
-                //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Column {
 
-                Spacer(modifier = Modifier.size(15.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
-                Image(
-                    painter = painterResource(id = drawableId),
-                    contentDescription = "Værsymbol"
-                )
+                    Spacer(modifier = Modifier.size(15.dp))
 
-                Spacer(modifier = Modifier.size(26.dp))
+                    Image(
+                        painter = painterResource(id = drawableId),
+                        contentDescription = "Værsymbol"
+                    )
+
+                    Spacer(modifier = Modifier.size(26.dp))
+
+                    Text(
+                        text = "${weatherForDay.startingTime} - ${weatherForDay.endingTime}",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+
+                    Spacer(modifier = Modifier.size(35.dp))
+
+                    Text(
+                        text = "${weatherForDay.meanTemperature}°C",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+
+                    Spacer(modifier = Modifier.size(35.dp))
+                }
 
                 Text(
-                    text = "${weatherForDay.lowestTemperature}°C",
+                    text = "${weatherForDay.startingTime}°C",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                 )
 
-                Spacer(modifier = Modifier.size(35.dp))
-
                 Text(
-                    text = "${weatherForDay.highestTemperature}°C",
+                    text = "${weatherForDay.endingTime}°C",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                 )
 
-                Spacer(modifier = Modifier.size(35.dp))
-
-                Text(
+                    /*Text(
                     text = weatherForDay.day,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                 )
+
+                 */
             }
         }
     }
 }
 
- */
+
 
 

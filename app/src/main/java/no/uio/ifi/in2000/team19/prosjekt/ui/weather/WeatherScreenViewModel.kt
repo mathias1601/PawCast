@@ -20,7 +20,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.forecastSuper
 import java.io.IOException
 import javax.inject.Inject
 
-/*
+
 sealed interface WeatherUiState {
     data class Success(
         val weather: List<List<forecastSuper>>) : WeatherUiState
@@ -53,7 +53,7 @@ class WeatherScreenViewModel @Inject constructor(
             val cords = settingsRepository.getCords()
 
             try {
-                val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.latitude, "0", 3, 2)
+                val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.latitude, "0", 2)
                 Log.d("Debug", "Loader vær for timer")
 
 
@@ -72,6 +72,3 @@ class WeatherScreenViewModel @Inject constructor(
     //fun fetchWeatherUiState(): WeatherUiState = weatherUiState
 
 }
-
-
- */

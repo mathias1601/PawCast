@@ -17,7 +17,6 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepositor
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import java.io.IOException
 import javax.inject.Inject
 
@@ -65,7 +64,12 @@ class HomeScreenViewModel @Inject constructor(
                 val userInfo = settingsRepository.getUserInfo()
                 _userInfoUiState.value = userInfo
 
-                val generalForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, "0", 3, 1)
+                val generalForecast = locationForecastRepository.getGeneralForecast(
+                    cords.latitude,
+                    cords.longitude,
+                    "0",
+                    2
+                )
                 val allAdvice = locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
 

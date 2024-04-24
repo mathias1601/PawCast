@@ -17,6 +17,8 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.navigation.ScreenManagerViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Team19prosjektoppgaveTheme
+import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
+
 //import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
 
 @AndroidEntryPoint
@@ -25,7 +27,7 @@ class MainActivity : ComponentActivity() {
     private val settingsScreenViewModel: SettingsScreenViewModel by viewModels()
     private val screenManagerViewModel: ScreenManagerViewModel by viewModels()
     private val homeScreenViewModel: HomeScreenViewModel by viewModels()
-    //private val weatherScreenViewModel:WeatherScreenViewModel by viewModels()
+    private val weatherScreenViewModel: WeatherScreenViewModel by viewModels()
     private val setupScreenViewModel: SetupScreenViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -43,7 +45,7 @@ class MainActivity : ComponentActivity() {
                         viewModel = screenManagerViewModel, // viewmodel for navbar and Scaffold.
                         settingsScreenViewModel = settingsScreenViewModel,
                         homeScreenViewModel= homeScreenViewModel,
-                        //weatherScreenViewModel = weatherScreenViewModel,
+                        weatherScreenViewModel = weatherScreenViewModel,
                         setupScreenViewModel=setupScreenViewModel
                         )
                 }
