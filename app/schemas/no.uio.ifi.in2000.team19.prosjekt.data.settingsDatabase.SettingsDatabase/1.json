@@ -2,6 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
+
     "identityHash": "7990af4f84f45f1df587f8529c3e8921",
     "entities": [
       {
@@ -50,7 +51,7 @@
       },
       {
         "tableName": "UserInfo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userName` TEXT NOT NULL, `dogName` TEXT NOT NULL, `isSenior` INTEGER NOT NULL, `isAdult` INTEGER NOT NULL, `isPuppy` INTEGER NOT NULL, `isFlatNosed` INTEGER NOT NULL, `isLongHaired` INTEGER NOT NULL, `isThinHaired` INTEGER NOT NULL, `isLightHaired` INTEGER NOT NULL, `isThin` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userName` TEXT NOT NULL, `dogName` TEXT NOT NULL, `isSenior` INTEGER NOT NULL, `isFlatNosed` INTEGER NOT NULL, `isThin` INTEGER NOT NULL, `isLongHaired` INTEGER NOT NULL, `isShortHaired` INTEGER NOT NULL, `isThinHaired` INTEGER NOT NULL, `isThickhaired` INTEGER NOT NULL, `isLightHaired` INTEGER NOT NULL, `isDarkHaired` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -77,20 +78,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "isAdult",
-            "columnName": "isAdult",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isPuppy",
-            "columnName": "isPuppy",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
             "fieldPath": "isFlatNosed",
             "columnName": "isFlatNosed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isThin",
+            "columnName": "isThin",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -101,8 +96,20 @@
             "notNull": true
           },
           {
+            "fieldPath": "isShortHaired",
+            "columnName": "isShortHaired",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "isThinHaired",
             "columnName": "isThinHaired",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isThickHaired",
+            "columnName": "isThickhaired",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -113,8 +120,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "isThin",
-            "columnName": "isThin",
+            "fieldPath": "isDarkHaired",
+            "columnName": "isDarkHaired",
             "affinity": "INTEGER",
             "notNull": true
           }

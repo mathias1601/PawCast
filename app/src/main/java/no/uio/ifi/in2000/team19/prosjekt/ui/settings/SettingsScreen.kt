@@ -26,7 +26,6 @@ fun SettingsScreen(
     searchLocationViewModel: SearchLocationViewModel
 ){
 
-    val mapboxAccessToken = stringResource( id = R.string.mapbox_access_token)
 
 
     Column (
