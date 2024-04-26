@@ -44,33 +44,20 @@ class SetupScreenViewModel @Inject constructor(
         _userInfo.value.isFlatNosed = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isFlatNosed.toString())
     }
-    fun updateLongHair(newValue: Boolean){
-        _userInfo.value.isLongHaired = newValue
-        Log.d("SETUP_DEBUG", _userInfo.value.isLongHaired.toString())
-    }
-    fun updateShortHair(newValue: Boolean){
-        _userInfo.value.isShortHaired = newValue
-        Log.d("SETUP_DEBUG", _userInfo.value.isShortHaired.toString())
-    }
-    fun updateThinHair(newValue: Boolean) {
-        _userInfo.value.isThinHaired = newValue
-        Log.d("SETUP_DEBUG", _userInfo.value.isThinHaired.toString())
-    }
-    fun updateThickHair(newValue: Boolean) {
-        _userInfo.value.isThickHaired = newValue
-        Log.d("SETUP_DEBUG", _userInfo.value.isThickHaired.toString())
-    }
-    fun updateLightHair(newValue: Boolean) {
-        _userInfo.value.isLightHaired = newValue
-        Log.d("SETUP_DEBUG", _userInfo.value.isLightHaired.toString())
-    }
-    fun updateDarkHair(newValue: Boolean) {
-        _userInfo.value.isDarkHaired = newValue
-        Log.d("SETUP_DEBUG", _userInfo.value.isDarkHaired.toString())
-    }
     fun updateThin(newValue: Boolean) {
         _userInfo.value.isThin = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isThin.toString())
+    }
+
+    fun updateFilterCategories(categoryName: String, newValue: Boolean) {
+        when (categoryName) {
+            "tynnPels" -> { _userInfo.value.isThinHaired = newValue }
+            "tykkPels" -> {_userInfo.value.isThickHaired = newValue}
+            "langPels" -> {_userInfo.value.isLongHaired = newValue}
+            "kortPels" -> {_userInfo.value.isShortHaired = newValue}
+            "lysPels" -> {_userInfo.value.isLightHaired = newValue}
+            "moerkPels" -> {_userInfo.value.isDarkHaired = newValue}
+        }
     }
 
     fun saveUserInfo() {
