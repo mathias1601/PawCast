@@ -121,6 +121,10 @@ dependencies {
     // DataStore. Storing preferences to local storage (used to remember if user has completed setup)
     implementation("androidx.datastore:datastore-preferences:1.1.0")
 
+    // Google Locations. used to get users current location
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+
+
 }
 
 kapt {

@@ -4,50 +4,28 @@ package no.uio.ifi.in2000.team19.prosjekt.ui.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import no.uio.ifi.in2000.team19.prosjekt.R
+import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationTextField
+import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsScreenViewModel
+    viewModel: SettingsScreenViewModel,
+    searchLocationViewModel: SearchLocationViewModel
 ){
 
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val coordinates = viewModel.cordsUiState.collectAsState()
-
-    var localLatitude by remember { mutableStateOf("") }
-    var localLongitude by remember { mutableStateOf("") }
-
-
-    val mapboxAccessToken = stringResource( id = R.string.mapbox_access_token)
-
-
-    LaunchedEffect(coordinates.value) {
-        localLatitude = coordinates.value.latitude
-        localLongitude = coordinates.value.longitude
-
-    }
 
 
     Column (
@@ -61,57 +39,43 @@ fun SettingsScreen(
 
     ){
 
-        
-        Text(text = "${coordinates.value.latitude}, ${coordinates.value.longitude}")
-        OutlinedTextField(
-            label = { Text(text = "Latitude") },
-            value = localLatitude,
-            onValueChange = {localLatitude = it},
 
-            singleLine = true,
+        Column(
+            modifier = Modifier
+                .padding(
+                    horizontal = 50.dp,
+                    vertical = 40.dp
+                ) // Global horizontal padding for all settings items.
+                .fillMaxSize()
+            ,
+        ) {
 
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Decimal,
-                imeAction = ImeAction.Done
-            ),
+            CategoryDivider(text = "Location")
+            Column (
+                modifier = Modifier.padding(top = 10.dp)
+            ){
+                SearchLocationTextField(viewModel = searchLocationViewModel)
+            }
 
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    keyboardController?.hide()
-                    viewModel.setCoordinates(localLatitude, localLongitude)
-                }
-            )
-        )
 
-        OutlinedTextField(
-            label = { Text(text = "Longitude") },
-            value = localLongitude,
-            onValueChange = {localLongitude = it},
 
-            singleLine = true,
 
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Decimal,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    keyboardController?.hide()
-                    viewModel.setCoordinates(localLatitude, localLongitude)
-
-                }
-            )
-        )
-        
-        Button(onClick = {
-            viewModel.setCoordinates(localLatitude, localLongitude)
-        }) {
-            Text(text = "Save")
-        }
-        
-        
-        Button(onClick = { viewModel.clearDataStore() }) {
-            Text(text = "Reset so next time show setup")
+            CategoryDivider(text = "Debug")
+            Button(onClick = { viewModel.clearDataStore() }) {
+                Text(text = "Reset to setup")
+            }
         }
     }
+}
+
+@Composable
+fun CategoryDivider(text: String){
+
+    Column(
+        modifier = Modifier.padding(top = 40.dp)
+    ) {
+        Text(text = text)
+        HorizontalDivider()
+    }
+
 }

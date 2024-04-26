@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
+import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupManager
@@ -39,7 +40,8 @@ fun ScreenManager(
     homeScreenViewModel: HomeScreenViewModel,
     viewModel: ScreenManagerViewModel,
     weatherScreenViewModel: WeatherScreenViewModel,
-    setupScreenViewModel: SetupScreenViewModel
+    setupScreenViewModel: SetupScreenViewModel,
+    searchLocationViewModel : SearchLocationViewModel
 ) {
 
     val navController = rememberNavController()
@@ -96,7 +98,7 @@ fun ScreenManager(
                 }
 
                 composable("settings"){
-                    SettingsScreen(settingsScreenViewModel)
+                    SettingsScreen(settingsScreenViewModel, searchLocationViewModel)
                 }
 
                 composable("weather"){

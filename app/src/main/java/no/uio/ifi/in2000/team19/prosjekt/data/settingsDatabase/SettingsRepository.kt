@@ -11,17 +11,32 @@ class SettingsRepository @Inject constructor(
     private val coordsDao: coordsDao,
     private val userInfoDao: userInfoDao){
 
+
+    // CORDS
     suspend fun getCords(): Cords {
 
         if (coordsDao.getCords() == null){
-            val defaultCoords = Cords(0, "60", "10")
+            val defaultCoords =
+                Cords(
+                    id = 0,
+                    longitude = "60",
+                    latitude = "10",
+                    shortName = "Default Location",
+                    detailedName = "Default Location"
+                )
             coordsDao.insertCords(defaultCoords)
         }
         return coordsDao.getCords()!!
     }
 
-    suspend fun updateCoords(latitude:String, longitude:String) {
-        val cords = Cords(0, longitude, latitude) // altid id: 0 så vi kan overskrive eldre longitude/latitude
+    suspend fun updateCoords(latitude:String, longitude:String, shortName:String, detailedName:String) {
+        val cords = Cords(
+            id = 0,
+            longitude = longitude,
+            latitude = latitude,
+            shortName = shortName,
+            detailedName = detailedName,
+        )
         coordsDao.insertCords(cords)
     }
 
@@ -29,6 +44,8 @@ class SettingsRepository @Inject constructor(
         coordsDao.deleteCords(cords)
     }
 
+
+    // USER INFO
     suspend fun getUserInfo(): UserInfo? {
         return userInfoDao.getUserInfo()
     }
