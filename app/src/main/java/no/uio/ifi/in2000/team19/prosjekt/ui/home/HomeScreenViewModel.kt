@@ -42,7 +42,7 @@ class HomeScreenViewModel @Inject constructor(
     var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
 
     //Kommer mby ikke til å bruke dette
-    private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false))
+    private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false))
     var userInfoUiState: StateFlow<UserInfo?> = _userInfoUiState.asStateFlow()
 
     private val height: String = "0"
