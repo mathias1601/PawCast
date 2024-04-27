@@ -36,7 +36,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import android.annotation.SuppressLint as SuppressLint1
@@ -123,7 +122,8 @@ fun OnboardingScreenOne(viewModel: SetupScreenViewModel, id:String, navControlle
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Button(onClick = {
+            Button(
+                onClick = {
                 viewModel.updateUserName(userName)
                 viewModel.updateDogName(dogName)
                 navController.navigate("setup/${id.toInt()+1}")
@@ -240,10 +240,10 @@ fun CheckboxButton(
 
 ) {
     OutlinedCard(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
-        border = BorderStroke(1.dp, Color.Black),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         modifier = Modifier
             .padding(8.dp)
             .clickable { onClick(isChecked) }
