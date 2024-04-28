@@ -123,7 +123,7 @@ fun HomeScreen(
         Text(
             text = "Anbefalinger"
         )
-        Text(text = "LAT: ${cords.latitude}, LONG: ${cords.longitude}")
+        Text(text = "Valgt lokasjon: ${cords.shortName}")
         LazyColumn(
         ) {
             items(advice.allAdvice) { item ->

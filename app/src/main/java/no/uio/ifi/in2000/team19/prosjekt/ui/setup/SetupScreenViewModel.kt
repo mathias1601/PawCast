@@ -38,25 +38,26 @@ class SetupScreenViewModel @Inject constructor(
     }
     fun updateAge(newValue: Boolean) {
         _userInfo.value.isSenior = newValue
+        Log.d("SETUP_DEBUG", _userInfo.value.isSenior.toString())
     }
     fun updateNose(newValue: Boolean){
         _userInfo.value.isFlatNosed = newValue
-    }
-    fun updateLongHaired(newValue: Boolean){
-        _userInfo.value.isLongHaired = newValue
-    }
-
-    fun updateShortHaired(newValue: Boolean) {
-        _userInfo.value.isShortHaired = newValue
-    }
-    fun updateThinHaired(newValue: Boolean) {
-        _userInfo.value.isThinHaired = newValue
-    }
-    fun updateLightHaired(newValue: Boolean) {
-        _userInfo.value.isLightHaired = newValue
+        Log.d("SETUP_DEBUG", _userInfo.value.isFlatNosed.toString())
     }
     fun updateThin(newValue: Boolean) {
         _userInfo.value.isThin = newValue
+        Log.d("SETUP_DEBUG", _userInfo.value.isThin.toString())
+    }
+
+    fun updateFilterCategories(categoryName: String, newValue: Boolean) {
+        when (categoryName) {
+            "tynnPels" -> { _userInfo.value.isThinHaired = newValue }
+            "tykkPels" -> {_userInfo.value.isThickHaired = newValue}
+            "langPels" -> {_userInfo.value.isLongHaired = newValue}
+            "kortPels" -> {_userInfo.value.isShortHaired = newValue}
+            "lysPels" -> {_userInfo.value.isLightHaired = newValue}
+            "moerkPels" -> {_userInfo.value.isDarkHaired = newValue}
+        }
     }
 
     fun saveUserInfo() {
