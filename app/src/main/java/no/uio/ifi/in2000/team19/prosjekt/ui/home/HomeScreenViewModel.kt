@@ -47,7 +47,7 @@ class HomeScreenViewModel @Inject constructor(
     var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
 
     //Kommer mby ikke til å bruke dette
-    private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false))
+    private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false, false))
     var userInfoUiState: StateFlow<UserInfo?> = _userInfoUiState.asStateFlow()
 
     private val height: String = "0"
@@ -155,63 +155,63 @@ class HomeScreenViewModel @Inject constructor(
     val tempLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
             listOf(-20.0, -11.0) to 1,
-            listOf(36.0, 40.0) to 1,
+            listOf(35.1, 45.0) to 1,
 
-            listOf(-10.0, -6.0) to 2,
-            listOf(33.0, 35.0) to 2,
+            listOf(-10.0, -5.9) to 2,
+            listOf(32.1, 35.0) to 2,
 
-            listOf(-5.0, -3.0) to 3,
-            listOf(31.0, 32.0) to 3,
+            listOf(-5.0, -2.9) to 3,
+            listOf(30.1, 32.0) to 3,
 
-            listOf(-2.0, 0.0) to 4,
-            listOf(29.0, 30.0) to 4,
+            listOf(-2.0, 0.9) to 4,
+            listOf(28.1, 30.0) to 4,
 
-            listOf(1.0, 2.0) to 5,
-            listOf(27.0, 28.0) to 5,
+            listOf(1.0, 2.9) to 5,
+            listOf(26.1, 28.0) to 5,
 
-            listOf(3.0, 5.0) to 6,
-            listOf(24.0, 26.0) to 6,
+            listOf(3.0, 5.9) to 6,
+            listOf(23.1, 26.0) to 6,
 
-            listOf(6.0, 9.0) to 7,
-            listOf(22.0, 23.0) to 7,
+            listOf(6.0, 9.9) to 7,
+            listOf(21.1, 23.0) to 7,
 
-            listOf(10.0, 12.0) to 8,
-            listOf(20.0, 21.0) to 8,
+            listOf(10.0, 12.9) to 8,
+            listOf(19.1, 21.0) to 8,
 
-            listOf(13.0, 14.0) to 9,
-            listOf(17.0, 19.0) to 9,
+            listOf(13.0, 14.9) to 9,
+            listOf(16.6, 19.0) to 9,
 
-            listOf(15.0, 16.0) to 10
+            listOf(15.0, 16.5) to 10
         )
 
     //basert på info fra Yr
     val percipitationLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
-            listOf(2.0, 7.0) to 1,
+            listOf(2.1, 7.0) to 1,
             listOf(1.6, 2.0) to 2,
             listOf(1.1, 1.5) to 3,
             listOf(0.9, 1.0) to 4,
             listOf(0.7, 0.8) to 5,
             listOf(0.5, 0.6) to 6,
             listOf(0.3, 0.4) to 7,
-            listOf(0.1, 0.2) to 8,
-            listOf(0.0, 0.09) to 9,
+            listOf(0.2, 0.2) to 8,
+            listOf(0.1, 0.1) to 9,
             listOf(0.0, 0.0) to 10
         )
 
     //basert på data fra SNL
     val UVLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
-            listOf(10.0, 15.0) to 1,
-            listOf(9.0, 10.0) to 2,
-            listOf(8.0, 8.0) to 3,
-            listOf(7.0, 7.0) to 4,
-            listOf(6.0, 6.0) to 5,
-            listOf(5.0, 5.0) to 6,
-            listOf(4.0, 4.0) to 7,
-            listOf(3.0, 3.0) to 8,
-            listOf(2.0, 2.0) to 9,
-            listOf(1.0, 1.0) to 10
+            listOf(8.1, 15.0) to 1,
+            listOf(6.6, 8.0) to 2,
+            listOf(5.1, 6.5) to 3,
+            listOf(4.1, 5.0) to 4,
+            listOf(3.7, 4.0) to 5,
+            listOf(3.1, 3.6) to 6,
+            listOf(2.6, 3.0) to 7,
+            listOf(2.1, 2.5) to 8,
+            listOf(1.1, 2.0) to 9,
+            listOf(0.0, 1.0) to 10
         )
 
 

@@ -2,8 +2,10 @@ package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -31,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
@@ -65,7 +70,7 @@ fun HomeScreenManager(
     }
     val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast()})
 
-    Scaffold() { innerPadding ->
+    Scaffold { innerPadding ->
 
             Box(
                 Modifier.padding(innerPadding)
@@ -114,18 +119,53 @@ fun HomeScreen(
     graphUiState: CartesianChartModelProducer
 ) {
 
+    val newColor = Color(0xffece9e4)
 
+    val context = LocalContext.current
+    //val drawableName = advice.
+    val drawableId =
+        context.resources.getIdentifier("clearsky_day", "drawable", context.packageName)
     Column(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxSize()
     ) {
+
+
+        Card(
+            colors = CardDefaults.cardColors(
+                //containerColor = newColor
+            ),
+            modifier = Modifier
+                .size(width = 350.dp, height = 75.dp)
+                .padding(9.dp)
+            //.height(23.dp)
+        ) {
+
+            Row(
+                modifier = Modifier
+                    .fillMaxSize(),
+                //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text("18C")
+
+                Spacer(modifier = Modifier.size(15.dp))
+
+                Image(
+                    painter = painterResource(id = drawableId),
+                    contentDescription = "Værsymbol"
+                )
+            }
+        }
         Text(
             text = "Anbefalinger"
         )
         Text(text = "Valgt lokasjon: ${cords.shortName}")
-        LazyColumn(
-        ) {
+        Text("Longitude: ${cords.longitude}, Latitude: ${cords.latitude}")
+
+        LazyColumn {
             items(advice.allAdvice) { item ->
                 AdviceCard(item)
             }
