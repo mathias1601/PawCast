@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Checkbox
@@ -31,14 +33,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import android.annotation.SuppressLint as SuppressLint1
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,13 +99,22 @@ fun SetupManager(
 @Composable
 fun OnboardingScreenOne(viewModel: SetupScreenViewModel, id:String, navController: NavHostController) {
 
-    var userName by remember { mutableStateOf("") }
-    var dogName by remember { mutableStateOf("") }
+
+    val userInfo = viewModel.userInfo.collectAsState().value
+
+    var userName by remember {
+        mutableStateOf(userInfo.userName)
+    }
+
+    var dogName by remember {
+        mutableStateOf(userInfo.dogName)
+    }
 
     Column (
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center
+
 
     ) {
         Text(text="Navnet ditt")
@@ -127,7 +139,11 @@ fun OnboardingScreenOne(viewModel: SetupScreenViewModel, id:String, navControlle
                 viewModel.updateUserName(userName)
                 viewModel.updateDogName(dogName)
                 navController.navigate("setup/${id.toInt()+1}")
-            }) {
+            },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )) {
                 Text(text = "Neste")
             }
         }
@@ -135,13 +151,15 @@ fun OnboardingScreenOne(viewModel: SetupScreenViewModel, id:String, navControlle
     }
 }
 
-@SuppressLint1("UnrememberedMutableState")
 @Composable
 fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navController: NavHostController) {
 
+    /*
     var age by remember { mutableStateOf(false) }
     var nose by remember { mutableStateOf(false) }
     var body by remember { mutableStateOf(false) }
+
+     */
 
     val ageOptions = listOf("Valp", "Voksen", "Senior")
     val noseOptions = listOf("Flat", "Ikke flat")
@@ -154,7 +172,7 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
     Column (
         modifier = Modifier
             .fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
 
     ) {
         Text(text="Alder")
@@ -169,7 +187,10 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
                     isChecked = (text == selectedAgeOption),
                     onClick = {
                         onAgeOptionSelected(text)
-                    }
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
                 )
 
             }
@@ -187,7 +208,10 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
                     isChecked = (text == selectedNoseOption),
                     onClick = {
                         onNoseOptionSelected(text)
-                    }
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
                 )
 
             }
@@ -204,7 +228,10 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
                     isChecked = (text == selectedBodyOption),
                     onClick = {
                         onBodyOptionSelected(text)
-                    }
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
                 )
 
             }
@@ -215,13 +242,14 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = {
-                    age = selectedAgeOption == "Senior"
+/*                  age = selectedAgeOption == "Senior"
                     nose = selectedNoseOption == "Flat"
                     body = selectedBodyOption == "Tynn"
+ */
 
-                    viewModel.updateAge(age)
-                    viewModel.updateNose(nose)
-                    viewModel.updateThin(body)
+                    viewModel.updateIsSenior(age)
+                    viewModel.updateIsFlatNosed(nose)
+                    viewModel.updateIsThin(body)
 
                     navController.navigate("setup/${id.toInt()+1}")
                 }
@@ -236,48 +264,64 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
 fun CheckboxButton(
     text: String,
     isChecked: Boolean,
-    onClick: (Boolean) -> Unit
+    onClick: (Boolean) -> Unit,
+    modifier: Modifier
 
 ) {
+
     OutlinedCard(
-        colors = CardDefaults.outlinedCardColors(
+        colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-        modifier = Modifier
+        modifier = modifier
             .padding(8.dp)
             .clickable { onClick(isChecked) }
 
     ) {
-        Box(
-            modifier = Modifier
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Checkbox(
+                checked = isChecked,
+                onCheckedChange = onClick)
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodySmall.merge(),
+                modifier = Modifier
+                    .padding(top = 26.dp)
 
-        )
-        Checkbox(checked = isChecked, onCheckedChange = onClick)
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodySmall.merge()
-        )
+            )
+        }
+
     }
+
+
 }
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OnboardingScreenThree(viewModel: SetupScreenViewModel, navController: NavHostController) {
 
+    val userInfo = viewModel.userInfo.collectAsState().value
     Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center
     ) {
         Text(text="Pels")
-        FlowRow() {
+        FlowRow(
+        ) {
 
-            FilterChip(text = "Tynn", categoryName = "tynnPels", viewModel)
+            FilterChip(text = "Tynn", categoryName = "tynnPels", viewModel, userInfo.isThinHaired)
+            /*
             FilterChip(text = "Tykk", categoryName = "tykkPels", viewModel)
             FilterChip(text = "Lang", categoryName = "langPels", viewModel)
             FilterChip(text = "Kort", categoryName = "kortPels", viewModel)
             FilterChip(text = "Lys", categoryName = "lysPels", viewModel)
             FilterChip(text = "Mørk", categoryName = "moerkPels", viewModel)
+
+             */
         }
         Box(){
             Button(
@@ -304,21 +348,27 @@ fun FilterChip(
     text: String,
     categoryName: String,
     viewModel: SetupScreenViewModel,
+    selected: Boolean
     ) {
-        var selected by remember { mutableStateOf(false)}
+
+        var isSelected by remember {
+            mutableStateOf(selected)
+        }
 
         FilterChip(
             modifier = Modifier
                 .padding(8.dp),
             onClick = {
-                selected = !selected
-                viewModel.updateFilterCategories(categoryName,selected)
+                isSelected = !isSelected
+                viewModel.updateFilterCategories(categoryName,isSelected)
                 },
             label = {
-                Text(text=text)
+                Text(
+                    text=text
+                )
             },
-        selected = selected,
-        leadingIcon = if (selected) {
+        selected = isSelected,
+        leadingIcon = if (isSelected) {
             {
                 Icon(
                     imageVector = Icons.Filled.Done,

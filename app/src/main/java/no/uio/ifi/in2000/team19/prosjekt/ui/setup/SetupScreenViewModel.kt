@@ -34,17 +34,18 @@ class SetupScreenViewModel @Inject constructor(
     fun updateDogName(dogName: String){
         val updatedDogName = _userInfo.value.copy(dogName = dogName)
         _userInfo.value = updatedDogName
+
         Log.d("SETUP_DEBUG", _userInfo.value.dogName)
     }
-    fun updateAge(newValue: Boolean) {
+    fun updateIsSenior(newValue: Boolean) {
         _userInfo.value.isSenior = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isSenior.toString())
     }
-    fun updateNose(newValue: Boolean){
+    fun updateIsFlatNosed(newValue: Boolean){
         _userInfo.value.isFlatNosed = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isFlatNosed.toString())
     }
-    fun updateThin(newValue: Boolean) {
+    fun updateIsThin(newValue: Boolean) {
         _userInfo.value.isThin = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isThin.toString())
     }
