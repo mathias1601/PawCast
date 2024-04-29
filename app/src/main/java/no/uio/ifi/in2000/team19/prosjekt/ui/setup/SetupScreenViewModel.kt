@@ -51,7 +51,7 @@ class SetupScreenViewModel @Inject constructor(
     private var _selectedAgeIndex: MutableStateFlow<Int?> = MutableStateFlow(null) // Null when none are chosen.
     var selectedAgeIndex: StateFlow<Int?> = _selectedAgeIndex.asStateFlow()
 
-    fun updateSelectedAgeIndex(newIndex:Int){
+    fun updateAgeIndex(newIndex:Int){
         _selectedAgeIndex.value = newIndex
     }
     fun updateIsSenior(newValue: Boolean) {
@@ -63,19 +63,36 @@ class SetupScreenViewModel @Inject constructor(
 
 
     // SCREEN THREE
+
+    private var _selectedNoseIndex: MutableStateFlow<Int?> = MutableStateFlow(null) // Null when none are chosen.
+    var selectedNoseIndex: StateFlow<Int?> = _selectedNoseIndex.asStateFlow()
+
     fun updateIsFlatNosed(newValue: Boolean){
         _userInfo.value.isFlatNosed = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isFlatNosed.toString())
+    }
+
+    fun updateNoseIndex(newIndex:Int){
+        _selectedNoseIndex.value = newIndex
     }
 
 
 
 
     // SCREEN FOUR
+
+    private var _selectedThinIndex: MutableStateFlow<Int?> = MutableStateFlow(null)
+    var selectedThinIndex:StateFlow<Int?> = _selectedThinIndex.asStateFlow()
+
     fun updateIsThin(newValue: Boolean) {
         _userInfo.value.isThin = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isThin.toString())
     }
+
+    fun updateThinIndex(newIndex: Int){
+        _selectedThinIndex.value = newIndex
+    }
+
 
 
 

@@ -82,9 +82,9 @@ fun SetupManager(
             when (id) {
                 "0" -> OnboardingScreenOne(viewModel,id,navController)
                 "1" -> OnboardingScreenTwo(viewModel,id,navController)
-                //"2" -> OnboardingScreenThree(viewModel,id,navController)
-                //"3" -> OnboardingScreenFour(viewModel,id,navController)
-                "2" -> OnboardingScreenFive(viewModel,navController)
+                "2" -> OnboardingScreenThree(viewModel,id,navController)
+                "3" -> OnboardingScreenFour(viewModel,id,navController)
+                "4" -> OnboardingScreenFive(viewModel,navController)
 
             }
         }
@@ -166,17 +166,21 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
                 .fillMaxWidth()
         ){
 
-            Card(onClick = {
-                viewModel.updateSelectedAgeIndex(0)
+
+            Card(
+                onClick = {
+                viewModel.updateAgeIndex(0)
                 viewModel.updateIsSenior(false) // Doesnt need to update puppy in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
-            }
+                },
+
             ) {
                 Text(text = "Valp")
             }
-            
+
+
             Card(onClick = {
-                viewModel.updateSelectedAgeIndex(1)
+                viewModel.updateAgeIndex(1)
                 viewModel.updateIsSenior(false) // Doesnt need to update adult in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
             }) {
@@ -184,13 +188,104 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
             }
             
             Card(onClick = {
-                viewModel.updateSelectedAgeIndex(2)
+                viewModel.updateAgeIndex(2)
                 viewModel.updateIsSenior(true) // Update senior in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
             }) {
-                
                 Text(text = "Senior")
                 
+            }
+        }
+    }
+}
+
+
+
+@Composable
+fun OnboardingScreenThree(viewModel: SetupScreenViewModel, id: String, navController: NavHostController) {
+
+    val noseIndex = viewModel.selectedAgeIndex.collectAsState().value
+
+    Column (
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+
+        ) {
+        Text(text="Nese form")
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+        ){
+
+
+            Card(
+                onClick = {
+                    viewModel.updateAgeIndex(0)
+                    viewModel.updateIsFlatNosed(false) // Doesnt need to update puppy in database
+                    navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+                },
+
+                ) {
+                Text(text = "Vanlig nese")
+            }
+
+
+            Card(onClick = {
+                viewModel.updateAgeIndex(1)
+                viewModel.updateIsFlatNosed(true) // Doesnt need to update adult in database
+                navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+            }) {
+                Text(text = "Flat nese")
+            }
+        }
+    }
+}
+
+@Composable
+fun OnboardingScreenFour(viewModel: SetupScreenViewModel, id: String, navController: NavHostController) {
+
+    val thinIndex = viewModel.selectedThinIndex.collectAsState().value
+
+    Column (
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+
+        ) {
+        Text(text="Nese form")
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+        ){
+
+
+            Card(
+                onClick = {
+                    viewModel.updateThinIndex(0)
+                    viewModel.updateIsThin(true) // Doesnt need to update puppy in database
+                    navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+                },
+
+                ) {
+                Text(text = "Tynn")
+            }
+
+
+            Card(onClick = {
+                viewModel.updateThinIndex(1)
+                viewModel.updateIsThin(false) // Doesnt need to update adult in database
+                navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+            }) {
+                Text(text = "Middels")
+            }
+
+            Card(onClick = {
+                viewModel.updateThinIndex(2)
+                viewModel.updateIsThin(false) // Doesnt need to update adult in database
+                navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+            }) {
+                Text(text = "Tykk")
             }
         }
     }
