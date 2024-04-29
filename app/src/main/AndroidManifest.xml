@@ -4,6 +4,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+
+    <!-- MapBox forces us to use "Access Coarse Location". Even if we just their Search API -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+
     <application
         android:name = ".WeatherApp"
         android:allowBackup="true"

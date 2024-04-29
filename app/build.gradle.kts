@@ -85,8 +85,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
     // MapBox!
-    implementation("com.mapbox.maps:android:11.2.0")
-    implementation("com.mapbox.extension:maps-compose:11.2.0")
+    implementation("com.mapbox.search:mapbox-search-android-ui:1.2.0")
 
     // Nav Controller og navigation
     val nav_version = "2.7.7"
@@ -121,6 +120,10 @@ dependencies {
 
     // DataStore. Storing preferences to local storage (used to remember if user has completed setup)
     implementation("androidx.datastore:datastore-preferences:1.1.0")
+
+    // Google Locations. used to get users current location
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+
 
 }
 

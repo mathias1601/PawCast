@@ -2,16 +2,29 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "cd8111c139f15f6240d15c0d2367c089",
+
+    "identityHash": "7990af4f84f45f1df587f8529c3e8921",
     "entities": [
       {
         "tableName": "Cords",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `longitude` TEXT NOT NULL, `latitude` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `location-short-name` TEXT NOT NULL, `location-detailed-name` TEXT NOT NULL, `longitude` TEXT NOT NULL, `latitude` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shortName",
+            "columnName": "location-short-name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "detailedName",
+            "columnName": "location-detailed-name",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -38,7 +51,7 @@
       },
       {
         "tableName": "UserInfo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userName` TEXT NOT NULL, `dogName` TEXT NOT NULL, `isSenior` INTEGER NOT NULL, `isAdult` INTEGER NOT NULL, `isPuppy` INTEGER NOT NULL, `isFlatNosed` INTEGER NOT NULL, `isLongHaired` INTEGER NOT NULL, `isShortHaired` INTEGER NOT NULL, `isThinHaired` INTEGER NOT NULL, `isLightHaired` INTEGER NOT NULL, `isThin` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userName` TEXT NOT NULL, `dogName` TEXT NOT NULL, `isSenior` INTEGER NOT NULL, `isFlatNosed` INTEGER NOT NULL, `isThin` INTEGER NOT NULL, `isLongHaired` INTEGER NOT NULL, `isShortHaired` INTEGER NOT NULL, `isThinHaired` INTEGER NOT NULL, `isThickhaired` INTEGER NOT NULL, `isLightHaired` INTEGER NOT NULL, `isDarkHaired` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -65,20 +78,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "isAdult",
-            "columnName": "isAdult",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "isPuppy",
-            "columnName": "isPuppy",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
             "fieldPath": "isFlatNosed",
             "columnName": "isFlatNosed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isThin",
+            "columnName": "isThin",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -101,14 +108,20 @@
             "notNull": true
           },
           {
+            "fieldPath": "isThickHaired",
+            "columnName": "isThickhaired",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "isLightHaired",
             "columnName": "isLightHaired",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "isThin",
-            "columnName": "isThin",
+            "fieldPath": "isDarkHaired",
+            "columnName": "isDarkHaired",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -126,7 +139,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cd8111c139f15f6240d15c0d2367c089')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7990af4f84f45f1df587f8529c3e8921')"
     ]
   }
 }
