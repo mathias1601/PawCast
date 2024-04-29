@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -238,6 +237,10 @@ fun OnboardingScreenThree(viewModel: SetupScreenViewModel, id: String, navContro
 
 
             Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
                 onClick = {
                     viewModel.updateAgeIndex(0)
                     viewModel.updateIsFlatNosed(false) // Doesnt need to update puppy in database
@@ -249,7 +252,12 @@ fun OnboardingScreenThree(viewModel: SetupScreenViewModel, id: String, navContro
             }
 
 
-            Card(onClick = {
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
+                onClick = {
                 viewModel.updateAgeIndex(1)
                 viewModel.updateIsFlatNosed(true) // Doesnt need to update adult in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
@@ -279,6 +287,10 @@ fun OnboardingScreenFour(viewModel: SetupScreenViewModel, id: String, navControl
 
 
             Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
                 onClick = {
                     viewModel.updateThinIndex(0)
                     viewModel.updateIsThin(true) // Doesnt need to update puppy in database
@@ -290,7 +302,12 @@ fun OnboardingScreenFour(viewModel: SetupScreenViewModel, id: String, navControl
             }
 
 
-            Card(onClick = {
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
+                onClick = {
                 viewModel.updateThinIndex(1)
                 viewModel.updateIsThin(false) // Doesnt need to update adult in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
@@ -298,7 +315,12 @@ fun OnboardingScreenFour(viewModel: SetupScreenViewModel, id: String, navControl
                 Text(text = "Middels")
             }
 
-            Card(onClick = {
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
+                onClick = {
                 viewModel.updateThinIndex(2)
                 viewModel.updateIsThin(false) // Doesnt need to update adult in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
@@ -333,14 +355,12 @@ fun OnboardingScreenFive(viewModel: SetupScreenViewModel, navController: NavHost
         ) {
 
             FilterChip(text = "Tynn", categoryName = "tynnPels", viewModel, userInfo.isThinHaired)
-            /*
-            FilterChip(text = "Tykk", categoryName = "tykkPels", viewModel)
-            FilterChip(text = "Lang", categoryName = "langPels", viewModel)
-            FilterChip(text = "Kort", categoryName = "kortPels", viewModel)
-            FilterChip(text = "Lys", categoryName = "lysPels", viewModel)
-            FilterChip(text = "Mørk", categoryName = "moerkPels", viewModel)
+            FilterChip(text = "Tykk", categoryName = "tykkPels", viewModel, userInfo.isThickHaired)
+            FilterChip(text = "Lang", categoryName = "langPels", viewModel, userInfo.isLongHaired)
+            FilterChip(text = "Kort", categoryName = "kortPels", viewModel, userInfo.isShortHaired)
+            FilterChip(text = "Lys", categoryName = "lysPels", viewModel, userInfo.isLightHaired)
+            FilterChip(text = "Mørk", categoryName = "moerkPels", viewModel, userInfo.isDarkHaired)
 
-             */
         }
         Box(){
             Button(
