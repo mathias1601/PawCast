@@ -8,8 +8,9 @@ data class GeneralForecast (
     val date: String,
     val percipitation: Double,
     val thunderprobability: Double,
-    val UVindex: Double
-) : forecastSuper()
+    val UVindex: Double,
+    val time: String
+)
 
 //TODO add all relevant data
 

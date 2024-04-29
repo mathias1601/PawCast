@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +18,7 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepositor
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import java.io.IOException
 import javax.inject.Inject
 
@@ -75,8 +77,14 @@ class HomeScreenViewModel @Inject constructor(
 
                 /////////////////////////////////// GRAPH METHOD TO BE MOVED INTO REPOSITORY OR NEW DOMAIN LAYER///////////////////////////////////
 
-                val x = listOf(3, 5, 6)
-                val y = listOf(10, 4, 5)
+
+                val graphCoordinates = forecastGraphFunction(locationForecastRepository.getAdviceForecastList(generalForecast))
+
+                val x = graphCoordinates[0]
+                val y = graphCoordinates[1]
+
+                Log.i("X:", x.toString())
+                Log.i("Y:", y.toString())
 
                 _graphUiState.value.tryRunTransaction {
                     lineSeries {
@@ -100,13 +108,17 @@ class HomeScreenViewModel @Inject constructor(
 
     //parameter: a list of (advice) forecast objects that each represent one hour of the day
 
-    /*
+
     fun forecastGraphFunction(forecasts: List<AdviceForecast>): List<List<Int>> {
 
         var overallRatingList = mutableListOf<Int>()
-        val hours = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) //how many hours can we do?
-
+        //val hours = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) //how many hours can we do?
+        var currentHours = mutableListOf<Int>()
         forecasts.forEach {
+
+            //hvis dette ikke funker, se val hour i getGeneralForecast
+            var hourOfDay = it.time.toInt()
+            currentHours.add(hourOfDay)
 
             var overallRating: Int
             val tempRating = rating(it.temperature, tempLimitMap)
@@ -116,17 +128,27 @@ class HomeScreenViewModel @Inject constructor(
             val ratings = listOf(tempRating, percRating, UVRating)
 
             overallRating = (tempRating + percRating + UVRating) / 3
-
+            /*
             ratings.forEach {
                 if (it < 3) {
                     overallRating = it
                 }
             }
+            */
 
             overallRatingList.add(overallRating)
         }
 
-        return listOf(overallRatingList, hours)
+
+        val hourlength = currentHours.size
+        val ratinglength = overallRatingList.size
+
+        Log.i("HOURS", "$hourlength")
+        Log.i("RATINGS", "$ratinglength")
+
+        Log.i("rating list", overallRatingList.toString())
+
+        return listOf(currentHours, overallRatingList)
     }
 
     //these maps are used to determine rating
@@ -205,5 +227,5 @@ class HomeScreenViewModel @Inject constructor(
         return 0
     }
 
-     */
+
 }

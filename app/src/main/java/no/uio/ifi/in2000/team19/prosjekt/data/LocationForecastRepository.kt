@@ -11,7 +11,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.forecastSuper
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -33,10 +33,35 @@ class LocationForecastRepository @Inject constructor(
     private suspend fun fetchLocationForecast(latitude: String, longitude: String, height: String): LocationForecast {
         return locationForecastDataSource.getLocationForecast(latitude, longitude, height)
     }
-    @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getGeneralForecast(latitude: String, longitude: String, height: String, nrDays: Int): List<List<forecastSuper>> {
 
-        val forecastLists = mutableListOf<List<forecastSuper>>()
+
+    fun getAdviceForecastList(listOfGeneralForecasts: ForecastTypes): List<AdviceForecast> {
+
+        var adviceForecasts = mutableListOf<AdviceForecast>()
+        val general: List<GeneralForecast> = listOfGeneralForecasts.general
+        general.forEach{
+            adviceForecasts.add(getAdviceForecastData(it))
+        }
+        return adviceForecasts
+    }
+
+    /*
+    * data class GeneralForecast (
+    val temperature:Double,
+    val wind: Double? = null,
+    val symbol : String,
+    val hour: String,
+    val date: String,
+    val percipitation: Double,
+    val thunderprobability: Double,
+    val UVindex: Double
+) : forecastSuper()
+
+    * */
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun getGeneralForecast(latitude: String, longitude: String, height: String, nrDays: Int): ForecastTypes {
 
         val locationForecast = fetchLocationForecast(latitude, longitude, height)
 
@@ -72,7 +97,8 @@ class LocationForecastRepository @Inject constructor(
             val percipitation = locationForecast.properties.timeseries[i].data.next_1_hours.details.precipitation_amount
             val thunderprobability = locationForecast.properties.timeseries[i].data.next_1_hours.details.probability_of_thunder
             val UVindex = locationForecast.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky
-            genForecastList.add(GeneralForecast(temperature, wind, symbol, hourAsInt, date, percipitation, thunderprobability, UVindex))
+
+            genForecastList.add(GeneralForecast(temperature, wind, symbol, hourAsInt, date, percipitation, thunderprobability, UVindex, time))
 
             //startingHour += 1
         }
@@ -80,11 +106,9 @@ class LocationForecastRepository @Inject constructor(
         val dayForecastList = getWeatherForecastForDays(locationForecast, nrDays, startForDays)
         val meanHours = getWeatherForecastHours(locationForecast, startForDays, 2)
 
-        forecastLists.add(genForecastList)
-        forecastLists.add(dayForecastList)
-        forecastLists.add(meanHours)
+        val forecasts: ForecastTypes = ForecastTypes(genForecastList, dayForecastList, meanHours)
 
-        return forecastLists
+        return forecasts
     }
 
     //Also possible to do this in the same function. An If-check to see if you want to get for days or hours.
@@ -184,10 +208,10 @@ class LocationForecastRepository @Inject constructor(
     }
 
     //Returnerer en liste av Advice-objekter
-    fun getAdvice(generalForecast: List<List<forecastSuper>>, typeOfDog: UserInfo?): List<Advice> {
+    fun getAdvice(generalForecast: ForecastTypes, typeOfDog: UserInfo?): List<Advice> {
 
 
-        val adviceForecast = when (val firstForecast = generalForecast[0][0]) {
+        val adviceForecast = when (val firstForecast = generalForecast.general[0]) {
             is GeneralForecast -> getAdviceForecastData(firstForecast)
             else -> return emptyList()  // Eller en annen passende feilhåndtering
         }
@@ -200,7 +224,8 @@ class LocationForecastRepository @Inject constructor(
 
     //Gjør om fra GeneralForecast til AdviceForecast (fjerner unødvendig dsta)
     private fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
-        return AdviceForecast(generalForecast.temperature, generalForecast.thunderprobability, generalForecast.percipitation, generalForecast.UVindex, generalForecast.date)
+
+        return AdviceForecast(generalForecast.temperature, generalForecast.thunderprobability, generalForecast.percipitation, generalForecast.UVindex, generalForecast.date, generalForecast.hour)
     }
 
 

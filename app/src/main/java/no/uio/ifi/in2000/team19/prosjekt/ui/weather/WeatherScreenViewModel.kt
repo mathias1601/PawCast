@@ -7,23 +7,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.forecastSuper
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import java.io.IOException
 import javax.inject.Inject
 
 
 sealed interface WeatherUiState {
     data class Success(
-        val weather: List<List<forecastSuper>>) : WeatherUiState
+        val weather: ForecastTypes
+    ) : WeatherUiState
 
     data object Loading: WeatherUiState
     data object Error: WeatherUiState

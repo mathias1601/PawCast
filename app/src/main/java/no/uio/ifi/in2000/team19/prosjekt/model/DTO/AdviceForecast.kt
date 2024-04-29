@@ -5,5 +5,6 @@ data class AdviceForecast(
     val thunderprobability: Double,
     val percipitation: Double,
     val UVindex: Double,
-    val date: String
+    val date: String,
+    val time: String
 )
