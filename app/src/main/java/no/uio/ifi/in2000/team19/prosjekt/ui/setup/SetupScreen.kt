@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalLayoutApi::class)
+
 package no.uio.ifi.in2000.team19.prosjekt.ui.setup
 
 import androidx.compose.foundation.layout.Arrangement
@@ -6,6 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -161,13 +165,17 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
 
     ) {
         Text(text="Alder")
-        Row (
+        FlowRow (
             modifier = Modifier
                 .fillMaxWidth()
         ){
 
 
             Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
                 onClick = {
                 viewModel.updateAgeIndex(0)
                 viewModel.updateIsSenior(false) // Doesnt need to update puppy in database
@@ -179,15 +187,25 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
             }
 
 
-            Card(onClick = {
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
+                onClick = {
                 viewModel.updateAgeIndex(1)
                 viewModel.updateIsSenior(false) // Doesnt need to update adult in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
             }) {
                 Text(text = "Voksen")
             }
-            
-            Card(onClick = {
+
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
+                onClick = {
                 viewModel.updateAgeIndex(2)
                 viewModel.updateIsSenior(true) // Update senior in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
@@ -212,7 +230,7 @@ fun OnboardingScreenThree(viewModel: SetupScreenViewModel, id: String, navContro
         verticalArrangement = Arrangement.Center,
 
         ) {
-        Text(text="Nese form")
+        Text(text="Form på snute")
         Row (
             modifier = Modifier
                 .fillMaxWidth()
@@ -227,7 +245,7 @@ fun OnboardingScreenThree(viewModel: SetupScreenViewModel, id: String, navContro
                 },
 
                 ) {
-                Text(text = "Vanlig nese")
+                Text(text = "Vanlig snute")
             }
 
 
@@ -236,7 +254,7 @@ fun OnboardingScreenThree(viewModel: SetupScreenViewModel, id: String, navContro
                 viewModel.updateIsFlatNosed(true) // Doesnt need to update adult in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
             }) {
-                Text(text = "Flat nese")
+                Text(text = "Flat snute")
             }
         }
     }
@@ -253,7 +271,7 @@ fun OnboardingScreenFour(viewModel: SetupScreenViewModel, id: String, navControl
         verticalArrangement = Arrangement.Center,
 
         ) {
-        Text(text="Nese form")
+        Text(text="Kropp")
         Row (
             modifier = Modifier
                 .fillMaxWidth()
