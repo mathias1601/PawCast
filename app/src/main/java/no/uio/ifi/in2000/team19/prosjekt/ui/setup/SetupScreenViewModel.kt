@@ -22,9 +22,15 @@ class SetupScreenViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ): ViewModel() {
 
+
+
+    // COMMON
     private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"undefined", "undefined", false,false,false, false, false, false, false, false, false))
     var userInfo: StateFlow<UserInfo> = _userInfo.asStateFlow()
 
+
+
+    // SCREEN ONE
     fun updateUserName(userName: String){
         val updatedUserName = _userInfo.value.copy(userName = userName)
         _userInfo.value = updatedUserName
@@ -37,19 +43,45 @@ class SetupScreenViewModel @Inject constructor(
 
         Log.d("SETUP_DEBUG", _userInfo.value.dogName)
     }
+
+
+
+    // SCREEN TWO
+
+    private var _selectedAgeIndex: MutableStateFlow<Int?> = MutableStateFlow(null) // Null when none are chosen.
+    var selectedAgeIndex: StateFlow<Int?> = _selectedAgeIndex.asStateFlow()
+
+    fun updateSelectedAgeIndex(newIndex:Int){
+        _selectedAgeIndex.value = newIndex
+    }
     fun updateIsSenior(newValue: Boolean) {
         _userInfo.value.isSenior = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isSenior.toString())
     }
+
+
+
+
+    // SCREEN THREE
     fun updateIsFlatNosed(newValue: Boolean){
         _userInfo.value.isFlatNosed = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isFlatNosed.toString())
     }
+
+
+
+
+    // SCREEN FOUR
     fun updateIsThin(newValue: Boolean) {
         _userInfo.value.isThin = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isThin.toString())
     }
 
+
+
+
+
+    // SCREEN FIVE
     fun updateFilterCategories(categoryName: String, newValue: Boolean) {
         when (categoryName) {
             "tynnPels" -> { _userInfo.value.isThinHaired = newValue }
@@ -61,6 +93,9 @@ class SetupScreenViewModel @Inject constructor(
         }
     }
 
+
+
+    // SAVE EVERY CHOICE. Only done at the end to make sure the user finnished the Setup process.
     fun saveUserInfo() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
