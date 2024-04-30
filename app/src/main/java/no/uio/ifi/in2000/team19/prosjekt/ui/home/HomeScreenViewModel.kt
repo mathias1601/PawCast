@@ -1,5 +1,8 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
@@ -15,6 +18,7 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepositor
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import java.io.IOException
 import javax.inject.Inject
 
@@ -26,6 +30,7 @@ sealed interface AdviceUiState{
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
@@ -42,7 +47,7 @@ class HomeScreenViewModel @Inject constructor(
     var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
 
     //Kommer mby ikke til å bruke dette
-    private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false))
+    private var _userInfoUiState:MutableStateFlow<UserInfo?> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false, false))
     var userInfoUiState: StateFlow<UserInfo?> = _userInfoUiState.asStateFlow()
 
     private val height: String = "0"
@@ -51,6 +56,7 @@ class HomeScreenViewModel @Inject constructor(
         loadWeatherForecast()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -60,15 +66,25 @@ class HomeScreenViewModel @Inject constructor(
                 val userInfo = settingsRepository.getUserInfo()
                 _userInfoUiState.value = userInfo
 
-                val generalForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, "0", 3)
-                val allAdvice = locationForecastRepository.getAdvice(generalForecast)
-
+                val generalForecast = locationForecastRepository.getGeneralForecast(
+                    cords.latitude,
+                    cords.longitude,
+                    "0",
+                    2
+                )
+                val allAdvice = locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
 
                 /////////////////////////////////// GRAPH METHOD TO BE MOVED INTO REPOSITORY OR NEW DOMAIN LAYER///////////////////////////////////
 
-                val x = listOf(3, 5, 6)
-                val y = listOf(10, 4, 5)
+
+                val graphCoordinates = forecastGraphFunction(locationForecastRepository.getAdviceForecastList(generalForecast))
+
+                val x = graphCoordinates[0]
+                val y = graphCoordinates[1]
+
+                Log.i("X:", x.toString())
+                Log.i("Y:", y.toString())
 
                 _graphUiState.value.tryRunTransaction {
                     lineSeries {
@@ -82,4 +98,134 @@ class HomeScreenViewModel @Inject constructor(
             }
         }
     }
+
+
+    //based on temperature, percipitation and UVLimit
+    //percipitation mm is (i assume) only based on rain
+    //figuring out how to determine snow is not a high enough priority at this stage
+
+    //we are using AdviceForecast because we only need temp, percipitation and UVLimit
+
+    //parameter: a list of (advice) forecast objects that each represent one hour of the day
+
+
+    fun forecastGraphFunction(forecasts: List<AdviceForecast>): List<List<Int>> {
+
+        var overallRatingList = mutableListOf<Int>()
+        //val hours = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) //how many hours can we do?
+        var currentHours = mutableListOf<Int>()
+        forecasts.forEach {
+
+            //hvis dette ikke funker, se val hour i getGeneralForecast
+            var hourOfDay = it.time.toInt()
+            currentHours.add(hourOfDay)
+
+            var overallRating: Int
+            val tempRating = rating(it.temperature, tempLimitMap)
+            val percRating = rating(it.percipitation, percipitationLimitMap)
+            val UVRating = rating(it.UVindex, UVLimitMap)
+
+            val ratings = listOf(tempRating, percRating, UVRating)
+
+            overallRating = (tempRating + percRating + UVRating) / 3
+            /*
+            ratings.forEach {
+                if (it < 3) {
+                    overallRating = it
+                }
+            }
+            */
+
+            overallRatingList.add(overallRating)
+        }
+
+
+        val hourlength = currentHours.size
+        val ratinglength = overallRatingList.size
+
+        Log.i("HOURS", "$hourlength")
+        Log.i("RATINGS", "$ratinglength")
+
+        Log.i("rating list", overallRatingList.toString())
+
+        return listOf(currentHours, overallRatingList)
+    }
+
+    //these maps are used to determine rating
+    val tempLimitMap: HashMap<List<Double>, Int> =
+        hashMapOf(
+            listOf(-20.0, -11.0) to 1,
+            listOf(35.1, 45.0) to 1,
+
+            listOf(-10.0, -5.9) to 2,
+            listOf(32.1, 35.0) to 2,
+
+            listOf(-5.0, -2.9) to 3,
+            listOf(30.1, 32.0) to 3,
+
+            listOf(-2.0, 0.9) to 4,
+            listOf(28.1, 30.0) to 4,
+
+            listOf(1.0, 2.9) to 5,
+            listOf(26.1, 28.0) to 5,
+
+            listOf(3.0, 5.9) to 6,
+            listOf(23.1, 26.0) to 6,
+
+            listOf(6.0, 9.9) to 7,
+            listOf(21.1, 23.0) to 7,
+
+            listOf(10.0, 12.9) to 8,
+            listOf(19.1, 21.0) to 8,
+
+            listOf(13.0, 14.9) to 9,
+            listOf(16.6, 19.0) to 9,
+
+            listOf(15.0, 16.5) to 10
+        )
+
+    //basert på info fra Yr
+    val percipitationLimitMap: HashMap<List<Double>, Int> =
+        hashMapOf(
+            listOf(2.1, 7.0) to 1,
+            listOf(1.6, 2.0) to 2,
+            listOf(1.1, 1.5) to 3,
+            listOf(0.9, 1.0) to 4,
+            listOf(0.7, 0.8) to 5,
+            listOf(0.5, 0.6) to 6,
+            listOf(0.3, 0.4) to 7,
+            listOf(0.2, 0.2) to 8,
+            listOf(0.1, 0.1) to 9,
+            listOf(0.0, 0.0) to 10
+        )
+
+    //basert på data fra SNL
+    val UVLimitMap: HashMap<List<Double>, Int> =
+        hashMapOf(
+            listOf(8.1, 15.0) to 1,
+            listOf(6.6, 8.0) to 2,
+            listOf(5.1, 6.5) to 3,
+            listOf(4.1, 5.0) to 4,
+            listOf(3.7, 4.0) to 5,
+            listOf(3.1, 3.6) to 6,
+            listOf(2.6, 3.0) to 7,
+            listOf(2.1, 2.5) to 8,
+            listOf(1.1, 2.0) to 9,
+            listOf(0.0, 1.0) to 10
+        )
+
+
+    //this function is used to fetch the rating of a given weather specification
+    private fun rating(weatherTypeValue: Double, limitsMap: HashMap<List<Double>, Int>): Int {
+
+        for((key, value) in limitsMap) {
+            if (weatherTypeValue in key[0] .. key[1]) {
+                return value
+            }
+        }
+
+        return 0
+    }
+
+
 }

@@ -4,11 +4,10 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,18 +30,18 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.NoConnectionScreen
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
 
-    val weatherUiState = weatherScreenViewModel.weatherUiState.collectAsState().value
-
-    when (weatherUiState) {
+    when (val weatherUiState = weatherScreenViewModel.weatherUiState.collectAsState().value) {
         is WeatherUiState.Loading -> CircularProgressIndicator()
         is WeatherUiState.Error -> NoConnectionScreen()
         is WeatherUiState.Success -> {
-            val weatherHours = weatherUiState.weatherHours
-            val weatherDays = weatherUiState.weatherDays
+            val weatherHours = weatherUiState.weather.general
+            val weatherDays = weatherUiState.weather.day
+            val weatherMean = weatherUiState.weather.hours
 
             LazyColumn {
 
@@ -54,7 +53,9 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
                     WeatherForecastCardForDays(weatherForDay = weatherData)
                 }
 
-
+                items(weatherMean) { weatherHoursMean ->
+                    WeatherForecastMean(weatherForDay = weatherHoursMean)
+                }
             }
         }
     }
@@ -69,15 +70,15 @@ fun WeatherForecastCard(generalForecast: GeneralForecast) {
 
     val context = LocalContext.current
     val drawableName = generalForecast.symbol
-    val drawableId = context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+    val drawableId =
+        context.resources.getIdentifier(drawableName, "drawable", context.packageName)
 
     Card(
         colors = CardDefaults.cardColors(
             containerColor = newColor
         ),
         modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
+            .size(width = 350.dp, height = 75.dp)
             .padding(9.dp)
         //.height(23.dp)
     ) {
@@ -115,75 +116,164 @@ fun WeatherForecastCard(generalForecast: GeneralForecast) {
             Spacer(modifier = Modifier.size(35.dp))
 
             Text(
-                text = generalForecast.time,
+                text = generalForecast.hour,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
             )
         }
     }
 }
+
 
 
 @SuppressLint("DiscouragedApi")
 @Composable
 fun WeatherForecastCardForDays(weatherForDay: WeatherForDay) {
 
-    val newColor = Color(0xffece9e4)
 
-    //TODO find better way to showcase picture because of Discouraged API
-    val context = LocalContext.current
-    val drawableName = weatherForDay.symbol
-    val drawableId = context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+        val newColor = Color(0xffece9e4)
 
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = newColor
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .padding(9.dp)
-        //.height(23.dp)
-    ) {
+        //TODO find better way to showcase picture because of Discouraged API
+        val context = LocalContext.current
+        val drawableName = weatherForDay.symbol
+        val drawableId =
+            context.resources.getIdentifier(drawableName, "drawable", context.packageName)
 
-        Row(
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = newColor
+            ),
             modifier = Modifier
-                .fillMaxSize(),
-            //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
-            verticalAlignment = Alignment.CenterVertically
+                .size(width = 350.dp, height = 75.dp)
+                .padding(9.dp)
+            //.height(23.dp)
         ) {
 
-            Spacer(modifier = Modifier.size(15.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxSize(),
+                //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-            Image(
-                painter = painterResource(id = drawableId),
-                contentDescription = "Værsymbol"
-            )
+                Spacer(modifier = Modifier.size(15.dp))
 
-            Spacer(modifier = Modifier.size(26.dp))
+                Image(
+                    painter = painterResource(id = drawableId),
+                    contentDescription = "Værsymbol"
+                )
 
-            Text(
-                text = "${weatherForDay.lowestTemperature}°C",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-            )
+                Spacer(modifier = Modifier.size(26.dp))
 
-            Spacer(modifier = Modifier.size(35.dp))
+                Text(
+                    text = "${weatherForDay.lowestTemperature}°C",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                )
 
-            Text(
-                text = "${weatherForDay.highestTemperature}°C",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-            )
+                Spacer(modifier = Modifier.size(35.dp))
 
-            Spacer(modifier = Modifier.size(35.dp))
+                Text(
+                    text = "${weatherForDay.highestTemperature}°C",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                )
 
-            Text(
-                text = weatherForDay.day,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-            )
+                Spacer(modifier = Modifier.size(35.dp))
+
+                Text(
+                    text = weatherForDay.day,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
         }
     }
-    
-}
+
+
+
+@SuppressLint("DiscouragedApi")
+@Composable
+fun WeatherForecastMean(weatherForDay: WeatherForDay) {
+
+
+        val newColor = Color(0xffece9e4)
+
+        //TODO find better way to showcase picture because of Discouraged API
+        val context = LocalContext.current
+        val drawableName = weatherForDay.symbol
+        val drawableId =
+            context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = newColor
+            ),
+            modifier = Modifier
+                .size(width = 350.dp, height = 75.dp)
+                .padding(9.dp)
+            //.height(23.dp)
+        ) {
+
+            Column {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Spacer(modifier = Modifier.size(15.dp))
+
+                    Image(
+                        painter = painterResource(id = drawableId),
+                        contentDescription = "Værsymbol"
+                    )
+
+                    Spacer(modifier = Modifier.size(26.dp))
+
+                    Text(
+                        text = "${weatherForDay.startingTime} - ${weatherForDay.endingTime}",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+
+                    Spacer(modifier = Modifier.size(35.dp))
+
+                    Text(
+                        text = "${weatherForDay.meanTemperature}°C",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+
+                    Spacer(modifier = Modifier.size(35.dp))
+                }
+
+                Text(
+                    text = "${weatherForDay.startingTime}°C",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+
+                Text(
+                    text = "${weatherForDay.endingTime}°C",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+
+                    /*Text(
+                    text = weatherForDay.day,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+
+                 */
+            }
+        }
+    }
+
+
+
+
+
