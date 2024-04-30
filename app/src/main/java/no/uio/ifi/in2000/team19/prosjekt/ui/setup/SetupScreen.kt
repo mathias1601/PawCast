@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -121,12 +122,14 @@ fun OnboardingScreenOne(viewModel: SetupScreenViewModel, id:String, navControlle
     ) {
         Text(text="Navnet ditt")
         OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = userName,
             onValueChange = {userName = it},
             label = { Text("Skriv inn") }
         )
         Text(text="Hunden din")
         OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = dogName,
             onValueChange = {dogName = it},
             label = { Text("Skriv inn") }
@@ -137,6 +140,8 @@ fun OnboardingScreenOne(viewModel: SetupScreenViewModel, id:String, navControlle
                 .fillMaxWidth()
         ) {
             Button(
+                modifier = Modifier.fillMaxWidth(),
+
                 onClick = {
                 viewModel.updateUserName(userName)
                 viewModel.updateDogName(dogName)
@@ -147,6 +152,7 @@ fun OnboardingScreenOne(viewModel: SetupScreenViewModel, id:String, navControlle
                     contentColor = MaterialTheme.colorScheme.primary
                 )) {
                 Text(text = "Neste")
+                Icon(Icons.Filled.ChevronRight, contentDescription = "Next")
             }
         }
         //Skal også kunne skrive inn adresse en eller annen gang i setup

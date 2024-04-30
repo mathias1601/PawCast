@@ -2,8 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-
-    "identityHash": "7990af4f84f45f1df587f8529c3e8921",
+    "identityHash": "49a31bb405129439fc209d95d01fa6a5",
     "entities": [
       {
         "tableName": "Cords",
@@ -51,7 +50,7 @@
       },
       {
         "tableName": "UserInfo",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userName` TEXT NOT NULL, `dogName` TEXT NOT NULL, `isSenior` INTEGER NOT NULL, `isFlatNosed` INTEGER NOT NULL, `isThin` INTEGER NOT NULL, `isLongHaired` INTEGER NOT NULL, `isShortHaired` INTEGER NOT NULL, `isThinHaired` INTEGER NOT NULL, `isThickhaired` INTEGER NOT NULL, `isLightHaired` INTEGER NOT NULL, `isDarkHaired` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `userName` TEXT NOT NULL, `dogName` TEXT NOT NULL, `isSenior` INTEGER NOT NULL, `isPuppy` INTEGER NOT NULL, `isFlatNosed` INTEGER NOT NULL, `isThin` INTEGER NOT NULL, `isLongHaired` INTEGER NOT NULL, `isShortHaired` INTEGER NOT NULL, `isThinHaired` INTEGER NOT NULL, `isThickhaired` INTEGER NOT NULL, `isLightHaired` INTEGER NOT NULL, `isDarkHaired` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -74,6 +73,12 @@
           {
             "fieldPath": "isSenior",
             "columnName": "isSenior",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPuppy",
+            "columnName": "isPuppy",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -139,7 +144,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7990af4f84f45f1df587f8529c3e8921')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '49a31bb405129439fc209d95d01fa6a5')"
     ]
   }
 }
