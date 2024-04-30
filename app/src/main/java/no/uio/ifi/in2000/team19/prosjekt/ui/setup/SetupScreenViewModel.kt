@@ -22,10 +22,7 @@ class SetupScreenViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ): ViewModel() {
 
-
-
-    // COMMON
-    private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"", "", false,false,false, false, false, false, false, false, false))
+    private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"undefined", "undefined", false,false,false, false, false, false, false, false, false, false))
     var userInfo: StateFlow<UserInfo> = _userInfo.asStateFlow()
 
 
@@ -43,7 +40,6 @@ class SetupScreenViewModel @Inject constructor(
 
         Log.d("SETUP_DEBUG", _userInfo.value.dogName)
     }
-
 
 
     // SCREEN TWO
