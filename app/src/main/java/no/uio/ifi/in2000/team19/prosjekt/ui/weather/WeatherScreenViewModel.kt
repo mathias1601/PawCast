@@ -35,8 +35,6 @@ class WeatherScreenViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    //private var weatherUiState: WeatherUiState by mutableStateOf(WeatherUiState.Loading)
-
     private val _weatherUiState: MutableStateFlow<WeatherUiState> = MutableStateFlow(WeatherUiState.Loading)
     var weatherUiState: StateFlow<WeatherUiState> = _weatherUiState.asStateFlow()
 
@@ -51,7 +49,11 @@ class WeatherScreenViewModel @Inject constructor(
             val cords = settingsRepository.getCords()
 
             try {
-                val weatherHoursDeferred = async {locationForecastRepository.getGeneralForecast(cords.latitude, cords.latitude, "0", 3)}
+                val weatherHoursDeferred = async {locationForecastRepository.getGeneralForecast(
+                    latitude = cords.latitude,
+                    longitude = cords.longitude,
+                    height = "0",
+                    nrHours = 3)}
                 Log.d("Debug", "Loader vær for timer")
 
 
@@ -60,14 +62,11 @@ class WeatherScreenViewModel @Inject constructor(
 
                 val weatherHours = weatherHoursDeferred.await()
                 val weatherDays = weatherDaysDeferred.await()
-                //weatherUiState = WeatherUiState.Success(weatherHours, weatherDays)
+
                 _weatherUiState.value = WeatherUiState.Success(weatherHours, weatherDays)
             } catch (e: IOException) {
                 _weatherUiState.value = WeatherUiState.Error
             }
         }
     }
-
-    //fun fetchWeatherUiState(): WeatherUiState = weatherUiState
-
 }
