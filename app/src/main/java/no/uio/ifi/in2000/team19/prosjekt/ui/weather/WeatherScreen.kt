@@ -5,8 +5,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
@@ -71,154 +74,195 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
 
             val differentDays = weatherDays.map { it.day }.distinct()
 
-            val meanHoursForTomorrow = weatherMean.filter {it.day == differentDays[0]}
-            val meanHoursForDayAfterTomorrow = weatherMean.filter {it.day == differentDays[1]}
+            val meanHoursForTomorrow = weatherMean.filter { it.day == differentDays[0] }
+            val meanHoursForDayAfterTomorrow = weatherMean.filter { it.day == differentDays[1] }
 
-            LazyColumn {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xffdff5fd)),
+                contentAlignment = Alignment.Center
+            ) {
 
-                item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(18.dp)
-                            .animateContentSize(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = colorForTitle)
-                        //elevation = 4.dp
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { todayExpanded = !todayExpanded }
-                                .padding(16.dp)) {
-                            //val dayWithCapitalizedFirst = weatherDays[0].day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-                            //Text(text = dayWithCapitalizedFirst)
+                LazyColumn (
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp)) {
+
+                    item {
+                        Spacer(modifier = Modifier.size(20.dp))
                             Text(
-                                text = "I dag",
-                                fontSize = 25.sp,
+                                text = "Værvarsel",
+                                fontSize = 30.sp,
                                 fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                .fillMaxWidth(), // Fyller maksimal bredde. // Sørger for at teksten er sentrert horisontalt.
+                                textAlign = TextAlign.Center
+                                //modifier = Modifier.align(Alignment.Center)
+                            )
+                        Spacer(modifier = Modifier.size(20.dp))
+                    }
+
+
+                    item {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                                .animateContentSize(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = colorForTitle
+                            )
+                            //elevation = 4.dp
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { todayExpanded = !todayExpanded }
+                                    .padding(16.dp)) {
+                                //val dayWithCapitalizedFirst = weatherDays[0].day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+                                //Text(text = dayWithCapitalizedFirst)
+                                Text(
+                                    text = "I dag",
+                                    fontSize = 25.sp,
+                                    fontWeight = FontWeight.Bold,
                                 )
-                            Spacer(Modifier.weight(12f))
-                            Icon(
-                                imageVector = if (todayExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
-                                contentDescription = if (todayExpanded) "Collapse" else "Expand",
-                                modifier = Modifier.size(24.dp)
-                            )
+                                Spacer(Modifier.weight(12f))
+                                Icon(
+                                    imageVector = if (todayExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
+                                    contentDescription = if (todayExpanded) "Collapse" else "Expand",
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.size(6.dp))
                         }
-                        Spacer(modifier = Modifier.size(6.dp))
                     }
-                }
 
 
-                if (!todayExpanded) {
-                    items(firstThreeHours) { weather ->
-                        WeatherForecastCard(weather, color)
+                    if (!todayExpanded) {
+                        items(firstThreeHours) { weather ->
+                            WeatherForecastCard(weather, color)
+                        }
                     }
-                }
 
 
-                if (todayExpanded) {
-                    items(allHours) { weather ->
-                        WeatherForecastCard(weather, color)
+                    if (todayExpanded) {
+                        items(allHours) { weather ->
+                            WeatherForecastCard(weather, color)
+                        }
                     }
-                }
 
 
 
-                item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(18.dp)
-                            .animateContentSize(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = colorForTitle)
-                        //elevation = 4.dp
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                    item {
+                        Spacer(modifier = Modifier.size(10.dp))
+
+                        Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { tomorrowExpanded = !tomorrowExpanded }
-                                .padding(16.dp)) {
-                            val dayWithCapitalizedFirst = weatherDays[0].day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-                            Text(text = dayWithCapitalizedFirst,
-                                fontSize = 25.sp,
-                                fontWeight = FontWeight.Bold)
-                            Spacer(Modifier.weight(12f))
-                            Icon(
-                                imageVector = if (tomorrowExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
-                                contentDescription = if (tomorrowExpanded) "Collapse" else "Expand",
-                                modifier = Modifier.size(24.dp)
+                                .padding(vertical = 8.dp)
+                                .animateContentSize(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = colorForTitle
                             )
+                            //elevation = 4.dp
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { tomorrowExpanded = !tomorrowExpanded }
+                                    .padding(16.dp)) {
+                                val dayWithCapitalizedFirst =
+                                    weatherDays[0].day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+                                Text(
+                                    text = dayWithCapitalizedFirst,
+                                    fontSize = 25.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(Modifier.weight(12f))
+                                Icon(
+                                    imageVector = if (tomorrowExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
+                                    contentDescription = if (tomorrowExpanded) "Collapse" else "Expand",
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.size(6.dp))
                         }
-                        Spacer(modifier = Modifier.size(6.dp))
                     }
-                }
 
-                if (!tomorrowExpanded) {
+                    if (!tomorrowExpanded) {
+                        item {
+                            WeatherForecastCardForDays(weatherForDay = weatherDays[0], color)
+                        }
+                    }
+
+                    if (tomorrowExpanded) {
+                        items(meanHoursForTomorrow) { weather ->
+                            WeatherForecastMean(weatherForDay = weather, color)
+                        }
+
+                    }
+
+
+
                     item {
-                        WeatherForecastCardForDays(weatherForDay = weatherDays[0], color)
-                    }
-                }
+                        Spacer(modifier = Modifier.size(10.dp))
 
-                if (tomorrowExpanded) {
-                    items(meanHoursForTomorrow) {weather ->
-                        WeatherForecastMean(weatherForDay = weather, color)
-                    }
-                }
-
-
-
-                item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(18.dp)
-                            .animateContentSize(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = colorForTitle)
-                        //elevation = 4.dp
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                        Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { dayAfterTomorrowExpanded = !dayAfterTomorrowExpanded }
-                                .padding(16.dp)) {
-                            val dayWithCapitalizedFirst = weatherDays[1].day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-                            Text(text = dayWithCapitalizedFirst,
-                                fontSize = 25.sp,
-                                fontWeight = FontWeight.Bold,)
-                            Spacer(Modifier.weight(12f))
-                            Icon(
-                                imageVector = if (dayAfterTomorrowExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
-                                contentDescription = if (dayAfterTomorrowExpanded) "Collapse" else "Expand",
-                                modifier = Modifier.size(24.dp)
+                                .padding(vertical = 8.dp)
+                                .animateContentSize(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = colorForTitle
                             )
+                            //elevation = 4.dp
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        dayAfterTomorrowExpanded = !dayAfterTomorrowExpanded
+                                    }
+                                    .padding(16.dp)) {
+                                val dayWithCapitalizedFirst =
+                                    weatherDays[1].day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+                                Text(
+                                    text = dayWithCapitalizedFirst,
+                                    fontSize = 25.sp,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                                Spacer(Modifier.weight(12f))
+                                Icon(
+                                    imageVector = if (dayAfterTomorrowExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
+                                    contentDescription = if (dayAfterTomorrowExpanded) "Collapse" else "Expand",
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.size(6.dp))
                         }
-                        Spacer(modifier = Modifier.size(6.dp))
                     }
-                }
 
-                if (!dayAfterTomorrowExpanded) {
-                    item {
-                        WeatherForecastCardForDays(weatherForDay = weatherDays[1], color)
+                    if (!dayAfterTomorrowExpanded) {
+                        item {
+                            WeatherForecastCardForDays(weatherForDay = weatherDays[1], color)
+                        }
                     }
-                }
 
-                if (dayAfterTomorrowExpanded) {
-                    items(meanHoursForDayAfterTomorrow) {weather ->
-                        WeatherForecastMean(weatherForDay = weather, color)
+                    if (dayAfterTomorrowExpanded) {
+                        items(meanHoursForDayAfterTomorrow) { weather ->
+                            WeatherForecastMean(weatherForDay = weather, color)
+                        }
                     }
-                }
 
+
+                }
 
 
             }
-
-
         }
     }
 }
@@ -273,7 +317,7 @@ fun WeatherForecastCard(generalForecast: GeneralForecast, color: Color) {
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(18.dp)
+            .padding(vertical = 8.dp)
             //.size(width = 350.dp, height = 75.dp)
             //.padding(9.dp)
         //.height(23.dp)
@@ -348,7 +392,7 @@ fun WeatherForecastCardForDays(weatherForDay: WeatherForDay, color: Color) {
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(18.dp)
+                .padding(vertical = 8.dp)
             //.height(23.dp)
         ) {
 
@@ -406,7 +450,7 @@ fun WeatherForecastMean(weatherForDay: WeatherForDay, color: Color) {
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(18.dp)
+            .padding(vertical = 8.dp)
         //.size(width = 350.dp, height = 75.dp)
         //.padding(9.dp)
         //.height(23.dp)
