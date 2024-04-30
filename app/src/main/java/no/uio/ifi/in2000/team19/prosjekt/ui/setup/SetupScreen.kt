@@ -36,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -96,7 +97,6 @@ fun SetupManager(
 }
 
 
-// DONE.
 @Composable
 fun OnboardingScreenOne(viewModel: SetupScreenViewModel, id:String, navController: NavHostController) {
 
@@ -114,7 +114,8 @@ fun OnboardingScreenOne(viewModel: SetupScreenViewModel, id:String, navControlle
     Column (
         modifier = Modifier
             .fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
 
 
     ) {
@@ -182,7 +183,15 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
                 },
 
             ) {
-                Text(text = "Valp")
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Valp")
+                }
             }
 
 
@@ -196,7 +205,15 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
                 viewModel.updateIsSenior(false) // Doesnt need to update adult in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
             }) {
-                Text(text = "Voksen")
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Voksen")
+                }
             }
 
             Card(
@@ -209,8 +226,15 @@ fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navControll
                 viewModel.updateIsSenior(true) // Update senior in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
             }) {
-                Text(text = "Senior")
-                
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Senior")
+                }
             }
         }
     }
@@ -248,7 +272,16 @@ fun OnboardingScreenThree(viewModel: SetupScreenViewModel, id: String, navContro
                 },
 
                 ) {
-                Text(text = "Vanlig snute")
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Vanlig snute")
+                }
+
             }
 
 
@@ -262,7 +295,15 @@ fun OnboardingScreenThree(viewModel: SetupScreenViewModel, id: String, navContro
                 viewModel.updateIsFlatNosed(true) // Doesnt need to update adult in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
             }) {
-                Text(text = "Flat snute")
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Flat snute")
+                }
             }
         }
     }
@@ -298,7 +339,16 @@ fun OnboardingScreenFour(viewModel: SetupScreenViewModel, id: String, navControl
                 },
 
                 ) {
-                Text(text = "Tynn")
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ) {
+                    Text(text = "Tynn")
+                }
+
             }
 
 
@@ -312,7 +362,16 @@ fun OnboardingScreenFour(viewModel: SetupScreenViewModel, id: String, navControl
                 viewModel.updateIsThin(false) // Doesnt need to update adult in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
             }) {
-                Text(text = "Middels")
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Middels")
+                }
+
             }
 
             Card(
@@ -325,7 +384,15 @@ fun OnboardingScreenFour(viewModel: SetupScreenViewModel, id: String, navControl
                 viewModel.updateIsThin(false) // Doesnt need to update adult in database
                 navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
             }) {
-                Text(text = "Tykk")
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Tykk")
+                }
             }
         }
     }
