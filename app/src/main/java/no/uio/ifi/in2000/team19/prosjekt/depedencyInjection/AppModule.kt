@@ -47,8 +47,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideLocationForecastRepository(forecastDataSource: LocationForecastDataSource): LocationForecastRepository {
-        return LocationForecastRepository(forecastDataSource)
+    fun provideLocationForecastRepository(forecastDataSource: LocationForecastDataSource, @ApplicationContext context: Context): LocationForecastRepository {
+        return LocationForecastRepository(forecastDataSource, context)
     }
 
     @Singleton

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="SAFE">
+        <item>Trygt</item>
+
+        <item>Nå kan du gå ut</item>
+
+        <item> Nå kan du gå ut </item>
+    </string-array>
+</resources>

@@ -1,7 +1,11 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,9 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
@@ -49,10 +52,9 @@ import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
-import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherForecastCard
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenManager(
@@ -68,7 +70,7 @@ fun HomeScreenManager(
     }
     val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast()})
 
-    Scaffold() { innerPadding ->
+    Scaffold { innerPadding ->
 
             Box(
                 Modifier.padding(innerPadding)
@@ -117,18 +119,53 @@ fun HomeScreen(
     graphUiState: CartesianChartModelProducer
 ) {
 
+    val newColor = Color(0xffece9e4)
 
+    val context = LocalContext.current
+    //val drawableName = advice.
+    val drawableId =
+        context.resources.getIdentifier("clearsky_day", "drawable", context.packageName)
     Column(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxSize()
     ) {
+
+
+        Card(
+            colors = CardDefaults.cardColors(
+                //containerColor = newColor
+            ),
+            modifier = Modifier
+                .size(width = 350.dp, height = 75.dp)
+                .padding(9.dp)
+            //.height(23.dp)
+        ) {
+
+            Row(
+                modifier = Modifier
+                    .fillMaxSize(),
+                //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text("18C")
+
+                Spacer(modifier = Modifier.size(15.dp))
+
+                Image(
+                    painter = painterResource(id = drawableId),
+                    contentDescription = "Værsymbol"
+                )
+            }
+        }
         Text(
             text = "Anbefalinger"
         )
         Text(text = "Valgt lokasjon: ${cords.shortName}")
-        LazyColumn(
-        ) {
+        Text("Longitude: ${cords.longitude}, Latitude: ${cords.latitude}")
+
+        LazyColumn {
             items(advice.allAdvice) { item ->
                 AdviceCard(item)
             }
@@ -144,9 +181,8 @@ fun HomeScreen(
 fun AdviceCard(advice: Advice) {
 
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = Color(android.graphics.Color.parseColor(advice.color))
-        ),
+        //colors = CardDefaults.cardColors(
+           //containerColor = Color(android.graphics.Color.parseColor(advice.color))
         modifier = Modifier
             .padding(2.dp)
     ) {
@@ -157,27 +193,14 @@ fun AdviceCard(advice: Advice) {
         ) {
             Text(text = advice.title)
             Text(text = advice.description)
-            Text(text = "${advice.forecast.temperature} grader")
-            Text(text = "${advice.forecast.windspeed} m/s")
+
         }
     }
 
 }
 
 
-@Composable
-fun WeatherForecast(weatherForecast: List<GeneralForecast>) {
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
-        //columns = GridCells.Adaptive(minSize = 150.dp),
-        content = {
-            items(weatherForecast) { generalForecast ->
-                WeatherForecastCard(generalForecast = generalForecast)
-            }
-        }
-    )
-}
 
 @Composable
 fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
@@ -212,3 +235,4 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
         }
     }
 }
+

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="VERYWARM">
+        <item> Veldig varmt </item>
+
+        <item>
+            Ta deg et bad
+        </item>
+
+        <item> kort info </item>
+    </string-array>
+</resources>

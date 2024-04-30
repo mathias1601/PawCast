@@ -13,6 +13,8 @@ data class UserInfo(
     @ColumnInfo(name = "dogName") var dogName: String,
     //Age
     @ColumnInfo(name = "isSenior") var isSenior: Boolean,
+    @ColumnInfo(name = "isPuppy") var isPuppy: Boolean,
+
     //Nose
     @ColumnInfo(name = "isFlatNosed") var isFlatNosed: Boolean,
     //Body
