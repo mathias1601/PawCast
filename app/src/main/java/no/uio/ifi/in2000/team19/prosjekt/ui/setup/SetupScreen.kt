@@ -1,13 +1,14 @@
+@file:OptIn(ExperimentalLayoutApi::class)
+
 package no.uio.ifi.in2000.team19.prosjekt.ui.setup
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,30 +17,29 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import android.annotation.SuppressLint as SuppressLint1
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,7 +86,9 @@ fun SetupManager(
             when (id) {
                 "0" -> OnboardingScreenOne(viewModel,id,navController)
                 "1" -> OnboardingScreenTwo(viewModel,id,navController)
-                "2" -> OnboardingScreenThree(viewModel,navController)
+                "2" -> OnboardingScreenThree(viewModel,id,navController)
+                "3" -> OnboardingScreenFour(viewModel,id,navController)
+                "4" -> OnboardingScreenFive(viewModel,navController)
 
             }
         }
@@ -94,16 +96,27 @@ fun SetupManager(
 
 }
 
+
 @Composable
 fun OnboardingScreenOne(viewModel: SetupScreenViewModel, id:String, navController: NavHostController) {
 
-    var userName by remember { mutableStateOf("") }
-    var dogName by remember { mutableStateOf("") }
+
+    val userInfo = viewModel.userInfo.collectAsState().value
+
+    var userName by remember {
+        mutableStateOf(userInfo.userName)
+    }
+
+    var dogName by remember {
+        mutableStateOf(userInfo.dogName)
+    }
 
     Column (
         modifier = Modifier
             .fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+
 
     ) {
         Text(text="Navnet ditt")
@@ -123,11 +136,16 @@ fun OnboardingScreenOne(viewModel: SetupScreenViewModel, id:String, navControlle
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Button(onClick = {
+            Button(
+                onClick = {
                 viewModel.updateUserName(userName)
                 viewModel.updateDogName(dogName)
-                navController.navigate("setup/${id.toInt()+1}")
-            }) {
+                navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+            },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.primary
+                )) {
                 Text(text = "Neste")
             }
         }
@@ -135,149 +153,281 @@ fun OnboardingScreenOne(viewModel: SetupScreenViewModel, id:String, navControlle
     }
 }
 
-@SuppressLint1("UnrememberedMutableState")
 @Composable
 fun OnboardingScreenTwo(viewModel: SetupScreenViewModel, id: String, navController: NavHostController) {
 
-    var age by remember { mutableStateOf(false) }
-    var nose by remember { mutableStateOf(false) }
-    var body by remember { mutableStateOf(false) }
-
-    val ageOptions = listOf("Valp", "Voksen", "Senior")
-    val noseOptions = listOf("Flat", "Ikke flat")
-    val bodyOptions = listOf("Tynn", "Middels", "Tykk")
-
-    val (selectedAgeOption, onAgeOptionSelected) = remember { mutableStateOf(ageOptions[0] ) }
-    val (selectedNoseOption, onNoseOptionSelected) = remember { mutableStateOf(noseOptions[0] ) }
-    val (selectedBodyOption, onBodyOptionSelected) = remember { mutableStateOf(bodyOptions[0] ) }
+    val ageIndex = viewModel.selectedAgeIndex.collectAsState().value
 
     Column (
         modifier = Modifier
             .fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
 
     ) {
         Text(text="Alder")
-        Row (
-            modifier = Modifier
-                .fillMaxWidth()
-        ){
-            ageOptions.forEach { text ->
-
-                CheckboxButton(
-                    text = text,
-                    isChecked = (text == selectedAgeOption),
-                    onClick = {
-                        onAgeOptionSelected(text)
-                    }
-                )
-
-            }
-        }
-        Text(text="Snute")
-        Row (
+        FlowRow (
             modifier = Modifier
                 .fillMaxWidth()
         ){
 
-            noseOptions.forEach { text ->
 
-                CheckboxButton(
-                    text = text,
-                    isChecked = (text == selectedNoseOption),
-                    onClick = {
-                        onNoseOptionSelected(text)
-                    }
-                )
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
+                onClick = {
+                viewModel.updateAgeIndex(0)
+                viewModel.updateIsSenior(false) // Doesnt need to update puppy in database
+                navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+                },
 
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Valp")
+                }
+            }
+
+
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
+                onClick = {
+                viewModel.updateAgeIndex(1)
+                viewModel.updateIsSenior(false) // Doesnt need to update adult in database
+                navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+            }) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Voksen")
+                }
+            }
+
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
+                onClick = {
+                viewModel.updateAgeIndex(2)
+                viewModel.updateIsSenior(true) // Update senior in database
+                navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+            }) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Senior")
+                }
             }
         }
+    }
+}
+
+
+
+@Composable
+fun OnboardingScreenThree(viewModel: SetupScreenViewModel, id: String, navController: NavHostController) {
+
+    val noseIndex = viewModel.selectedAgeIndex.collectAsState().value
+
+    Column (
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+
+        ) {
+        Text(text="Form på snute")
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+        ){
+
+
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
+                onClick = {
+                    viewModel.updateAgeIndex(0)
+                    viewModel.updateIsFlatNosed(false) // Doesnt need to update puppy in database
+                    navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+                },
+
+                ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Vanlig snute")
+                }
+
+            }
+
+
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
+                onClick = {
+                viewModel.updateAgeIndex(1)
+                viewModel.updateIsFlatNosed(true) // Doesnt need to update adult in database
+                navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+            }) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Flat snute")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun OnboardingScreenFour(viewModel: SetupScreenViewModel, id: String, navController: NavHostController) {
+
+    val thinIndex = viewModel.selectedThinIndex.collectAsState().value
+
+    Column (
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+
+        ) {
         Text(text="Kropp")
         Row (
             modifier = Modifier
                 .fillMaxWidth()
         ){
-            bodyOptions.forEach { text ->
 
-                CheckboxButton(
-                    text = text,
-                    isChecked = (text == selectedBodyOption),
-                    onClick = {
-                        onBodyOptionSelected(text)
-                    }
-                )
 
-            }
-        }
-
-        Box() {
-            Button(
+            Card(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
                 onClick = {
-                    age = selectedAgeOption == "Senior"
-                    nose = selectedNoseOption == "Flat"
-                    body = selectedBodyOption == "Tynn"
+                    viewModel.updateThinIndex(0)
+                    viewModel.updateIsThin(true) // Doesnt need to update puppy in database
+                    navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+                },
 
-                    viewModel.updateAge(age)
-                    viewModel.updateNose(nose)
-                    viewModel.updateThin(body)
+                ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
 
-                    navController.navigate("setup/${id.toInt()+1}")
+                ) {
+                    Text(text = "Tynn")
                 }
-            ) {
-                Text(text = "Neste")
+
+            }
+
+
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
+                onClick = {
+                viewModel.updateThinIndex(1)
+                viewModel.updateIsThin(false) // Doesnt need to update adult in database
+                navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+            }) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Middels")
+                }
+
+            }
+
+            Card(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(4.dp),
+                onClick = {
+                viewModel.updateThinIndex(2)
+                viewModel.updateIsThin(false) // Doesnt need to update adult in database
+                navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+            }) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+
+                ){
+                    Text(text = "Tykk")
+                }
             }
         }
     }
-
 }
-@Composable
-fun CheckboxButton(
-    text: String,
-    isChecked: Boolean,
-    onClick: (Boolean) -> Unit
 
-) {
-    OutlinedCard(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        border = BorderStroke(1.dp, Color.Black),
-        modifier = Modifier
-            .padding(8.dp)
-            .clickable { onClick(isChecked) }
 
-    ) {
-        Box(
-            modifier = Modifier
 
-        )
-        Checkbox(checked = isChecked, onCheckedChange = onClick)
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodySmall.merge()
-        )
-    }
-}
+
+
+
+
+
+
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun OnboardingScreenThree(viewModel: SetupScreenViewModel, navController: NavHostController) {
+fun OnboardingScreenFive(viewModel: SetupScreenViewModel, navController: NavHostController) {
 
+    val userInfo = viewModel.userInfo.collectAsState().value
     Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center
     ) {
         Text(text="Pels")
-        FlowRow() {
+        FlowRow(
+        ) {
 
-            FilterChip(text = "Tynn", categoryName = "tynnPels", viewModel)
-            FilterChip(text = "Tykk", categoryName = "tykkPels", viewModel)
-            FilterChip(text = "Lang", categoryName = "langPels", viewModel)
-            FilterChip(text = "Kort", categoryName = "kortPels", viewModel)
-            FilterChip(text = "Lys", categoryName = "lysPels", viewModel)
-            FilterChip(text = "Mørk", categoryName = "moerkPels", viewModel)
+            FilterChip(text = "Tynn", categoryName = "tynnPels", viewModel, userInfo.isThinHaired)
+            FilterChip(text = "Tykk", categoryName = "tykkPels", viewModel, userInfo.isThickHaired)
+            FilterChip(text = "Lang", categoryName = "langPels", viewModel, userInfo.isLongHaired)
+            FilterChip(text = "Kort", categoryName = "kortPels", viewModel, userInfo.isShortHaired)
+            FilterChip(text = "Lys", categoryName = "lysPels", viewModel, userInfo.isLightHaired)
+            FilterChip(text = "Mørk", categoryName = "moerkPels", viewModel, userInfo.isDarkHaired)
+
         }
         Box(){
             Button(
@@ -304,21 +454,27 @@ fun FilterChip(
     text: String,
     categoryName: String,
     viewModel: SetupScreenViewModel,
+    selected: Boolean
     ) {
-        var selected by remember { mutableStateOf(false)}
+
+        var isSelected by remember {
+            mutableStateOf(selected)
+        }
 
         FilterChip(
             modifier = Modifier
                 .padding(8.dp),
             onClick = {
-                selected = !selected
-                viewModel.updateFilterCategories(categoryName,selected)
+                isSelected = !isSelected
+                viewModel.updateFilterCategories(categoryName,isSelected)
                 },
             label = {
-                Text(text=text)
+                Text(
+                    text=text
+                )
             },
-        selected = selected,
-        leadingIcon = if (selected) {
+        selected = isSelected,
+        leadingIcon = if (isSelected) {
             {
                 Icon(
                     imageVector = Icons.Filled.Done,

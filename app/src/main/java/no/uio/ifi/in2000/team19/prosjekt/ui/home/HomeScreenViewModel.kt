@@ -37,11 +37,11 @@ class HomeScreenViewModel @Inject constructor(
     private val locationForecastRepository: LocationForecastRepository
 ): ViewModel() {
 
-    private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
-    var graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
-
     private var _adviceUiState: MutableStateFlow<AdviceUiState> = MutableStateFlow(AdviceUiState.Loading)
     var adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
+
+    private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
+    var graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
 
     private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "69", "69"))
     var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()

@@ -25,6 +25,9 @@ class SetupScreenViewModel @Inject constructor(
     private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"undefined", "undefined", false,false,false, false, false, false, false, false, false, false))
     var userInfo: StateFlow<UserInfo> = _userInfo.asStateFlow()
 
+
+
+    // SCREEN ONE
     fun updateUserName(userName: String){
         val updatedUserName = _userInfo.value.copy(userName = userName)
         _userInfo.value = updatedUserName
@@ -34,22 +37,64 @@ class SetupScreenViewModel @Inject constructor(
     fun updateDogName(dogName: String){
         val updatedDogName = _userInfo.value.copy(dogName = dogName)
         _userInfo.value = updatedDogName
+
         Log.d("SETUP_DEBUG", _userInfo.value.dogName)
     }
-    fun updateAge(newValue: Boolean) {
-        //TODO add puppy here
+
+
+    // SCREEN TWO
+
+    private var _selectedAgeIndex: MutableStateFlow<Int?> = MutableStateFlow(null) // Null when none are chosen.
+    var selectedAgeIndex: StateFlow<Int?> = _selectedAgeIndex.asStateFlow()
+
+    fun updateAgeIndex(newIndex:Int){
+        _selectedAgeIndex.value = newIndex
+    }
+    fun updateIsSenior(newValue: Boolean) {
         _userInfo.value.isSenior = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isSenior.toString())
     }
-    fun updateNose(newValue: Boolean){
+
+
+
+
+    // SCREEN THREE
+
+    private var _selectedNoseIndex: MutableStateFlow<Int?> = MutableStateFlow(null) // Null when none are chosen.
+    var selectedNoseIndex: StateFlow<Int?> = _selectedNoseIndex.asStateFlow()
+
+    fun updateIsFlatNosed(newValue: Boolean){
         _userInfo.value.isFlatNosed = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isFlatNosed.toString())
     }
-    fun updateThin(newValue: Boolean) {
+
+    fun updateNoseIndex(newIndex:Int){
+        _selectedNoseIndex.value = newIndex
+    }
+
+
+
+
+    // SCREEN FOUR
+
+    private var _selectedThinIndex: MutableStateFlow<Int?> = MutableStateFlow(null)
+    var selectedThinIndex:StateFlow<Int?> = _selectedThinIndex.asStateFlow()
+
+    fun updateIsThin(newValue: Boolean) {
         _userInfo.value.isThin = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isThin.toString())
     }
 
+    fun updateThinIndex(newIndex: Int){
+        _selectedThinIndex.value = newIndex
+    }
+
+
+
+
+
+
+    // SCREEN FIVE
     fun updateFilterCategories(categoryName: String, newValue: Boolean) {
         when (categoryName) {
             "tynnPels" -> { _userInfo.value.isThinHaired = newValue }
@@ -61,6 +106,9 @@ class SetupScreenViewModel @Inject constructor(
         }
     }
 
+
+
+    // SAVE EVERY CHOICE. Only done at the end to make sure the user finnished the Setup process.
     fun saveUserInfo() {
         viewModelScope.launch(Dispatchers.IO) {
             try {

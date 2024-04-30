@@ -3,7 +3,6 @@ package no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @Entity
 data class UserInfo(
