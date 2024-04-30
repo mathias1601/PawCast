@@ -29,8 +29,9 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.settings.SettingsScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
-import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
+//import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

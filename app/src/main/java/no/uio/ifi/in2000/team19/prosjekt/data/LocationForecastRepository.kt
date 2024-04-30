@@ -189,16 +189,16 @@ class LocationForecastRepository @Inject constructor(
             val symbolCode = nextHoursData?.summary?.symbol_code ?: locationForecast.properties.timeseries[startOfFirstDay].data.next_6_hours.summary.symbol_code
 
             val timeStart = locationForecast.properties.timeseries[startOfFirstDay].time
-            //val zonedDateTimeStart = ZonedDateTime.parse(timeStart)
-            //val hourFormat = DateTimeFormatter.ofPattern("HH")
-            //val startHourAsInt = zonedDateTimeStart.format(hourFormat)
+            val zonedDateTimeStart = ZonedDateTime.parse(timeStart)
+            val hourFormat = DateTimeFormatter.ofPattern("HH")
+            val startHourAsInt = zonedDateTimeStart.format(hourFormat)
 
             val timeEnd = locationForecast.properties.timeseries[startOfFirstDay + 3].time
-            //val zonedDateTimeEnd = ZonedDateTime.parse(timeEnd)
-            //val hourFormatter = DateTimeFormatter.ofPattern("HH")
-            //val endHourAsInt = zonedDateTimeEnd.format(hourFormatter)
+            val zonedDateTimeEnd = ZonedDateTime.parse(timeEnd)
+            val hourFormatter = DateTimeFormatter.ofPattern("HH")
+            val endHourAsInt = zonedDateTimeEnd.format(hourFormatter)
 
-            forecastList.add(WeatherForDay(symbolCode, "1: ${startOfFirstDay} 2: ${startOfFirstDay + 1} 3: ${startOfFirstDay + 2} 4: ${startOfFirstDay + 3}", null, null, timeStart, timeEnd, roundedMean))
+            forecastList.add(WeatherForDay(symbolCode, dayOfWeekString, null, null, startHourAsInt, endHourAsInt, roundedMean))
 
             startOfFirstDay += 4
         }
