@@ -8,4 +8,6 @@ data class WeatherForDay(
     val startingTime: String? = null,
     val endingTime: String? = null,
     val meanTemperature: String? = null,
+    val wind: Double? = null,
+    val percipitation: Double? = null
 ) : forecastSuper()

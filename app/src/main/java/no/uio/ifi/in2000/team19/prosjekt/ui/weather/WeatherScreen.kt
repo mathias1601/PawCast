@@ -68,8 +68,15 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
             val weatherDays = weatherUiState.weather.day
             val weatherMean = weatherUiState.weather.hours
 
-            val indices = listOf(1, 2, 3) // Definerer hvilke indekser du vil inkludere
-            val firstThreeHours = weatherHours.slice(indices)
+            var firstHours: List<GeneralForecast>
+
+            if (weatherHours.size > 3) {
+                val indices = listOf(1, 2, 3) // Definerer hvilke indekser du vil inkludere
+                firstHours = weatherHours.slice(indices)
+            }
+            else {
+                firstHours = weatherHours
+            }
             val allHours = weatherHours.drop(1)
 
             val differentDays = weatherDays.map { it.day }.distinct()
@@ -125,7 +132,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
                                 //Text(text = dayWithCapitalizedFirst)
                                 Text(
                                     text = "I dag",
-                                    fontSize = 25.sp,
+                                    fontSize = 23.sp,
                                     fontWeight = FontWeight.Bold,
                                 )
                                 Spacer(Modifier.weight(12f))
@@ -141,7 +148,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
 
 
                     if (!todayExpanded) {
-                        items(firstThreeHours) { weather ->
+                        items(firstHours) { weather ->
                             WeatherForecastCard(weather, color)
                         }
                     }
@@ -178,7 +185,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
                                     weatherDays[0].day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
                                 Text(
                                     text = dayWithCapitalizedFirst,
-                                    fontSize = 25.sp,
+                                    fontSize = 23.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Spacer(Modifier.weight(12f))
@@ -232,7 +239,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
                                     weatherDays[1].day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
                                 Text(
                                     text = dayWithCapitalizedFirst,
-                                    fontSize = 25.sp,
+                                    fontSize = 23.sp,
                                     fontWeight = FontWeight.Bold,
                                 )
                                 Spacer(Modifier.weight(12f))
@@ -405,10 +412,17 @@ fun WeatherForecastCardForDays(weatherForDay: WeatherForDay, color: Color) {
 
                 Spacer(modifier = Modifier.size(15.dp))
 
+                Image(
+                    painter = painterResource(id = drawableId),
+                    contentDescription = "Værsymbol",
+                    modifier = Modifier.size(83.dp)
+                )
+                Spacer(modifier = Modifier.size(45.dp))
+
                 Column {
                     Text(
                         text = "L: ${weatherForDay.lowestTemperature}°C",
-                        fontSize = 25.sp,
+                        fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                     )
 
@@ -416,17 +430,11 @@ fun WeatherForecastCardForDays(weatherForDay: WeatherForDay, color: Color) {
 
                     Text(
                         text = "H: ${weatherForDay.highestTemperature}°C",
-                        fontSize = 25.sp,
+                        fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                     )
                 }
-                Spacer(modifier = Modifier.size(45.dp))
 
-                Image(
-                    painter = painterResource(id = drawableId),
-                    contentDescription = "Værsymbol",
-                    modifier = Modifier.size(83.dp)
-                )
 
             }
         }

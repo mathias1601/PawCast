@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,10 +14,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,6 +28,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,7 +40,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
@@ -159,13 +166,38 @@ fun HomeScreen(
                 )
             }
         }
-        Text(
-            text = "Anbefalinger"
-        )
-        Text(text = "Valgt lokasjon: ${cords.shortName}")
-        Text("Longitude: ${cords.longitude}, Latitude: ${cords.latitude}")
 
-        LazyColumn {
+        Text(text = "Valgt lokasjon: ${cords.shortName}")
+        //Text("Longitude: ${cords.longitude}, Latitude: ${cords.latitude}")
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()) {
+            Text(
+                text = "Anbefalinger",
+                fontWeight = FontWeight.Bold,
+                fontSize = 25.sp,
+                //modifier = Modifier
+                //    .fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(Modifier.weight(1f))
+
+            TextButton(onClick = { })
+            {
+                Text(
+                    text = "Se alle",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.size(7.dp))
+
+        LazyRow {
             items(advice.allAdvice) { item ->
                 AdviceCard(item)
             }
@@ -184,16 +216,40 @@ fun AdviceCard(advice: Advice) {
         //colors = CardDefaults.cardColors(
            //containerColor = Color(android.graphics.Color.parseColor(advice.color))
         modifier = Modifier
-            .padding(2.dp)
+            .size(width = 270.dp, height = 190.dp)
+            .padding(horizontal = 10.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(10.dp)
-        ) {
-            Text(text = advice.title)
-            Text(text = advice.description)
+        Box {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)
+            ) {
+                Text(
+                    text = advice.title,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
 
+                Spacer(modifier = Modifier.size(10.dp))
+
+                Text(
+                    text = advice.shortAdvice,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+
+            }
+
+            Button(
+                onClick = { },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp),
+                contentPadding = PaddingValues(horizontal = 9.dp, vertical = 4.dp)
+            ) {
+                Text("Les mer")
+            }
         }
     }
 
