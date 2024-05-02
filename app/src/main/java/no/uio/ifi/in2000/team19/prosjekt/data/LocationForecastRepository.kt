@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.patrykandpatrick.vico.core.Animation.range
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
@@ -15,6 +16,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -37,27 +39,13 @@ class LocationForecastRepository @Inject constructor(
 
     fun getAdviceForecastList(listOfGeneralForecasts: ForecastTypes): List<AdviceForecast> {
 
-        var adviceForecasts = mutableListOf<AdviceForecast>()
+        val adviceForecasts = mutableListOf<AdviceForecast>()
         val general: List<GeneralForecast> = listOfGeneralForecasts.general
         general.forEach{
             adviceForecasts.add(getAdviceForecastData(it))
         }
         return adviceForecasts
     }
-
-    /*
-    * data class GeneralForecast (
-    val temperature:Double,
-    val wind: Double? = null,
-    val symbol : String,
-    val hour: String,
-    val date: String,
-    val percipitation: Double,
-    val thunderprobability: Double,
-    val UVindex: Double
-) : forecastSuper()
-
-    * */
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -67,20 +55,30 @@ class LocationForecastRepository @Inject constructor(
 
         val start = locationForecast.properties.timeseries[0].time
         val dateTime = ZonedDateTime.parse(start, DateTimeFormatter.ISO_DATE_TIME)
-        val hour = dateTime.toLocalDateTime().withMinute(0).withSecond(0).withNano(0).hour
+        val startHour = dateTime.toLocalDateTime().truncatedTo(ChronoUnit.HOURS)
 
-        val now = LocalDateTime.now()
-        val nowRounded = now.truncatedTo(ChronoUnit.HOURS).hour
+        val now = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS)
 
-        val startingHour = nowRounded - hour
+        val hours = ChronoUnit.HOURS.between(startHour, now)
+        Log.i("Debugger", "hours aka antall timer mellom starten og nå $hours")
 
-        val startForDays = nowRounded - startingHour
+        //If the time is past midnight, hours will get a negative value
+        val adjustedStart = if (hours < 0) 24 + hours.toInt() else hours.toInt()
+        Log.i("Debugger", "adjusted: $adjustedStart")
 
-        val lastHour = 23 - hour
+
+        //Find ending point of for-loop.
+
+        val hoursTo23 = (23 - now.hour + 24) % 24 + adjustedStart
+        Log.i("Debugger", "hoursTo23 $hoursTo23")
+        val startOfNextDay = hoursTo23 + 1
+        Log.i("Debugger", "startOfNextDay $startOfNextDay")
+
+        val lastHour = (hoursTo23 + 12)
 
         val genForecastList = mutableListOf<GeneralForecast>()
         //if (nrHours <= 3)
-        for( i in startingHour .. lastHour) {
+        for( i in adjustedStart .. lastHour) {
             val temperature = locationForecast.properties.timeseries[i].data.instant.details.air_temperature
             val wind = locationForecast.properties.timeseries[i].data.instant.details.wind_speed
             val symbol = locationForecast.properties.timeseries[i].data.next_1_hours.summary.symbol_code
@@ -103,8 +101,8 @@ class LocationForecastRepository @Inject constructor(
             //startingHour += 1
         }
 
-        val dayForecastList = getWeatherForecastForDays(locationForecast, nrDays, startForDays)
-        val meanHours = getWeatherForecastHours(locationForecast, startForDays, 2)
+        val dayForecastList = getWeatherForecastForDays(locationForecast, nrDays, startOfNextDay)
+        val meanHours = getWeatherForecastHours(locationForecast, startOfNextDay, 2)
 
         val forecasts: ForecastTypes = ForecastTypes(genForecastList, dayForecastList, meanHours)
 
@@ -116,7 +114,9 @@ class LocationForecastRepository @Inject constructor(
     private fun getWeatherForecastForDays(locationForecast: LocationForecast, nrDays: Int, startingHour: Int): List<WeatherForDay> {
 
         //var dayInTime = 24 - hour
-        var theHour = 24 - startingHour
+        var theHour = startingHour
+
+        Log.i("Debugger", "theHour $theHour")
 
         var middleOfDay: Int
         //var coldestTime: Int
@@ -145,10 +145,12 @@ class LocationForecastRepository @Inject constructor(
             val coldestTemperature = temperatures.min()
 
             //val temperatureWarm = locationForecast.properties.timeseries[warmestTime].data.instant.details.air_temperature
-            val symbolWarm = locationForecast.properties.timeseries[middleOfDay].data.next_1_hours.summary.symbol_code
+            val nextHoursData = locationForecast.properties.timeseries[middleOfDay].data.next_1_hours
+            val symbolCode = nextHoursData?.summary?.symbol_code ?: locationForecast.properties.timeseries[middleOfDay].data.next_6_hours.summary.symbol_code
+            //val symbolWarm = locationForecast.properties.timeseries[middleOfDay].data.next_1_hours.summary.symbol_code
             //val temperatureCold = locationForecast.properties.timeseries[coldestTime].data.instant.details.air_temperature
 
-            forecastList.add(WeatherForDay(symbolWarm, dayOfWeekString, coldestTemperature, warmestTemperature, ""))
+            forecastList.add(WeatherForDay(symbolCode, dayOfWeekString, coldestTemperature, warmestTemperature, ""))
 
             theHour += 24
         }
@@ -162,7 +164,7 @@ class LocationForecastRepository @Inject constructor(
         //Tar 3 timer om gangen og finner gjennomsnitt og lager et WeatherForDay-object
         val forecastList = mutableListOf<WeatherForDay>()
 
-        var startOfFirstDay = 24 - startHour
+        var startOfFirstDay = startHour
 
         val today = LocalDate.now()
         var nextDay = today.plusDays(1)
@@ -189,16 +191,16 @@ class LocationForecastRepository @Inject constructor(
             val symbolCode = nextHoursData?.summary?.symbol_code ?: locationForecast.properties.timeseries[startOfFirstDay].data.next_6_hours.summary.symbol_code
 
             val timeStart = locationForecast.properties.timeseries[startOfFirstDay].time
-            //val zonedDateTimeStart = ZonedDateTime.parse(timeStart)
-            //val hourFormat = DateTimeFormatter.ofPattern("HH")
-            //val startHourAsInt = zonedDateTimeStart.format(hourFormat)
+            val zonedDateTimeStart = ZonedDateTime.parse(timeStart)
+            val hourFormat = DateTimeFormatter.ofPattern("HH")
+            val startHourAsInt = zonedDateTimeStart.format(hourFormat)
 
             val timeEnd = locationForecast.properties.timeseries[startOfFirstDay + 3].time
-            //val zonedDateTimeEnd = ZonedDateTime.parse(timeEnd)
-            //val hourFormatter = DateTimeFormatter.ofPattern("HH")
-            //val endHourAsInt = zonedDateTimeEnd.format(hourFormatter)
+            val zonedDateTimeEnd = ZonedDateTime.parse(timeEnd)
+            val hourFormatter = DateTimeFormatter.ofPattern("HH")
+            val endHourAsInt = zonedDateTimeEnd.format(hourFormatter)
 
-            forecastList.add(WeatherForDay(symbolCode, "1: ${startOfFirstDay} 2: ${startOfFirstDay + 1} 3: ${startOfFirstDay + 2} 4: ${startOfFirstDay + 3}", null, null, timeStart, timeEnd, roundedMean))
+            forecastList.add(WeatherForDay(symbolCode, dayOfWeekString, null, null, startHourAsInt, endHourAsInt, roundedMean))
 
             startOfFirstDay += 4
         }
@@ -252,6 +254,7 @@ class LocationForecastRepository @Inject constructor(
                 "COOL" -> adviceArray = context.resources.getStringArray(R.array.COOL)
                 "COOLOTHER" -> adviceArray = context.resources.getStringArray(R.array.COOLOTHER)
                 "COLD" -> adviceArray = context.resources.getStringArray(R.array.COLD)
+                "COLDLONGFUR" -> adviceArray = context.resources.getStringArray(R.array.COLDLONGFUR)
                 "COLDOTHER" -> adviceArray = context.resources.getStringArray(R.array.COLDOTHER)
                 "FREEZING" -> adviceArray = context.resources.getStringArray(R.array.FREEZING)
                 "SALT" -> adviceArray = context.resources.getStringArray(R.array.SALT)
@@ -350,12 +353,15 @@ class LocationForecastRepository @Inject constructor(
             }
         }
 
+        if (typeOfDog.isLongHaired && AdviceCategory.COLD in categoryList) {
+            categoryList.add(AdviceCategory.COLDLONGFUR)
+        }
 
 
         if (adviceForecast.UVindex >= 3 && (
                     typeOfDog.isThinHaired ||
-                    typeOfDog.isLightHaired ||
-                    typeOfDog.isShortHaired)) {
+                            typeOfDog.isLightHaired ||
+                            typeOfDog.isShortHaired)) {
             categoryList.add(AdviceCategory.SUNBURN)
             Log.i("KATEGORIER", "Legger til sunburn")
         }
@@ -381,3 +387,4 @@ class LocationForecastRepository @Inject constructor(
         return categoryList
     }
 }
+
