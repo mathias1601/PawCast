@@ -226,7 +226,7 @@ fun HomeScreen(
         Spacer(modifier = Modifier.size(7.dp))
 
         LazyRow {
-
+            var id = 0
             items(advice.allAdvice) { item ->
                 AdviceCard(item, id, navController)
                 id++
@@ -249,43 +249,42 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
             .size(width = 270.dp, height = 190.dp)
             .padding(horizontal = 10.dp)
             .clickable {
-                navController.navigate("advice/${id.toString()}")
+                navController.navigate("advice/${id.toString()}")}
     ) {
-        Box {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp)
-            ) {
-                Text(
-                    text = advice.title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
+                Box {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(10.dp)
+                    ) {
+                        Text(
+                            text = advice.title,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
 
-                Spacer(modifier = Modifier.size(10.dp))
+                        Spacer(modifier = Modifier.size(10.dp))
 
-                Text(
-                    text = advice.shortAdvice,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp
-                )
+                        Text(
+                            text = advice.shortAdvice,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
 
-            }
+                    }
 
-            Button(
-                onClick = { },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(8.dp),
-                contentPadding = PaddingValues(horizontal = 9.dp, vertical = 4.dp)
-            ) {
-                Text("Les mer")
-            }
-        }
+                    Button(
+                        onClick = { },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(8.dp),
+                        contentPadding = PaddingValues(horizontal = 9.dp, vertical = 4.dp)
+                    ) {
+                        Text("Les mer")
+                    }
+                }
 
     }
-
 }
 
 

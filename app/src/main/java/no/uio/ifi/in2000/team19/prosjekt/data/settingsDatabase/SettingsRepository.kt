@@ -46,8 +46,12 @@ class SettingsRepository @Inject constructor(
 
 
     // USER INFO
-    suspend fun getUserInfo(): UserInfo? {
-        return userInfoDao.getUserInfo()
+    suspend fun getUserInfo(): UserInfo {
+        if(userInfoDao.getUserInfo() == null) {
+            updateUserInfo(
+                UserInfo(0, "", "", false, false, false, false, false, false, false, false, false, false))
+        }
+        return userInfoDao.getUserInfo()!!
     }
 
     suspend fun updateUserInfo(userInfo: UserInfo) {
