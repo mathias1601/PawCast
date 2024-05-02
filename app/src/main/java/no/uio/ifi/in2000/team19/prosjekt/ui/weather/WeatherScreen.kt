@@ -325,9 +325,7 @@ fun WeatherForecastCard(generalForecast: GeneralForecast, color: Color) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-        //.size(width = 350.dp, height = 75.dp)
-        //.padding(9.dp)
-        //.height(23.dp)
+
     ) {
 
         Row(
@@ -431,10 +429,9 @@ fun WeatherForecastCardForDays(weatherForDay: WeatherForDay, color: Color) {
                 Text(
                     text = "H: ${weatherForDay.highestTemperature}°C",
                     fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Bold
                 )
             }
-
 
         }
     }
