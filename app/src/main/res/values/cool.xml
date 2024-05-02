@@ -1,12 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="COOL">
-        <item> Kaldt </item>
+        <item> Det er kjølig </item>
 
         <item>
-            utdypende info
+            Veterinærer anbefaler
+
+            Dersom hunden er ute over lengre tid, burde den ha et
+            skjermet område uten trekk fra snø eller regn.
+            Vær oppmerksom på om hunden viser tegn til å fryse.
+            Da kan du vurdere å bruke potesokker eller dekken.
+
+            Tegn å se etter
+            • Skjelving.
+            • Løfter på potene eller halter.
+
         </item>
 
-        <item> kort info </item>
+        <item>
+
+            Du burde følge med på om hunden synes det er kaldt.
+
+            Veterinærer anbefaler
+            Hunden burde være skjermet fra trekk, snø eller regn.
+            Vurder potesokker eller dekken.
+
+        </item>
     </string-array>
 </resources>
