@@ -43,14 +43,12 @@ class HomeScreenViewModel @Inject constructor(
     private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
     var graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
 
-    private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "69", "69"))
-    var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
+    private var _locationUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "69", "69"))
+    var locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
 
-    //Kommer mby ikke til å bruke dette
+    // Is used show user name and dog name
     private var _userInfoUiState:MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false, false))
     var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
-
-    private val height: String = "0"
 
     private lateinit var adviceList: List<Advice>
 
@@ -62,15 +60,15 @@ class HomeScreenViewModel @Inject constructor(
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val cords = settingsRepository.getCords()
-                _cordsUiState.value = cords
+                val location = settingsRepository.getCords()
+                _locationUiState.value = location
 
                 val userInfo = settingsRepository.getUserInfo()
                 _userInfoUiState.value = userInfo
 
                 val generalForecast = locationForecastRepository.getGeneralForecast(
-                    cords.latitude,
-                    cords.longitude,
+                    location.latitude,
+                    location.longitude,
                     "0",
                     2
                 )
@@ -112,9 +110,9 @@ class HomeScreenViewModel @Inject constructor(
 
     fun forecastGraphFunction(forecasts: List<AdviceForecast>): List<List<Int>> {
 
-        var overallRatingList = mutableListOf<Int>()
+        val overallRatingList = mutableListOf<Int>()
 
-        var currentHours = mutableListOf<Int>()
+        val currentHours = mutableListOf<Int>()
 
         forecasts.forEach {
 
