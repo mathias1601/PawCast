@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="WARM">
-        <item> Varmt </item>
+        <item> Det er varmt ute </item>
 
         <item>
-            utdypende info
+
         </item>
 
         <item> kort info </item>

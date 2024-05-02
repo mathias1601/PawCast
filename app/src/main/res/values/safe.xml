@@ -3,8 +3,14 @@
     <string-array name="SAFE">
         <item>Trygt</item>
 
-        <item>Nå kan du gå ut</item>
+        <item>
+            Vi har ingen spesielle anbefalninger
+            til de nåværende værforholdene.
+        </item>
 
-        <item> Nå kan du gå ut </item>
+        <item>
+            Vi har ingen spesielle anbefalninger
+            til de nåværende værforholdene.
+        </item>
     </string-array>
 </resources>

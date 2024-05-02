@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="COLD">
+    <string-array name="COLDLONGFUR">
         <item> Det er kaldt </item>
 
         <item>
+
+            Hunden din er mer utsatt for snø/isklumper og floker i pelsen hvis det er mye snø ute,
+            på grunn av dens lange pels.
+
+
             Veterinærer anbefaler
+            Unngå at hunden vasser mye i snø - vurder dekken/snødrakt hvis dette
+            er vanskelig og hunden din får plager.
             Dersom hunden er ute over lengre tid, burde den ha et skjermet område uten trekk fra snø eller regn.
             Nå kan det være behov for å bruke potesokker, pungvarmer og/eller dekken.
             Begrens lengden på turene.
@@ -21,6 +28,8 @@
         </item>
 
         <item>
+            Hunden din er mer utsatt for snø/isklumper og floker i pelsen
+            hvis det er mye snø ute.
             Nå burde hunden din ha på klær og/eller potesokker.
             Ved disse temperaturene risikerer hunden å få frostskader.
         </item>

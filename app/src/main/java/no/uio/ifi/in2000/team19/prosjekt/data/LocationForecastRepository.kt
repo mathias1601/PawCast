@@ -47,20 +47,6 @@ class LocationForecastRepository @Inject constructor(
         return adviceForecasts
     }
 
-    /*
-    * data class GeneralForecast (
-    val temperature:Double,
-    val wind: Double? = null,
-    val symbol : String,
-    val hour: String,
-    val date: String,
-    val percipitation: Double,
-    val thunderprobability: Double,
-    val UVindex: Double
-) : forecastSuper()
-
-    * */
-
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getGeneralForecast(latitude: String, longitude: String, height: String, nrDays: Int): ForecastTypes {
@@ -268,6 +254,7 @@ class LocationForecastRepository @Inject constructor(
                 "COOL" -> adviceArray = context.resources.getStringArray(R.array.COOL)
                 "COOLOTHER" -> adviceArray = context.resources.getStringArray(R.array.COOLOTHER)
                 "COLD" -> adviceArray = context.resources.getStringArray(R.array.COLD)
+                "COLDLONGFUR" -> adviceArray = context.resources.getStringArray(R.array.COLDLONGFUR)
                 "COLDOTHER" -> adviceArray = context.resources.getStringArray(R.array.COLDOTHER)
                 "FREEZING" -> adviceArray = context.resources.getStringArray(R.array.FREEZING)
                 "SALT" -> adviceArray = context.resources.getStringArray(R.array.SALT)
@@ -366,12 +353,15 @@ class LocationForecastRepository @Inject constructor(
             }
         }
 
+        if (typeOfDog.isLongHaired && AdviceCategory.COLD in categoryList) {
+            categoryList.add(AdviceCategory.COLDLONGFUR)
+        }
 
 
         if (adviceForecast.UVindex >= 3 && (
                     typeOfDog.isThinHaired ||
-                    typeOfDog.isLightHaired ||
-                    typeOfDog.isShortHaired)) {
+                            typeOfDog.isLightHaired ||
+                            typeOfDog.isShortHaired)) {
             categoryList.add(AdviceCategory.SUNBURN)
             Log.i("KATEGORIER", "Legger til sunburn")
         }
@@ -397,3 +387,4 @@ class LocationForecastRepository @Inject constructor(
         return categoryList
     }
 }
+

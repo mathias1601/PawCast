@@ -52,6 +52,8 @@ class HomeScreenViewModel @Inject constructor(
 
     private val height: String = "0"
 
+    private lateinit var adviceList: List<Advice>
+
     init {
         loadWeatherForecast()
     }
@@ -75,7 +77,7 @@ class HomeScreenViewModel @Inject constructor(
                 val allAdvice = locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
 
-                /////////////////////////////////// GRAPH METHOD TO BE MOVED INTO REPOSITORY OR NEW DOMAIN LAYER///////////////////////////////////
+                adviceList = allAdvice
 
 
                 val graphCoordinates = forecastGraphFunction(locationForecastRepository.getAdviceForecastList(generalForecast))
@@ -108,33 +110,32 @@ class HomeScreenViewModel @Inject constructor(
 
     //parameter: a list of (advice) forecast objects that each represent one hour of the day
 
-
     fun forecastGraphFunction(forecasts: List<AdviceForecast>): List<List<Int>> {
 
         var overallRatingList = mutableListOf<Int>()
-        //val hours = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) //how many hours can we do?
+
         var currentHours = mutableListOf<Int>()
+
         forecasts.forEach {
 
-            //hvis dette ikke funker, se val hour i getGeneralForecast
-            var hourOfDay = it.time.toInt()
+            val hourOfDay = it.time.toInt()
             currentHours.add(hourOfDay)
 
             var overallRating: Int
             val tempRating = rating(it.temperature, tempLimitMap)
             val percRating = rating(it.percipitation, percipitationLimitMap)
-            val UVRating = rating(it.UVindex, UVLimitMap)
+            val uvRating = rating(it.UVindex, UVLimitMap)
 
-            val ratings = listOf(tempRating, percRating, UVRating)
+            val ratings = listOf(tempRating, percRating, uvRating)
 
-            overallRating = (tempRating + percRating + UVRating) / 3
-            /*
+            overallRating = (tempRating + percRating + uvRating) / 3
+
             ratings.forEach {
                 if (it < 3) {
                     overallRating = it
                 }
             }
-            */
+
 
             overallRatingList.add(overallRating)
         }
@@ -227,5 +228,9 @@ class HomeScreenViewModel @Inject constructor(
         return 0
     }
 
+
+    fun collectAdviceById(id: Int): Advice{
+        return adviceList[id]
+    }
 
 }
