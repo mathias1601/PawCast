@@ -10,4 +10,4 @@ data class WeatherForDay(
     val meanTemperature: String? = null,
     val wind: Double? = null,
     val percipitation: Double? = null
-)
+) 

@@ -41,6 +41,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -55,7 +56,9 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.google.android.material.shape.RoundedCornerTreatment
@@ -191,17 +194,39 @@ fun HomeScreen(
                 )
             }
         }
-        Text(
-            text = "Anbefalinger",
-            fontWeight = FontWeight.Bold
-        )
-        //Text(text = "Valgt lokasjon: ${cords.shortName}")
-        //Text("Longitude: ${cords.longitude}, Latitude: ${cords.latitude}")
 
-        LazyColumn(
-            Modifier.fillMaxHeight(0.4f)
-        ) {
-            var id = 0
+        Text(text = "Valgt lokasjon: ${cords.shortName}")
+        //Text("Longitude: ${cords.longitude}, Latitude: ${cords.latitude}")
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()) {
+            Text(
+                text = "Anbefalinger",
+                fontWeight = FontWeight.Bold,
+                fontSize = 25.sp,
+                //modifier = Modifier
+                //    .fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(Modifier.weight(1f))
+
+            TextButton(onClick = { })
+            {
+                Text(
+                    text = "Se alle",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.size(7.dp))
+
+        LazyRow {
+
             items(advice.allAdvice) { item ->
                 AdviceCard(item, id, navController)
                 id++
@@ -221,20 +246,42 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
         //colors = CardDefaults.cardColors(
         //containerColor = Color(android.graphics.Color.parseColor(advice.color))
         modifier = Modifier
-            .padding(2.dp)
-            //.fillMaxHeight(0.3f)
+            .size(width = 270.dp, height = 190.dp)
+            .padding(horizontal = 10.dp)
             .clickable {
                 navController.navigate("advice/${id.toString()}")
-            }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-        ) {
-            Text(text = advice.title)
-            Text(text = advice.shortAdvice)
+        Box {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)
+            ) {
+                Text(
+                    text = advice.title,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
 
+                Spacer(modifier = Modifier.size(10.dp))
+
+                Text(
+                    text = advice.shortAdvice,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+
+            }
+
+            Button(
+                onClick = { },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp),
+                contentPadding = PaddingValues(horizontal = 9.dp, vertical = 4.dp)
+            ) {
+                Text("Les mer")
+            }
         }
 
     }

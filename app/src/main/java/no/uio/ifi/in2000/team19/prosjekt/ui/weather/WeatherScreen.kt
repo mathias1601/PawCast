@@ -410,12 +410,20 @@ fun WeatherForecastCardForDays(weatherForDay: WeatherForDay, color: Color) {
 
             Spacer(modifier = Modifier.size(15.dp))
 
-            Image(
-                painter = painterResource(id = drawableId),
-                contentDescription = "Værsymbol",
-                modifier = Modifier.size(83.dp)
-            )
-            Spacer(modifier = Modifier.size(45.dp))
+                Image(
+                    painter = painterResource(id = drawableId),
+                    contentDescription = "Værsymbol",
+                    modifier = Modifier.size(83.dp)
+                )
+                Spacer(modifier = Modifier.size(45.dp))
+
+                Column {
+                    Text(
+                        text = "L: ${weatherForDay.lowestTemperature}°C",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+
 
             Column {
                 Text(
@@ -424,13 +432,15 @@ fun WeatherForecastCardForDays(weatherForDay: WeatherForDay, color: Color) {
                     fontWeight = FontWeight.Bold,
                 )
 
-                Spacer(modifier = Modifier.size(10.dp))
+                    Text(
+                        text = "H: ${weatherForDay.highestTemperature}°C",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
 
-                Text(
-                    text = "H: ${weatherForDay.highestTemperature}°C",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
+
+
             }
 
         }
