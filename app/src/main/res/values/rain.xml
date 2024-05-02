@@ -4,9 +4,24 @@
         <item> Regn </item>
 
         <item>
-            utdypende info
+
+            Veterinærer anbefaler:
+            Unngå at pelsen til hunden er fuktig/våt over lenger tid.
+            Bruk gjerne regndrakt eller gå kortere tur.
+            Sørg for å tørke hunden godt når dere er inne igjen.
+            Ikke la hunden din drikke fra sølepytter.
+
+            Hvis hunden din har drukket fra sølepytter eller spiser ting som kommer opp
+            fra smeltet snø kan den bli syk.
+            Tegn å se etter:
+            • oppkast og diarè
+
         </item>
 
-        <item> kort info </item>
+        <item>
+            Unngå at pelsen til hunden din er fuktig over lenger tid.
+            Gå kortere tur eller bruk regndrakt, og tørk den godt etter tur.
+            Ikke la hunden drikke fra sølepytter.
+        </item>
     </string-array>
 </resources>
