@@ -20,8 +20,6 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Team19prosjektoppgaveTheme
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
 
-//import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -49,11 +47,11 @@ class MainActivity : ComponentActivity() {
                 ) {
                     ScreenManager(
                         viewModel = screenManagerViewModel, // viewmodel for navbar and Scaffold.
-                        settingsScreenViewModel = settingsScreenViewModel,
-                        homeScreenViewModel= homeScreenViewModel,
-                        weatherScreenViewModel = weatherScreenViewModel,
-                        setupScreenViewModel=setupScreenViewModel,
-                        searchLocationViewModel = searchLocationViewModel
+                        settingsScreenViewModel = settingsScreenViewModel, // viewmodel for settings screen and state
+                        homeScreenViewModel= homeScreenViewModel, // viewmodel for homescreen
+                        weatherScreenViewModel = weatherScreenViewModel, // viewmodel for weather screen
+                        setupScreenViewModel=setupScreenViewModel, // viewmodel for setup screens
+                        searchLocationViewModel = searchLocationViewModel // viewmodel for Search Location Box.
                         )
                 }
             }

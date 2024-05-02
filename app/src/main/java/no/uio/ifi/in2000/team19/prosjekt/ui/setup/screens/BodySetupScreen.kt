@@ -1,12 +1,14 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -16,8 +18,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -25,6 +32,8 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: NavHostController) {
 
     val thinIndex = viewModel.selectedThinIndex.collectAsState().value
+
+
 
     Column (
         modifier = Modifier
@@ -34,13 +43,36 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
         ) {
 
         Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.dog),
+                contentDescription = "Avatar",
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier.height(125.dp)
+            )
+        }
+
+        Column(
               modifier = Modifier
                   .weight(2f),
-            verticalArrangement = Arrangement.Center
                 ){
 
-            Text(text="Hvilken beskriver hunden din best?",
-                style = MaterialTheme.typography.titleLarge)
+            Text(
+                text="Hvilken beskriver hunden din best?",
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.padding(10.dp))
+
+
             FlowRow (
                 modifier = Modifier
                     .fillMaxWidth()
@@ -49,8 +81,8 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
 
                 Card(
                     modifier = Modifier
+                        .height(125.dp)
                         .weight(1f)
-                        .aspectRatio(1f)
                         .padding(4.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = if (thinIndex == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
@@ -78,7 +110,7 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                 Card(
                     modifier = Modifier
                         .weight(1f)
-                        .aspectRatio(1f)
+                        .height(125.dp)
                         .padding(4.dp),
 
                     colors = CardDefaults.cardColors(
@@ -104,8 +136,9 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
 
                 Card(
                     modifier = Modifier
+                        .height(125.dp)
                         .weight(1f)
-                        .aspectRatio(1f)
+
                         .padding(4.dp),
 
                     colors = CardDefaults.cardColors(
@@ -126,20 +159,16 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                     ) {
                         Text(text = "Tykk")
                     }
-
                 }
-
-
             }
+            Spacer(modifier = Modifier.padding(10.dp))
 
-
-        }
-        Column (
-            modifier = Modifier
-                .weight(1f),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            Text(text="Vi vil bruke hundekategoriene du har valgt til å gi deg spesifiserte værmeldinger og anbefalinger.")
+            Text(
+                text= stringResource(R.string.chooseDogCategoryBottomScreenTip),
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
 
 
