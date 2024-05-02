@@ -68,8 +68,15 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
             val weatherDays = weatherUiState.weather.day
             val weatherMean = weatherUiState.weather.hours
 
-            val indices = listOf(1, 2, 3) // Definerer hvilke indekser du vil inkludere
-            val firstThreeHours = weatherHours.slice(indices)
+            var firstHours: List<GeneralForecast>
+
+            if (weatherHours.size > 3) {
+                val indices = listOf(1, 2, 3) // Definerer hvilke indekser du vil inkludere
+                firstHours = weatherHours.slice(indices)
+            }
+            else {
+                firstHours = weatherHours
+            }
             val allHours = weatherHours.drop(1)
 
             val differentDays = weatherDays.map { it.day }.distinct()
@@ -91,15 +98,15 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
 
                     item {
                         Spacer(modifier = Modifier.size(20.dp))
-                            Text(
-                                text = "Værvarsel",
-                                fontSize = 30.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
+                        Text(
+                            text = "Værvarsel",
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
                                 .fillMaxWidth(), // Fyller maksimal bredde. // Sørger for at teksten er sentrert horisontalt.
-                                textAlign = TextAlign.Center
-                                //modifier = Modifier.align(Alignment.Center)
-                            )
+                            textAlign = TextAlign.Center
+                            //modifier = Modifier.align(Alignment.Center)
+                        )
                         Spacer(modifier = Modifier.size(20.dp))
                     }
 
@@ -125,7 +132,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
                                 //Text(text = dayWithCapitalizedFirst)
                                 Text(
                                     text = "I dag",
-                                    fontSize = 25.sp,
+                                    fontSize = 23.sp,
                                     fontWeight = FontWeight.Bold,
                                 )
                                 Spacer(Modifier.weight(12f))
@@ -141,7 +148,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
 
 
                     if (!todayExpanded) {
-                        items(firstThreeHours) { weather ->
+                        items(firstHours) { weather ->
                             WeatherForecastCard(weather, color)
                         }
                     }
@@ -178,7 +185,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
                                     weatherDays[0].day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
                                 Text(
                                     text = dayWithCapitalizedFirst,
-                                    fontSize = 25.sp,
+                                    fontSize = 23.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Spacer(Modifier.weight(12f))
@@ -232,7 +239,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
                                     weatherDays[1].day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
                                 Text(
                                     text = dayWithCapitalizedFirst,
-                                    fontSize = 25.sp,
+                                    fontSize = 23.sp,
                                     fontWeight = FontWeight.Bold,
                                 )
                                 Spacer(Modifier.weight(12f))
@@ -318,9 +325,7 @@ fun WeatherForecastCard(generalForecast: GeneralForecast, color: Color) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            //.size(width = 350.dp, height = 75.dp)
-            //.padding(9.dp)
-        //.height(23.dp)
+
     ) {
 
         Row(
@@ -380,57 +385,57 @@ fun WeatherForecastCardForDays(weatherForDay: WeatherForDay, color: Color) {
 
 
 
-        //TODO find better way to showcase picture because of Discouraged API
-        val context = LocalContext.current
-        val drawableName = weatherForDay.symbol
-        val drawableId =
-            context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+    //TODO find better way to showcase picture because of Discouraged API
+    val context = LocalContext.current
+    val drawableName = weatherForDay.symbol
+    val drawableId =
+        context.resources.getIdentifier(drawableName, "drawable", context.packageName)
 
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = color
-            ),
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = color
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+        //.height(23.dp)
+    ) {
+
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-            //.height(23.dp)
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Row(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Spacer(modifier = Modifier.size(15.dp))
 
-                Spacer(modifier = Modifier.size(15.dp))
+            Image(
+                painter = painterResource(id = drawableId),
+                contentDescription = "Værsymbol",
+                modifier = Modifier.size(83.dp)
+            )
+            Spacer(modifier = Modifier.size(45.dp))
 
-                Column {
-                    Text(
-                        text = "L: ${weatherForDay.lowestTemperature}°C",
-                        fontSize = 25.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-
-                    Spacer(modifier = Modifier.size(10.dp))
-
-                    Text(
-                        text = "H: ${weatherForDay.highestTemperature}°C",
-                        fontSize = 25.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-                Spacer(modifier = Modifier.size(45.dp))
-
-                Image(
-                    painter = painterResource(id = drawableId),
-                    contentDescription = "Værsymbol",
-                    modifier = Modifier.size(83.dp)
+            Column {
+                Text(
+                    text = "L: ${weatherForDay.lowestTemperature}°C",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
                 )
 
+                Spacer(modifier = Modifier.size(10.dp))
+
+                Text(
+                    text = "H: ${weatherForDay.highestTemperature}°C",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
+
         }
     }
+}
 
 
 

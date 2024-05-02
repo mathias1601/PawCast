@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import no.uio.ifi.in2000.team19.prosjekt.ui.extendedAdvice.AdviceScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
@@ -94,7 +95,7 @@ fun ScreenManager(
 
             ){
                 composable("home") {
-                    HomeScreenManager(viewModel = homeScreenViewModel)
+                    HomeScreenManager(viewModel = homeScreenViewModel, navController)
                 }
 
                 composable("settings"){
@@ -109,6 +110,13 @@ fun ScreenManager(
                     val id = backStackEntry.arguments?.getString("STAGE") ?: "0"
                     SetupManager(viewModel = setupScreenViewModel, id=id, navController=navController)
                 }
+
+                composable("advice/{id}") {backStackEntry->
+                    val id = backStackEntry.arguments?.getString("id")?.let {
+                        AdviceScreen(adviceId = it.toInt(), navController, homeScreenViewModel)
+                    }
+                }
+
             }
         }
     }
