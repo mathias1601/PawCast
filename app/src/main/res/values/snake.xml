@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="VIPER">
-        <item> Snake</item>
+        <item> Det er hoggormsesong</item>
 
         <item>
-            utdypende info
+            Veterinærer anbefaler
+            Se opp for hoggorm når du går tur i skogsområder.
+
+            Hvis hunden skulle bli bitt:
+            Hold hunden i ro, giften sprer seg med bevegelse.
+            Ta med hunden til veterinær øyeblikkelig.
+
+
         </item>
 
-        <item> kort info </item>
+        <item>
+            Se opp for hoggorm når du går tur med hunden din, spesielt i/rundt skog.
+        </item>
     </string-array>
 </resources>

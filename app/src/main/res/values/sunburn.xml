@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="SUNBURN">
-        <item> Solbrent </item>
+        <item> Sterk sol </item>
 
         <item>
-            utdypende info
+            Hunden din kan bli solbrent hvis den er utsatt for sterk UV-stråling. Den har også høyere
+            risiko for hudkreft enn andre typer hunder.
+
+            Veterinærer anbefaler
+            Bruk solkrem. Du kan bruke solkrem for barn, eller spesielt for hunder.
+            Unngå direkte sol.
+            Vurder behov for solbriller for hund.
+
+            Tegn å se etter
+            • rød, tørr eller oppsprukket hud, spesielt på områder med eksponert hud
+            • om hunden klør seg mye på ett område
+            • hunden har ikke lyst til å bli klappet, eller uttrykker smerte ved berøring
+            • feber
+
         </item>
 
-        <item> kort info </item>
+        <item>
+            Hunden din kan bli solbrent!
+            Bruk solkrem på hunden din, enten for barn eller for hunder, og unngå direkte sol.
+        </item>
     </string-array>
 </resources>
