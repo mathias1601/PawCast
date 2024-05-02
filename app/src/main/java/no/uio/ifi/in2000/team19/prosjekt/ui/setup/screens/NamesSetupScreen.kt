@@ -3,15 +3,17 @@ package no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -28,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -58,47 +61,48 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: 
         Column (
             verticalArrangement = Arrangement.Center
         ){
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+
             ){
-                Text(
-                    text = "Hei!",
-                    style = MaterialTheme.typography.headlineLarge,
-                    textAlign = TextAlign.Center
-                )
+
                 Image(
                     painter = painterResource(id = R.drawable.dog),
                     contentDescription = "Avatar",
                     contentScale = ContentScale.FillHeight,
-                    modifier = Modifier.fillMaxHeight()
+                    modifier = Modifier.height(100.dp)
                 )
 
-
+                Text(
+                    text = "Heisann!",
+                    style = MaterialTheme.typography.headlineLarge,
+                    textAlign = TextAlign.Center
+                )
             }
 
-            Spacer(modifier=Modifier.padding(20.dp))
+            Spacer(modifier=Modifier.padding(16.dp))
 
-            Text(
-                text = "Velkommen til Weather Buddy. :D !!!!!!!!!!!!!!!!!!!!",
-                style = MaterialTheme.typography.bodyLarge)
 
-            Spacer(modifier = Modifier.padding(10.dp))
+            Spacer(modifier = Modifier.padding(30.dp))
 
             Text(
                 text = "Først, hva er navnet ditt og navnet til hunden din?",
                 style = MaterialTheme.typography.titleMedium
             )
 
-            Spacer(modifier = Modifier.padding(16.dp))
+            Spacer(modifier = Modifier.padding(10.dp))
 
             Text(text="Navnet ditt", style = MaterialTheme.typography.titleLarge)
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = userName,
+                maxLines = 1,
+                leadingIcon = { Icon(imageVector = Icons.Filled.Person, contentDescription = "Icon of person")},
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
                 onValueChange = {userName = it},
                 label = { Text("Ditt navn") }
             )
@@ -107,13 +111,33 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: 
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = dogName,
+                maxLines = 1,
+                leadingIcon = { Icon(imageVector = Icons.Filled.Pets, contentDescription = "Icon of person")},
                 onValueChange = {dogName = it},
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        viewModel.updateUserName(userName)
+                        viewModel.updateDogName(dogName)
+                        navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+                    }
+                ),
+
                 label = { Text("Hundens navn") }
             )
         }
 
-        Column {
-            Text(text="Navn blir kun brukt til å personalisere appen for deg.")
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text="Navn blir kun brukt til å personalisere appen for deg.",
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth())
+
             Button(
                 modifier = Modifier.fillMaxWidth(),
 
@@ -130,8 +154,5 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: 
                 Icon(Icons.Filled.ChevronRight, contentDescription = "Next")
             }
         }
-
     }
-    //Skal også kunne skrive inn adresse en eller annen gang i setup
-
 }
