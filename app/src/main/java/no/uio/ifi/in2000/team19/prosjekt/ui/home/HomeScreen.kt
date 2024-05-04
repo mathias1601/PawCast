@@ -2,43 +2,43 @@ package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.RoundRectShape
-import android.graphics.drawable.shapes.Shape
 import android.os.Build
 import android.text.Layout
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -49,19 +49,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
-import com.google.android.material.shape.RoundedCornerTreatment
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
@@ -69,7 +65,6 @@ import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
-import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
@@ -81,7 +76,9 @@ import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
+import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 
 
@@ -94,8 +91,9 @@ fun HomeScreenManager(
 ) {
 
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
-    val cordsUiState = viewModel.cordsUiState.collectAsState().value
     val graphUiState = viewModel.graphUiState.collectAsState().value
+    val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
+    val locationUiState = viewModel.locationUiState.collectAsState().value
 
     val isRefreshing by remember {
         mutableStateOf(false)
@@ -111,7 +109,7 @@ fun HomeScreenManager(
             ) {
                 when (adviceUiState) {
                     is AdviceUiState.Success -> {
-                        HomeScreen(adviceUiState, cordsUiState, graphUiState, navController)
+                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, navController)
                     }
 
                     is AdviceUiState.Loading -> {
@@ -145,151 +143,275 @@ fun NoConnectionScreen() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
+    userInfo: UserInfo,
+    location: Cords,
     advice: AdviceUiState.Success,
-    cords: Cords,
     graphUiState: CartesianChartModelProducer,
     navController: NavController,
 ) {
 
-    val newColor = Color(0xffece9e4)
 
     val context = LocalContext.current
     //val drawableName = advice.
-    val drawableId =
-        context.resources.getIdentifier("clearsky_day", "drawable", context.packageName)
+    val drawableId = context.resources.getIdentifier("clearsky_day", "drawable", context.packageName)
+
+    // Box is outside of Column hierarchy and therefor stretches for the entire
+    // size of screen without interfering with content.
+
+
+    val colorStops = arrayOf(
+        0.0f to Color.Blue, // Top app bar is specified as this color. To change that color go to Themes.kt and change TOP_APP_BAR_COLOR
+        0.5f to Color.Magenta
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colorStops = colorStops
+                ),
+            )
+    )
+
+
+
     Column(
         modifier = Modifier
-            .padding(16.dp)
             .fillMaxSize(),
         verticalArrangement = Arrangement.Top
     ) {
 
+        Spacer(modifier = Modifier.padding(10.dp)) // Spacer to avoid top app bar.
 
-        Card(
-            colors = CardDefaults.cardColors(
-                //containerColor = newColor
-            ),
+        Column(
             modifier = Modifier
+                .weight(1.5f)
                 .fillMaxWidth()
-                .fillMaxHeight(0.2f)
-                .padding(9.dp)
+                .padding(10.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
+            Text(
+                text = "Heisann ${userInfo.userName} og ${userInfo.dogName}!",
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White
+            )
+
+
+            // ACTUAL WEATHER
             Row(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxWidth()
+                    ,
+
                 //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
             ) {
 
-                Text("18C")
+                Text(
+                    text = "18C",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.White,
 
-                Spacer(modifier = Modifier.size(15.dp))
+                    )
+
 
                 Image(
                     painter = painterResource(id = drawableId),
                     contentDescription = "Værsymbol"
                 )
             }
+            
+            // Location Button / Text and Dog avatar
+            Row(
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+                ) {
+
+                ElevatedButton(onClick = { navController.navigate("settings") }) {
+                    Icon(imageVector = Icons.Filled.LocationOn, contentDescription = "Location")
+                    Text(
+                        text = location.shortName,
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                }
+                Image(
+                    painter = painterResource(id = R.drawable.dog),
+                    contentDescription = "dog avatar",
+                    modifier = Modifier
+                        .scale(3f)
+                        .offset(
+                            x= (-10).dp,
+                            y= (-5).dp
+                        )
+                )
+
+            }
         }
 
-        Text(text = "Valgt lokasjon: ${cords.shortName}")
-        //Text("Longitude: ${cords.longitude}, Latitude: ${cords.latitude}")
-        Row (
-            verticalAlignment = Alignment.CenterVertically,
+
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White,
+            ),
             modifier = Modifier
-                .fillMaxWidth()) {
-            Text(
-                text = "Anbefalinger",
-                fontWeight = FontWeight.Bold,
-                fontSize = 25.sp,
-                //modifier = Modifier
-                //    .fillMaxWidth(),
-                textAlign = TextAlign.Center
+                .weight(3f)
+                .shadow(10.dp)
+
+            ,
+            shape = RoundedCornerShape(
+                topEnd = 23.dp,
+                topStart = 23.dp,
+                bottomEnd = 0.dp,
+                bottomStart = 0.dp
             )
 
-            Spacer(Modifier.weight(1f))
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(20.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
 
-            TextButton(onClick = { })
-            {
-                Text(
-                    text = "Se alle",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
+
+                // ============= ADVICE CARDS =====================================
+                Column(
+
+                ) {
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+
+
+                        Text(
+                            text = "Anbefalinger",
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        
+                        TextButton(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier.align(Alignment.Bottom)
+                        ) {
+                            Text(
+                                text = "Vis alle",
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+                    }
+
+
+
+                    // ADVICE CARDS / Horizontal Pager / Carousell + Indicator for card index
+                    // Inspired by offical documentaion: https://developer.android.com/develop/ui/compose/layouts/pager
+                    Column {
+                        val pagerState = rememberPagerState(pageCount = {
+                            advice.allAdvice.size
+                        })
+
+                        // Advice cards / Horizontal Pager
+                        HorizontalPager(
+                            state = pagerState,
+                            pageSpacing = 20.dp
+                        ) { id ->
+                            AdviceCard(
+                                advice = advice.allAdvice[id],
+                                id = id,
+                                navController = navController
+                            )
+                        }
+                        // Active card thing. Seems to lag emulator quite alot..
+                        Spacer(modifier = Modifier.padding(2.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            repeat(pagerState.pageCount){iteration ->
+                                val color = if (pagerState.currentPage == iteration) Color.Gray else Color.LightGray
+                                Box (
+                                    modifier = Modifier
+                                        .padding(2.dp)
+                                        .clip(CircleShape)
+                                        .background(color)
+                                        .size(7.dp)
+                                )
+                            }
+                        }
+
+
+                    }
+                }
+
+                Column(
+                ) {
+                    Text(
+                        text = "Beste tidspunkter for tur",
+                        style = MaterialTheme.typography.titleMedium,
+                        )
+                    ForecastGraph(graphUiState)
+                }
+
             }
         }
-
-        Spacer(modifier = Modifier.size(7.dp))
-
-        LazyRow {
-            var id = 0
-            items(advice.allAdvice) { item ->
-                AdviceCard(item, id, navController)
-                id++
-            }
-        }
-
-        //Spacer(modifier = Modifier.size(50.dp))
-
-        ForecastGraph(graphUiState)
     }
 }
+
+
 
 @Composable
 fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
 
     Card(
-        //colors = CardDefaults.cardColors(
-        //containerColor = Color(android.graphics.Color.parseColor(advice.color))
         modifier = Modifier
-            .size(width = 270.dp, height = 190.dp)
-            .padding(horizontal = 10.dp)
+            .fillMaxWidth()
+            .height(IntrinsicSize.Max)
+            // .padding(horizontal = 10.dp)
             .clickable {
-                navController.navigate("advice/${id.toString()}")}
+                navController.navigate("advice/${id.toString()}")
+            }
     ) {
                 Box {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(10.dp)
+                            .padding(20.dp)
                     ) {
                         Text(
                             text = advice.title,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
+                            style = MaterialTheme.typography.titleMedium
                         )
 
                         Spacer(modifier = Modifier.size(10.dp))
 
                         Text(
                             text = advice.shortAdvice,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
+                            style = MaterialTheme.typography.bodyMedium
                         )
 
+                        Button(
+                            onClick = { },
+                            modifier = Modifier,
+                            contentPadding = PaddingValues(horizontal = 18.dp, vertical = 4.dp)
+                        ) {
+                            Text("Les mer")
+                        }
+
                     }
 
-                    Button(
-                        onClick = { },
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(8.dp),
-                        contentPadding = PaddingValues(horizontal = 9.dp, vertical = 4.dp)
-                    ) {
-                        Text("Les mer")
-                    }
                 }
 
     }
 }
-
-
-
-
 
 @SuppressLint("RestrictedApi")
 @Composable
@@ -299,13 +421,12 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.7f)
-            .shadow(elevation = 40.dp, shape = RoundedCornerShape(23.dp))
+            .fillMaxHeight(1f)
+            // .shadow(elevation = 40.dp, shape = RoundedCornerShape(23.dp))
     ){
         Column (
             modifier = Modifier
-                .padding(15.dp)
-                .zIndex(0f),
+                .padding(15.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ){
@@ -359,30 +480,6 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
     }
 }
 
-
-/*            Image(
-                painter = painter,
-                contentDescription = "smileys",
-                modifier = Modifier.zIndex(2f)
-
-
- Image(
-        bitmap = imageBitmap,
-        contentDescription = null,
-        modifier = Modifier
-            .size(100.dp, 100.dp)
-            .clip(customShape) // Clip to the custom-defined shape
-
-
-
-
-    )
-
-
-
-
-                graphuistate er en lineseries
-            )*/
 
 
 
