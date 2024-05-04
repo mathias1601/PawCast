@@ -1,9 +1,10 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.navigation
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Home
@@ -33,6 +34,8 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
 
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ScreenManager(
@@ -53,7 +56,6 @@ fun ScreenManager(
 
 
     Scaffold(
-
 
         bottomBar = {
             if (startDestination == "home" || startDestination == "weather" || startDestination == "settings")  {
@@ -82,15 +84,15 @@ fun ScreenManager(
             }
 
         }
-    ) {innerPadding ->
+    ) {
 
         Column(
-            Modifier.padding(innerPadding)
+            Modifier.fillMaxSize()
         ) {
                 //Sjekk kun for når man åpner appen
             NavHost(
                 navController = navController,
-                startDestination = startDestination
+                startDestination = startDestination,
 
             ){
                 composable("home") {
@@ -120,7 +122,6 @@ fun ScreenManager(
                         AdviceScreen(adviceId = it.toInt(), navController, homeScreenViewModel)
                     }
                 }
-
             }
         }
     }

@@ -12,11 +12,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,21 +24,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,11 +50,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -63,16 +66,21 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
+import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.chart.scroll.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.component.shape.shader.TopBottomShader
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.scroll.Scroll
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
@@ -80,6 +88,7 @@ import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
+import java.util.Calendar
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -100,20 +109,27 @@ fun HomeScreenManager(
     }
     val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast()})
 
-    Scaffold { innerPadding ->
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
             Box(
                 Modifier
-                    .padding(innerPadding)
+                    .fillMaxSize()
                     .pullRefresh(state),
             ) {
                 when (adviceUiState) {
                     is AdviceUiState.Success -> {
-                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, navController)
+                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, navController, innerPadding)
                     }
 
                     is AdviceUiState.Loading -> {
-                        CircularProgressIndicator()
+                        Column(
+                            Modifier.padding(innerPadding),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator()
+                        }
+
                     }
 
                     is AdviceUiState.Error -> {
@@ -121,11 +137,11 @@ fun HomeScreenManager(
                     }
                 }
 
-            PullRefreshIndicator(
-                refreshing = isRefreshing, state = state,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-            )
+                PullRefreshIndicator(
+                    refreshing = isRefreshing, state = state,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                )
         }
     }
 }
@@ -143,7 +159,7 @@ fun NoConnectionScreen() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     userInfo: UserInfo,
@@ -151,13 +167,63 @@ fun HomeScreen(
     advice: AdviceUiState.Success,
     graphUiState: CartesianChartModelProducer,
     navController: NavController,
+    innerPadding: PaddingValues,
 ) {
 
+    // ======INFO OPEN / CLOSE BOXES
+    var showGraphInfoSheet by remember { mutableStateOf(false) }
+    var showAdviceInfoSheet by remember { mutableStateOf(false)}
 
-    val context = LocalContext.current
-    //val drawableName = advice.
-    val drawableId = context.resources.getIdentifier("clearsky_day", "drawable", context.packageName)
+    if (showAdviceInfoSheet) {
+        ModalBottomSheet(
+            modifier = Modifier
+            .defaultMinSize(minHeight = 200.dp)
+            ,
+            onDismissRequest = { showAdviceInfoSheet = false }
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp)
+            ) {
+                Text(
+                    text = "Anbefalinger",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = "Lorem ipsium er en ......",
+                    style = MaterialTheme.typography.bodyMedium
+                    )
+            }
+        }
+    }
+    if (showGraphInfoSheet) {
+        ModalBottomSheet(
+            modifier = Modifier
+                .defaultMinSize(minHeight = 200.dp)
+            ,
+            onDismissRequest = { showGraphInfoSheet = false }
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp)
+            ) {
+                Text(
+                    text = "Graf!!",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = "grafer er kult :D",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    }
 
+
+
+
+
+
+
+    // ============================ TOP BLUE WEATHER SECTION =================================
     // Box is outside of Column hierarchy and therefor stretches for the entire
     // size of screen without interfering with content.
 
@@ -177,11 +243,10 @@ fun HomeScreen(
             )
     )
 
-
-
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(innerPadding),
         verticalArrangement = Arrangement.Top
     ) {
 
@@ -203,13 +268,10 @@ fun HomeScreen(
             )
 
 
-            // ACTUAL WEATHER
+            // WEATHER ROW
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    ,
-
-                //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -221,6 +283,8 @@ fun HomeScreen(
 
                     )
 
+                val context = LocalContext.current
+                val drawableId = context.resources.getIdentifier("clearsky_day", "drawable", context.packageName)
 
                 Image(
                     painter = painterResource(id = drawableId),
@@ -248,8 +312,8 @@ fun HomeScreen(
                     modifier = Modifier
                         .scale(3f)
                         .offset(
-                            x= (-10).dp,
-                            y= (-5).dp
+                            x = (-10).dp,
+                            y = (-5).dp
                         )
                 )
 
@@ -257,15 +321,17 @@ fun HomeScreen(
         }
 
 
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White,
-            ),
+
+
+
+
+        // ================================ SURFACE MAIN CONTENT =====================.
+        Surface(
+            color = MaterialTheme.colorScheme.surface,
             modifier = Modifier
                 .weight(3f)
-                .shadow(10.dp)
-
             ,
+
             shape = RoundedCornerShape(
                 topEnd = 23.dp,
                 topStart = 23.dp,
@@ -276,13 +342,17 @@ fun HomeScreen(
         ) {
             Column(
                 modifier = Modifier
+                    .verticalScroll(rememberScrollState()) // <-- Makes
                     .padding(20.dp)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
 
 
-                // ============= ADVICE CARDS =====================================
+            /*
+            ============= ADVICE CARDS =====================================
+            Wrapped in column so advice content is grouped together
+            */
                 Column(
 
                 ) {
@@ -293,11 +363,19 @@ fun HomeScreen(
                             .fillMaxWidth()
                     ) {
 
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                            Text(
+                                text = "Anbefalinger",
+                                style = MaterialTheme.typography.titleLarge,
+                            )
 
-                        Text(
-                            text = "Anbefalinger",
-                            style = MaterialTheme.typography.titleLarge,
-                        )
+                            TextButton(onClick = { showAdviceInfoSheet = true }) {
+                                Icon(imageVector = Icons.Filled.Info, contentDescription = "")
+                            }
+                        }
+
                         
                         TextButton(
                             onClick = { /*TODO*/ },
@@ -352,15 +430,24 @@ fun HomeScreen(
                     }
                 }
 
+
+                // =============== GRAPH ==========================
                 Column(
-                ) {
-                    Text(
-                        text = "Beste tidspunkter for tur",
-                        style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(bottom =  100.dp)
+                ){
+                    Spacer(modifier = Modifier.padding(10.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "Beste tidspunkter for tur",
+                            style = MaterialTheme.typography.titleLarge,
                         )
+                        TextButton(onClick = { showGraphInfoSheet = true }) {
+                            Icon(imageVector = Icons.Filled.Info, contentDescription = "Info about graph")
+                        }
+                    }
                     ForecastGraph(graphUiState)
                 }
-
             }
         }
     }
@@ -371,36 +458,46 @@ fun HomeScreen(
 @Composable
 fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
 
+    val navigateToMoreInfoScreen = { navController.navigate("advice/${id.toString()}") }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(IntrinsicSize.Max)
-            // .padding(horizontal = 10.dp)
+            .height(200.dp)
             .clickable {
-                navController.navigate("advice/${id.toString()}")
+                navigateToMoreInfoScreen()
             }
     ) {
-                Box {
+                Surface(
+                    color = MaterialTheme.colorScheme.secondaryContainer
+                ) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(20.dp)
+                        ,
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(
-                            text = advice.title,
-                            style = MaterialTheme.typography.titleMedium
-                        )
 
-                        Spacer(modifier = Modifier.size(10.dp))
+                        Column {
+                            Text(
+                                text = advice.title,
+                                style = MaterialTheme.typography.titleMedium
+                            )
 
-                        Text(
-                            text = advice.shortAdvice,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                            Spacer(modifier = Modifier.size(10.dp))
+
+                            Text(
+                                text = advice.shortAdvice,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
 
                         Button(
-                            onClick = { },
-                            modifier = Modifier,
+                            onClick = {
+                                navigateToMoreInfoScreen()
+                            },
+                            modifier = Modifier.align(Alignment.End),
                             contentPadding = PaddingValues(horizontal = 18.dp, vertical = 4.dp)
                         ) {
                             Text("Les mer")
@@ -417,12 +514,16 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
 @Composable
 fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
 
-    val colors = arrayOf(Color.Green, Color.Red, Color(174, 198, 207))
+    // Setting start state to current time
+    val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour
+    val scrollState = rememberVicoScrollState(
+        initialScroll = Scroll.Absolute.Companion.x(x = time.toFloat(), bias = 0f)
+    )
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(1f)
-            // .shadow(elevation = 40.dp, shape = RoundedCornerShape(23.dp))
+            .height(300.dp)
     ){
         Column (
             modifier = Modifier
@@ -432,46 +533,53 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
         ){
             Text("Værvurdering for tur")
 
-            // info sirkel
-
             CartesianChartHost(
                 chart =
-                rememberCartesianChart(
-                    rememberLineCartesianLayer(
-                        listOf(
-                            rememberLineSpec(
-                                shader = DynamicShaders.color(colors[2])
-                            )
+                    rememberCartesianChart(
+                        rememberLineCartesianLayer(
+                            listOf(
+                                rememberLineSpec(
+                                    shader = TopBottomShader(
+                                        DynamicShaders.color(Color.Green),
+                                        DynamicShaders.color(Color.Blue),
+                                        splitY = 9f
+                                    ),
+                                )
+                            ),
+                            axisValueOverrider = AxisValueOverrider.fixed(minY = 0f, maxY = 10f)
                         ),
-                        axisValueOverrider = AxisValueOverrider.fixed(minY = 0f, maxY = 10f)
-                    ),
-                    startAxis = rememberStartAxis(
-                        titleComponent =
-                        rememberTextComponent(
-                            background = ShapeComponent(
-                                shape = Shapes.pillShape,
-                                color = Color(174, 198, 207).hashCode()),
-                                padding = MutableDimensions(8f, 1f),
-                                textAlignment = Layout.Alignment.ALIGN_CENTER
+                        startAxis = rememberStartAxis(
+                            titleComponent =
+                                rememberTextComponent(
+                                    background = ShapeComponent(
+                                        shape = Shapes.pillShape,
+                                        color = MaterialTheme.colorScheme.tertiary
+                                        .hashCode()),
+                                        padding = MutableDimensions(8f, 1f),
+                                        textAlignment = Layout.Alignment.ALIGN_CENTER
+                                ),
+                            title = "Vurdering",
                         ),
-                        title = "Vurdering",
-                    ),
-                    bottomAxis = rememberBottomAxis(
-                        guideline = null,
-                        titleComponent =
-                        rememberTextComponent(
-                            background = ShapeComponent(
-                                shape = Shapes.pillShape,
-                                color = Color(174, 198, 207).hashCode()),
-                                padding = MutableDimensions(8f, 2f)
+                        bottomAxis = rememberBottomAxis(
+                            titleComponent = rememberTextComponent(
+                                    background = ShapeComponent(
+                                        shape = Shapes.pillShape,
+                                        color =  MaterialTheme.colorScheme.tertiary.hashCode()),
+                                        padding = MutableDimensions(8f, 2f)
+                            ),
+                            title = "Klokkkeslett.",
+                            guideline = null
                         ),
-                        title = "Klokkkeslett."
-                    ),
                 ),
                 modelProducer = graphUiState,
                 zoomState = rememberVicoZoomState(zoomEnabled = false),
                 modifier = Modifier.fillMaxSize(),
-                marker = rememberMarker()
+                marker = rememberMarker(),
+                horizontalLayout = HorizontalLayout.fullWidth(),
+                scrollState = scrollState
+
+
+
 
             )
 
@@ -479,6 +587,8 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
 
     }
 }
+
+
 
 
 

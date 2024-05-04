@@ -89,8 +89,10 @@ class HomeScreenViewModel @Inject constructor(
                 _graphUiState.value.tryRunTransaction {
                     lineSeries {
                         series(
-                        x=x,
-                        y=y) }
+                            x=x,
+                            y=y
+                        )
+                    }
                 }
 
             } catch (e: IOException) {
@@ -108,21 +110,23 @@ class HomeScreenViewModel @Inject constructor(
 
     //parameter: a list of (advice) forecast objects that each represent one hour of the day
 
+    // TODO move to repository or domain layer
+
     fun forecastGraphFunction(forecasts: List<AdviceForecast>): List<List<Int>> {
 
         val overallRatingList = mutableListOf<Int>()
 
         val currentHours = mutableListOf<Int>()
 
-        forecasts.forEach {
+        forecasts.forEach { forecast ->
 
-            val hourOfDay = it.time.toInt()
+            val hourOfDay = forecast.time.toInt()
             currentHours.add(hourOfDay)
 
             var overallRating: Int
-            val tempRating = rating(it.temperature, tempLimitMap)
-            val percRating = rating(it.percipitation, percipitationLimitMap)
-            val uvRating = rating(it.UVindex, UVLimitMap)
+            val tempRating = rating(forecast.temperature, tempLimitMap)
+            val percRating = rating(forecast.percipitation, percipitationLimitMap)
+            val uvRating = rating(forecast.UVindex, UVLimitMap)
 
             val ratings = listOf(tempRating, percRating, uvRating)
 
