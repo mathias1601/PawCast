@@ -80,17 +80,15 @@ class HomeScreenViewModel @Inject constructor(
 
                 val graphCoordinates = forecastGraphFunction(locationForecastRepository.getAdviceForecastList(generalForecast))
 
-                val x = graphCoordinates[0]
-                val y = graphCoordinates[1]
 
-                Log.i("X:", x.toString())
-                Log.i("Y:", y.toString())
+                Log.i("X:", graphCoordinates.x.toString())
+                Log.i("Y:", graphCoordinates.y.toString())
+
 
                 _graphUiState.value.tryRunTransaction {
                     lineSeries {
                         series(
-                            x=x,
-                            y=y
+                            y = graphCoordinates.y
                         )
                     }
                 }
@@ -108,14 +106,19 @@ class HomeScreenViewModel @Inject constructor(
 
     //we are using AdviceForecast because we only need temp, percipitation and UVLimit
 
-    //parameter: a list of (advice) forecast objects that each represent one hour of the day
+    //Parameter: a list of (advice) forecast objects that each represent one hour of the day
 
     // TODO move to repository or domain layer
 
-    fun forecastGraphFunction(forecasts: List<AdviceForecast>): List<List<Int>> {
+    // Data class for holding Axises for graph
+    data class GraphData(
+        val x: List<Int>,
+        val y: List<Int>
+    )
+
+    private fun forecastGraphFunction(forecasts: List<AdviceForecast>): GraphData {
 
         val overallRatingList = mutableListOf<Int>()
-
         val currentHours = mutableListOf<Int>()
 
         forecasts.forEach { forecast ->
@@ -123,14 +126,14 @@ class HomeScreenViewModel @Inject constructor(
             val hourOfDay = forecast.time.toInt()
             currentHours.add(hourOfDay)
 
-            var overallRating: Int
+
             val tempRating = rating(forecast.temperature, tempLimitMap)
             val percRating = rating(forecast.percipitation, percipitationLimitMap)
             val uvRating = rating(forecast.UVindex, UVLimitMap)
 
             val ratings = listOf(tempRating, percRating, uvRating)
 
-            overallRating = (tempRating + percRating + uvRating) / 3
+            var overallRating : Int = (tempRating + percRating + uvRating) / 3
 
             ratings.forEach {
                 if (it < 3) {
@@ -138,20 +141,18 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
 
-
             overallRatingList.add(overallRating)
         }
-
 
         val hourlength = currentHours.size
         val ratinglength = overallRatingList.size
 
-        Log.i("HOURS", "$hourlength")
+        Log.i("HOURS", currentHours.toString())
         Log.i("RATINGS", "$ratinglength")
 
         Log.i("rating list", overallRatingList.toString())
 
-        return listOf(currentHours, overallRatingList)
+        return GraphData(currentHours, overallRatingList)
     }
 
     //these maps are used to determine rating
@@ -187,7 +188,7 @@ class HomeScreenViewModel @Inject constructor(
             listOf(15.0, 16.5) to 10
         )
 
-    //basert på info fra Yr
+    //Basert på info fra Yr
     val percipitationLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
             listOf(2.1, 7.0) to 1,
@@ -202,7 +203,7 @@ class HomeScreenViewModel @Inject constructor(
             listOf(0.0, 0.0) to 10
         )
 
-    //basert på data fra SNL
+    //Basert på data fra SNL
     val UVLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
             listOf(8.1, 15.0) to 1,
