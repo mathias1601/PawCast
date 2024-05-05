@@ -4,36 +4,37 @@
         <item> Det er varmt ute </item>
 
         <item>
-            Veterinærer anbefaler
-            Sørg for at hunden alltid har tilgang til skygge og friskt vann.
-            Pass på at hunden ikke inntar store mengder vann ved bading.
-            Kjenn på asfalten med hendene, dersom du selv synes det er ubehagelig er det for varmt for hundens poter. Unngå eller begrens turer på asfalterte veier.
-            Vurder om hunden burde gjøre intens fysisk aktivitet.
+            ~Veterinærer anbefaler\n
+            Sørg for at hunden alltid har tilgang til skygge og friskt vann.\n
+            Pass på at hunden ikke inntar store mengder vann ved bading.\n
+            Kjenn på asfalten med hendene, dersom du selv synes det er ubehagelig er det for varmt for hundens poter.\n
+            Unngå eller begrens turer på asfalterte veier.\n
+            Vurder om hunden burde gjøre intens fysisk aktivitet.\n
 
-            Tegn å se etter:
-            • om hunden peser eller puster tungt og høylytt
-            • rastløshet eller irritabilitet
-            • økt puls
-            • oppkast og diarè
+            ~Tegn å se etter:\n
+            • om hunden peser eller puster tungt og høylytt\n
+            • rastløshet eller irritabilitet\n
+            • økt puls\n
+            • oppkast og diarè\n
 
-            Konsekvenser
+            ~Konsekvenser\n
             Hvis vannet hunden bader i har cyanobakterier (også kalt blågrønnalger), kan hunden din
             bli forgiftet hvis den drikker vannet. Vann som er stillestående har større risiko for
             å ha slike bakterier. Det er en god ide å følge med på hvilke vann i området som er
             testet for dette og vurdert som trygge av kommunen før du lar hunden bade.
             Hvis hundnen din drikker nok vann er det mindre sannsynlig at den drikker badevannet.
-            Hvis hunden ikke har nok skygge og friskt vann kan den i verste fall få heteslag.
+            Hvis hunden ikke har nok skygge og friskt vann kan den i verste fall få heteslag.\n
 
         </item>
 
         <item>
-            Dersom det er sol kan det bli ganske varmt for hunden.
+            Dersom det er sol kan det bli ganske varmt for hunden.\n
 
-            Veterinærer anbefaler
-            Hunden må ha tilgang til skygge og friskt vann.
-            Pass på at hunden ikke inntar store mengder vann ved bading.
-            Kjenn på asfalten, den kan være for varm for hundens poter.
-            Vurder om hunden burde gjøre intens fysisk aktivitet.
+            ~Veterinærer anbefaler\n
+            Hunden må ha tilgang til skygge og friskt vann.\n
+            Pass på at hunden ikke inntar store mengder vann ved bading.\n
+            Kjenn på asfalten, den kan være for varm for hundens poter.\n
+            Vurder om hunden burde gjøre intens fysisk aktivitet.\n
 
         </item>
     </string-array>
