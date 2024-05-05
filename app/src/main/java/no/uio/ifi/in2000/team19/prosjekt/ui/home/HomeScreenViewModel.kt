@@ -84,11 +84,11 @@ class HomeScreenViewModel @Inject constructor(
                 Log.i("X:", graphCoordinates.x.toString())
                 Log.i("Y:", graphCoordinates.y.toString())
 
+
                 _graphUiState.value.tryRunTransaction {
                     lineSeries {
-                            series(
-                                x=graphCoordinates.x,
-                                y=graphCoordinates.y
+                        series(
+                            y = graphCoordinates.y
                         )
                     }
                 }
@@ -109,12 +109,14 @@ class HomeScreenViewModel @Inject constructor(
     //Parameter: a list of (advice) forecast objects that each represent one hour of the day
 
     // TODO move to repository or domain layer
+
+    // Data class for holding Axises for graph
     data class GraphData(
         val x: List<Int>,
         val y: List<Int>
     )
 
-    fun forecastGraphFunction(forecasts: List<AdviceForecast>): GraphData {
+    private fun forecastGraphFunction(forecasts: List<AdviceForecast>): GraphData {
 
         val overallRatingList = mutableListOf<Int>()
         val currentHours = mutableListOf<Int>()
@@ -141,7 +143,6 @@ class HomeScreenViewModel @Inject constructor(
 
             overallRatingList.add(overallRating)
         }
-
 
         val hourlength = currentHours.size
         val ratinglength = overallRatingList.size
