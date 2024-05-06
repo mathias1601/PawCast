@@ -19,6 +19,7 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import java.io.IOException
 import javax.inject.Inject
 
@@ -50,16 +51,38 @@ class HomeScreenViewModel @Inject constructor(
     private var _userInfoUiState:MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false, false))
     var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
+
+    private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", "", 0.0, 0.0, 0.0, "",))
+    var temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
+
+    private val height: String = "0"
+
     private lateinit var adviceList: List<Advice>
 
-    init {
-        loadWeatherForecast()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun loadWeatherForecast() {
+    fun initialize() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                val cords = settingsRepository.getCords()
+                val userInfo = settingsRepository.getUserInfo()
+
+                if ((_cordsUiState.value != cords) || (_userInfoUiState.value != userInfo)) {
+                    _cordsUiState.value = cords
+                    _userInfoUiState.value = userInfo
+
+                    loadWeatherForecast(cords, userInfo)
+                }
+            } catch (e: IOException) {
+                _adviceUiState.value = AdviceUiState.Error
+            }
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun loadWeatherForecast(cords: Cords, userInfo: UserInfo) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+
                 val location = settingsRepository.getCords()
                 _locationUiState.value = location
 
@@ -72,6 +95,9 @@ class HomeScreenViewModel @Inject constructor(
                     "0",
                     2
                 )
+
+                _temperatureUiState.value = generalForecast.general[0]
+
                 val allAdvice = locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
 
