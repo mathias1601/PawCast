@@ -323,20 +323,33 @@ class LocationForecastRepository @Inject constructor(
                 categoryList.add(category)
             }
         }
+            //find special categories and overwrite by removing old category/categories
 
             when {
                 typeOfDog.isThin || typeOfDog.isPuppy || typeOfDog.isShortHaired || typeOfDog.isSenior || typeOfDog.isThinHaired -> {
-                    if (AdviceCategory.COOL in categoryList) { categoryList.add(AdviceCategory.COOLOTHER)}
-                    if (AdviceCategory.COLD in categoryList) { categoryList.add(AdviceCategory.COLDOTHER)}
+                    if (AdviceCategory.COOL in categoryList) {
+                        categoryList.add(AdviceCategory.COOLOTHER)
+                        categoryList.remove(AdviceCategory.COOL)}
+                    if (AdviceCategory.COLD in categoryList) {
+                        categoryList.add(AdviceCategory.COLDOTHER)
+                        categoryList.remove(AdviceCategory.COLD)}
                 }
 
                 typeOfDog.isFlatNosed -> {
-                    if (AdviceCategory.WARM in categoryList) {categoryList.add(AdviceCategory.WARMFLAT)}
-                    if (AdviceCategory.VERYWARM in categoryList) {categoryList.add(AdviceCategory.VERYWARMFLAT)}
+                    if (AdviceCategory.WARM in categoryList) {
+                        categoryList.add(AdviceCategory.WARMFLAT)
+                        categoryList.remove(AdviceCategory.WARM)}
+                    if (AdviceCategory.VERYWARM in categoryList) {
+                        categoryList.add(AdviceCategory.VERYWARMFLAT)
+                        categoryList.remove(AdviceCategory.VERYWARM)}
                 }
 
-                typeOfDog.isLongHaired && AdviceCategory.COLD in categoryList -> {
+                typeOfDog.isLongHaired && (AdviceCategory.COLD in categoryList || AdviceCategory.COLDOTHER in categoryList) -> {
                     categoryList.add(AdviceCategory.COLDLONGFUR)
+                    categoryList.remove(AdviceCategory.COLD)
+                    if (AdviceCategory.COLDOTHER in categoryList) {
+                        categoryList.remove(AdviceCategory.COLDOTHER)
+                    }
                 }
             }
 
