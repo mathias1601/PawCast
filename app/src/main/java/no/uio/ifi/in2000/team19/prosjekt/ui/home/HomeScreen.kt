@@ -90,6 +90,7 @@ import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -100,15 +101,18 @@ fun HomeScreenManager(
     navController: NavController
 ) {
 
+    viewModel.initialize()
+
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
     val graphUiState = viewModel.graphUiState.collectAsState().value
     val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
     val locationUiState = viewModel.locationUiState.collectAsState().value
+    val temperatureUiState = viewModel.temperatureUiState.collectAsState().value
 
     val isRefreshing by remember {
         mutableStateOf(false)
     }
-    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast()})
+    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.initialize()})
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
@@ -119,7 +123,7 @@ fun HomeScreenManager(
             ) {
                 when (adviceUiState) {
                     is AdviceUiState.Success -> {
-                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, navController, innerPadding)
+                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, temperatureUiState, navController, innerPadding)
                     }
 
                     is AdviceUiState.Loading -> {
@@ -167,6 +171,7 @@ fun HomeScreen(
     location: Cords,
     advice: AdviceUiState.Success,
     graphUiState: CartesianChartModelProducer,
+    temperature: GeneralForecast,
     navController: NavController,
     innerPadding: PaddingValues,
 ) {
@@ -278,7 +283,7 @@ fun HomeScreen(
             ) {
 
                 Text(
-                    text = "18C",
+                    text = temperature.temperature.toString(),
                     style = MaterialTheme.typography.titleLarge,
                     color = Color.White,
 
