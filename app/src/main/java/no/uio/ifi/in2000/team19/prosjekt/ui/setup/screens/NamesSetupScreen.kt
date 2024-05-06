@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -50,6 +52,8 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: 
     var dogName by remember {
         mutableStateOf(userInfo.dogName)
     }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Column (
         modifier = Modifier
@@ -119,9 +123,14 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: 
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        viewModel.updateUserName(userName)
-                        viewModel.updateDogName(dogName)
-                        navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+
+                        keyboardController?.hide()
+
+                        if (userName != ""){
+                            viewModel.updateUserName(userName)
+                            viewModel.updateDogName(dogName)
+                            navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+                        }
                     }
                 ),
 
@@ -130,7 +139,8 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: 
         }
 
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text="Navn blir kun brukt til å personalisere appen for deg.",
@@ -140,6 +150,7 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: 
 
             Button(
                 modifier = Modifier.fillMaxWidth(),
+                enabled = (userName != "" && dogName != ""),
 
                 onClick = {
                     viewModel.updateUserName(userName)
@@ -152,6 +163,15 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: 
                 )) {
                 Text(text = "Neste")
                 Icon(Icons.Filled.ChevronRight, contentDescription = "Next")
+            }
+
+            TextButton(
+                onClick = {
+                viewModel.updateUserName("")
+                viewModel.updateDogName("")
+                navController.navigate("setup/${id.toInt()+1}") })
+                {
+                Text(text = "Hopp over dette steget")
             }
         }
     }

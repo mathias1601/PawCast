@@ -1,20 +1,23 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.settings
 
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationTextField
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
 
@@ -27,46 +30,43 @@ fun SettingsScreen(
 ){
 
 
-
-    Column (
-
-        modifier = Modifier
-            .fillMaxSize()
-        ,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-
-
-    ){
-
-
         Column(
             modifier = Modifier
                 .padding(
                     horizontal = 50.dp,
-                    vertical = 40.dp
+                    vertical = 100.dp
                 ) // Global horizontal padding for all settings items.
                 .fillMaxSize()
             ,
         ) {
+            Row ( verticalAlignment = Alignment.CenterVertically) {
+                Icon(imageVector = Icons.Filled.Settings, contentDescription = "Settings")
+                Spacer(modifier = Modifier.padding(5.dp))
+                Text(text = "Instillinger", style = MaterialTheme.typography.titleLarge)
+            }
 
-            CategoryDivider(text = "Location")
+
+
+            CategoryDivider(text = "Lokasjon")
             Column (
                 modifier = Modifier.padding(top = 10.dp)
             ){
                 SearchLocationTextField(viewModel = searchLocationViewModel)
+                Spacer(modifier = Modifier.padding(5.dp))
+                Text(text = "Lokasjon blir lagret på enheten din og brukes kun til å hente værdata fra metrologisk institutt.", style = MaterialTheme.typography.labelMedium)
             }
+            
 
 
 
 
-            CategoryDivider(text = "Debug")
+            CategoryDivider(text = "Hunden din")
             Button(onClick = { viewModel.clearDataStore() }) {
-                Text(text = "Reset to setup")
+                Text(text = "Endre hunde profilen din")
             }
         }
     }
-}
+
 
 @Composable
 fun CategoryDivider(text: String){
