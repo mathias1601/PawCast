@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -59,7 +60,6 @@ fun LocationSetupScreen(
             )
             
 
-            
             Spacer(modifier = Modifier.padding(20.dp))
             
             SearchLocationTextField(viewModel = searchLocationViewModel)
@@ -84,6 +84,7 @@ fun LocationSetupScreen(
 
             Button(
                 modifier = Modifier.fillMaxWidth(),
+                enabled = searchLocationViewModel.isDone.collectAsState().value,
 
                 onClick = {
                     navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen.
@@ -95,6 +96,8 @@ fun LocationSetupScreen(
                 Text(text = "Neste")
                 Icon(Icons.Filled.ChevronRight, contentDescription = "Next")
             }
+            
+            Spacer(modifier = Modifier.padding(24.dp)) // match button heigth due to Skip button on last screen.
         }
     }
 
