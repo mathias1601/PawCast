@@ -62,14 +62,15 @@ class HomeScreenViewModel @Inject constructor(
     fun initialize() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val cords = settingsRepository.getCords()
+                val location = settingsRepository.getCords()
                 val userInfo = settingsRepository.getUserInfo()
 
-                if ((_cordsUiState.value != cords) || (_userInfoUiState.value != userInfo)) {
-                    _cordsUiState.value = cords
+
+                if ((_locationUiState.value != location) || (_userInfoUiState.value != userInfo)) {
+                    _locationUiState.value = location
                     _userInfoUiState.value = userInfo
 
-                    loadWeatherForecast(cords, userInfo)
+                    loadWeatherForecast(location, userInfo)
                 }
             } catch (e: IOException) {
                 _adviceUiState.value = AdviceUiState.Error
@@ -79,15 +80,9 @@ class HomeScreenViewModel @Inject constructor(
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun loadWeatherForecast(cords: Cords, userInfo: UserInfo) {
+    fun loadWeatherForecast(location: Cords, userInfo: UserInfo) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-
-                val location = settingsRepository.getCords()
-                _locationUiState.value = location
-
-                val userInfo = settingsRepository.getUserInfo()
-                _userInfoUiState.value = userInfo
 
                 val generalForecast = locationForecastRepository.getGeneralForecast(
                     location.latitude,
