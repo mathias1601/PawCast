@@ -268,7 +268,12 @@ fun HomeScreen(
         ) {
 
             Text(
-                text = "Heisann ${userInfo.userName} og ${userInfo.dogName}!",
+                text = if (userInfo.userName != "" && userInfo.dogName != ""){
+                    "Heisann ${userInfo.userName} og ${userInfo.dogName}!"
+                    } else {
+                       "Heisann!"
+                    }
+                ,
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.White
             )

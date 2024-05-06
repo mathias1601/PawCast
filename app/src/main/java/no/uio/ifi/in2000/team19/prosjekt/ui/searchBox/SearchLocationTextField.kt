@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -53,13 +52,12 @@ fun SearchLocationTextField(
     viewModel: SearchLocationViewModel
 ){
     val searchQuery = viewModel.searchFieldValue.collectAsState().value
-    val showSavedConfirmation = viewModel.showSavedConfirmation.collectAsState().value
+    val showSavedConfirmation = viewModel.isDone.collectAsState().value
 
     var isTextFieldFocused by remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
-
 
 
 
@@ -271,6 +269,7 @@ fun SearchSuggestion(
 }
 
 // When user clicks should get users location and set it. But is unfinnished.
+/*
 @Composable
 fun UseUserLocation(
     viewModel: SearchLocationViewModel,
@@ -307,8 +306,8 @@ fun UseUserLocation(
                 Icon(imageVector = Icons.Filled.MyLocation, contentDescription = "icon of Place")
                 Text(text = "Bruk din lokasjon")
             }
-
-
         }
     }
 }
+
+ */
