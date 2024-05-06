@@ -106,6 +106,10 @@ fun Team19prosjektoppgaveTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit)
 {
+
+
+
+
     val useDynamicColors = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val colors = when {
 

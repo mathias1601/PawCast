@@ -6,10 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.navigation.ScreenManager
@@ -36,24 +33,22 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
 
+
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window,false)
+
         setContent {
 
             Team19prosjektoppgaveTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    ScreenManager(
-                        viewModel = screenManagerViewModel, // viewmodel for navbar and Scaffold.
-                        settingsScreenViewModel = settingsScreenViewModel, // viewmodel for settings screen and state
-                        homeScreenViewModel= homeScreenViewModel, // viewmodel for homescreen
-                        weatherScreenViewModel = weatherScreenViewModel, // viewmodel for weather screen
-                        setupScreenViewModel=setupScreenViewModel, // viewmodel for setup screens
-                        searchLocationViewModel = searchLocationViewModel // viewmodel for Search Location Box.
-                        )
-                }
+                ScreenManager(
+                    viewModel = screenManagerViewModel, // viewmodel for navbar and Scaffold.
+                    settingsScreenViewModel = settingsScreenViewModel, // viewmodel for settings screen and state
+                    homeScreenViewModel= homeScreenViewModel, // viewmodel for homescreen
+                    weatherScreenViewModel = weatherScreenViewModel, // viewmodel for weather screen
+                    setupScreenViewModel=setupScreenViewModel, // viewmodel for setup screens
+                    searchLocationViewModel = searchLocationViewModel // viewmodel for Search Location Box.
+                    )
             }
         }
     }

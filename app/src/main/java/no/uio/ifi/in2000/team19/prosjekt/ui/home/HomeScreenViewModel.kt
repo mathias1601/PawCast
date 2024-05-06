@@ -44,12 +44,13 @@ class HomeScreenViewModel @Inject constructor(
     private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
     var graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
 
-    private var _cordsUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "69", "69"))
-    var cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
+    private var _locationUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "69", "69"))
+    var locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
 
-    //Kommer mby ikke til å bruke dette
+    // Is used show user name and dog name
     private var _userInfoUiState:MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false, false))
     var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
+
 
     private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", "", 0.0, 0.0, 0.0, "",))
     var temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
@@ -64,7 +65,7 @@ class HomeScreenViewModel @Inject constructor(
                 val cords = settingsRepository.getCords()
                 val userInfo = settingsRepository.getUserInfo()
 
-                if (!(_cordsUiState.value == cords) || !(_userInfoUiState.value == userInfo)) {
+                if ((_cordsUiState.value != cords) || (_userInfoUiState.value != userInfo)) {
                     _cordsUiState.value = cords
                     _userInfoUiState.value = userInfo
 
@@ -82,9 +83,15 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
 
+                val location = settingsRepository.getCords()
+                _locationUiState.value = location
+
+                val userInfo = settingsRepository.getUserInfo()
+                _userInfoUiState.value = userInfo
+
                 val generalForecast = locationForecastRepository.getGeneralForecast(
-                    cords.latitude,
-                    cords.longitude,
+                    location.latitude,
+                    location.longitude,
                     "0",
                     2
                 )
@@ -99,17 +106,17 @@ class HomeScreenViewModel @Inject constructor(
 
                 val graphCoordinates = forecastGraphFunction(locationForecastRepository.getAdviceForecastList(generalForecast))
 
-                val x = graphCoordinates[0]
-                val y = graphCoordinates[1]
 
-                Log.i("X:", x.toString())
-                Log.i("Y:", y.toString())
+                Log.i("X:", graphCoordinates.x.toString())
+                Log.i("Y:", graphCoordinates.y.toString())
+
 
                 _graphUiState.value.tryRunTransaction {
                     lineSeries {
                         series(
-                        x=x,
-                        y=y) }
+                            y = graphCoordinates.y
+                        )
+                    }
                 }
 
             } catch (e: IOException) {
@@ -125,27 +132,34 @@ class HomeScreenViewModel @Inject constructor(
 
     //we are using AdviceForecast because we only need temp, percipitation and UVLimit
 
-    //parameter: a list of (advice) forecast objects that each represent one hour of the day
+    //Parameter: a list of (advice) forecast objects that each represent one hour of the day
 
-    fun forecastGraphFunction(forecasts: List<AdviceForecast>): List<List<Int>> {
+    // TODO move to repository or domain layer
 
-        var overallRatingList = mutableListOf<Int>()
+    // Data class for holding Axises for graph
+    data class GraphData(
+        val x: List<Int>,
+        val y: List<Int>
+    )
 
-        var currentHours = mutableListOf<Int>()
+    private fun forecastGraphFunction(forecasts: List<AdviceForecast>): GraphData {
 
-        forecasts.forEach {
+        val overallRatingList = mutableListOf<Int>()
+        val currentHours = mutableListOf<Int>()
 
-            val hourOfDay = it.time.toInt()
+        forecasts.forEach { forecast ->
+
+            val hourOfDay = forecast.time.toInt()
             currentHours.add(hourOfDay)
 
-            var overallRating: Int
-            val tempRating = rating(it.temperature, tempLimitMap)
-            val percRating = rating(it.percipitation, percipitationLimitMap)
-            val uvRating = rating(it.UVindex, UVLimitMap)
+
+            val tempRating = rating(forecast.temperature, tempLimitMap)
+            val percRating = rating(forecast.percipitation, percipitationLimitMap)
+            val uvRating = rating(forecast.UVindex, UVLimitMap)
 
             val ratings = listOf(tempRating, percRating, uvRating)
 
-            overallRating = (tempRating + percRating + uvRating) / 3
+            var overallRating : Int = (tempRating + percRating + uvRating) / 3
 
             ratings.forEach {
                 if (it < 3) {
@@ -153,20 +167,18 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
 
-
             overallRatingList.add(overallRating)
         }
-
 
         val hourlength = currentHours.size
         val ratinglength = overallRatingList.size
 
-        Log.i("HOURS", "$hourlength")
+        Log.i("HOURS", currentHours.toString())
         Log.i("RATINGS", "$ratinglength")
 
         Log.i("rating list", overallRatingList.toString())
 
-        return listOf(currentHours, overallRatingList)
+        return GraphData(currentHours, overallRatingList)
     }
 
     //these maps are used to determine rating
@@ -202,7 +214,7 @@ class HomeScreenViewModel @Inject constructor(
             listOf(15.0, 16.5) to 10
         )
 
-    //basert på info fra Yr
+    //Basert på info fra Yr
     val percipitationLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
             listOf(2.1, 7.0) to 1,
@@ -217,7 +229,7 @@ class HomeScreenViewModel @Inject constructor(
             listOf(0.0, 0.0) to 10
         )
 
-    //basert på data fra SNL
+    //Basert på data fra SNL
     val UVLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
             listOf(8.1, 15.0) to 1,
