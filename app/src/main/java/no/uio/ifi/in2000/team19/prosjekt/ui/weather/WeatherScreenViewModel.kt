@@ -47,17 +47,15 @@ class WeatherScreenViewModel @Inject constructor(
 
 
 
-    fun initalize() {
+    init {
 
         viewModelScope.launch(Dispatchers.IO) {
 
-                val cords = settingsRepository.getCords()
+                settingsRepository.getCords().collect {
 
-                if (_locationUiState.value != cords) {
-                    _locationUiState.value = cords
-
-                    loadWeather(cords)
+                    loadWeather(it)
                 }
+
         }
     }
 

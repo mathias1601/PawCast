@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
@@ -59,19 +60,14 @@ class HomeScreenViewModel @Inject constructor(
 
     private lateinit var adviceList: List<Advice>
 
-    fun initialize() {
+    init {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val location = settingsRepository.getCords()
-                val userInfo = settingsRepository.getUserInfo()
+                settingsRepository.getCords().collect {
 
-
-                if ((_locationUiState.value != location) || (_userInfoUiState.value != userInfo)) {
-                    _locationUiState.value = location
-                    _userInfoUiState.value = userInfo
-
-                    loadWeatherForecast(location, userInfo)
+                    loadWeatherForecast(it)
                 }
+
             } catch (e: IOException) {
                 _adviceUiState.value = AdviceUiState.Error
             }
@@ -80,7 +76,7 @@ class HomeScreenViewModel @Inject constructor(
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun loadWeatherForecast(location: Cords, userInfo: UserInfo) {
+    fun loadWeatherForecast(location: Cords) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
 

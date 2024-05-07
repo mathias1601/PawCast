@@ -74,6 +74,7 @@ import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
@@ -81,6 +82,7 @@ import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.shape.shader.TopBottomShader
+import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
@@ -101,8 +103,6 @@ fun HomeScreenManager(
     navController: NavController
 ) {
 
-    viewModel.initialize()
-
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
     val graphUiState = viewModel.graphUiState.collectAsState().value
     val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
@@ -112,7 +112,7 @@ fun HomeScreenManager(
     val isRefreshing by remember {
         mutableStateOf(false)
     }
-    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.initialize()})
+    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast(locationUiState)})
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
@@ -563,7 +563,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
             Text("Værvurdering for tur")
 
             CartesianChartHost(
-                // getXStep = { 1f }, // Show every X step on X axis.
+                getXStep = { 1f }, // Show every X step on X axis.
                 chart =
                     rememberCartesianChart(
                         rememberLineCartesianLayer(
@@ -592,9 +592,9 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                         ),
                         bottomAxis = rememberBottomAxis(
                             itemPlacer = AxisItemPlacer.Horizontal.default(
-                                spacing = 2
+                                spacing = 1
                             ),
-                            labelRotationDegrees = -30f,
+                            tickLength = 20.dp,
                             valueFormatter = bottomAxisValueFormatter,
                             titleComponent = rememberTextComponent(
                                     background = ShapeComponent(

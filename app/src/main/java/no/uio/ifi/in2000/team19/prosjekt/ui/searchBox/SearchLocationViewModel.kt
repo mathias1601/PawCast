@@ -15,6 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
@@ -58,7 +59,9 @@ class SearchLocationViewModel @Inject constructor(
     // Set Text in TextField to match stored value
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            _searchFieldValue.value = settingsRepository.getCords().detailedName
+            settingsRepository.getCords().collect {
+                _searchFieldValue.value = it.detailedName
+            }
         }
     }
 
@@ -143,7 +146,9 @@ class SearchLocationViewModel @Inject constructor(
 
         viewModelScope.launch (Dispatchers.IO){
             val cords = settingsRepository.getCords()
-            _searchFieldValue.value = cords.shortName
+             cords.collect {
+                 _searchFieldValue.value = it.shortName
+            }
         }
 
 

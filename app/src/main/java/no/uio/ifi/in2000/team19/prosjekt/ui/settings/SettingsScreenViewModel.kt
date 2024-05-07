@@ -25,7 +25,9 @@ class SettingsScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            _cordsUiState.value = settingsRepository.getCords()
+            settingsRepository.getCords().collect {
+                _cordsUiState.value = it
+            }
 
         }
     }
