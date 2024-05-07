@@ -34,7 +34,9 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -235,8 +237,8 @@ fun HomeScreen(
 
 
     val colorStops = arrayOf(
-        0.0f to Color.Blue, // Top app bar is specified as this color. To change that color go to Themes.kt and change TOP_APP_BAR_COLOR
-        0.5f to Color.Magenta
+        0.0f to Color(0xFF02677d), // Top app bar is specified as this color. To change that color go to Themes.kt and change TOP_APP_BAR_COLOR
+        0.5f to Color(0xFFb4ebff)
     )
 
     Box(
@@ -473,7 +475,8 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
             }
     ) {
                 Surface(
-                    color = MaterialTheme.colorScheme.secondaryContainer
+                    color = MaterialTheme.colorScheme.tertiaryContainer
+
                 ) {
                     Column(
                         modifier = Modifier
@@ -486,14 +489,16 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
                         Column {
                             Text(
                                 text = advice.title,
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer
                             )
 
                             Spacer(modifier = Modifier.size(10.dp))
 
                             Text(
                                 text = advice.shortAdvice,
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer
                             )
                         }
 
@@ -502,9 +507,13 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
                                 navigateToMoreInfoScreen()
                             },
                             modifier = Modifier.align(Alignment.End),
-                            contentPadding = PaddingValues(horizontal = 18.dp, vertical = 4.dp)
+                            contentPadding = PaddingValues(horizontal = 22.dp, vertical = 8.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
+
                         ) {
-                            Text("Les mer")
+                            Text(
+                                text = "Les mer",
+                                color = MaterialTheme.colorScheme.onTertiary)
                         }
 
                     }
@@ -547,7 +556,10 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
+            .height(300.dp),
+        colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     ){
         Column (
             modifier = Modifier
@@ -565,8 +577,8 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                             listOf(
                                 rememberLineSpec(
                                     shader = TopBottomShader(
-                                        DynamicShaders.color(Color.Green),
-                                        DynamicShaders.color(Color.Blue),
+                                        DynamicShaders.color(MaterialTheme.colorScheme.secondary),
+                                        DynamicShaders.color(Color.Magenta),
                                     ),
                                 )
                             ),
@@ -577,8 +589,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                                 rememberTextComponent(
                                     background = ShapeComponent(
                                         shape = Shapes.pillShape,
-                                        color = MaterialTheme.colorScheme.tertiary
-                                        .hashCode()),
+                                        color = MaterialTheme.colorScheme.secondaryContainer.hashCode()),
                                         padding = MutableDimensions(8f, 1f),
                                         textAlignment = Layout.Alignment.ALIGN_CENTER
                                 ),
@@ -594,7 +605,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                             titleComponent = rememberTextComponent(
                                     background = ShapeComponent(
                                         shape = Shapes.pillShape,
-                                        color =  MaterialTheme.colorScheme.tertiary.hashCode()),
+                                        color =  MaterialTheme.colorScheme.secondaryContainer.hashCode()),
                                         padding = MutableDimensions(8f, 2f)
                             ),
                             title = "Klokkkeslett.",

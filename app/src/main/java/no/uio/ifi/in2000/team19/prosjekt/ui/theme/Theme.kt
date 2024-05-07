@@ -10,10 +10,37 @@ import androidx.compose.runtime.Composable
 
 private val DarkColorPalette = darkColorScheme(
     primary = primaryDark,
+    onPrimary = onPrimaryDark,
+    primaryContainer = primaryContainerDark,
+    onPrimaryContainer = onPrimaryContainerDark,
+    inversePrimary = inversePrimaryDark,
+
 
     secondary = secondaryDark,
+    onSecondary = onSecondaryDark,
+    secondaryContainer = secondaryContainerDark,
+    onSecondaryContainer = onSecondaryContainerDark,
 
-    tertiary = tertiaryDark
+    tertiary = tertiaryDark,
+    onTertiary = onTertiaryDark,
+    tertiaryContainer = tertiaryContainerDark,
+    onTertiaryContainer = onTertiaryContainerDark,
+
+    error = errorDark,
+    onError = onErrorDark,
+    errorContainer = errorContainerDark,
+    onErrorContainer = onErrorContainerDark,
+
+    background = backgroundDark,
+    onBackground = onBackgroundDark,
+    surface = surfaceDark,
+    onSurface = onSurfaceDark,
+    surfaceContainer = surfaceContainerDark,
+    inverseSurface = inverseSurfaceDark,
+    inverseOnSurface = inverseOnSurfaceDark,
+    surfaceVariant = surfaceVariantDark,
+    onSurfaceVariant = onSurfaceVariantDark,
+    outline = outlineDark,
 
 
 )
@@ -45,6 +72,7 @@ private val LightColorPalette = lightColorScheme(
     onBackground = onBackgroundLight,
     surface = surfaceLight,
     onSurface = onSurfaceLight,
+    surfaceContainer = surfaceContainerLight,
     inverseSurface = inverseSurfaceLight,
     inverseOnSurface = inverseOnSurfaceLight,
     surfaceVariant = surfaceVariantLight,
