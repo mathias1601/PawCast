@@ -22,10 +22,16 @@ class SetupScreenViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ): ViewModel() {
 
-    private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"", "", false,false,false, false, false, false, false, false, false, false))
+
+
+    private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"loading", "loading", false,false,false, false, false, false, false, false, false, false))
     var userInfo: StateFlow<UserInfo> = _userInfo.asStateFlow()
 
-
+    fun initialize(){
+        viewModelScope.launch (Dispatchers.IO){
+            _userInfo.value = settingsRepository.getUserInfo()
+        }
+    }
 
     // SCREEN ONE
     fun updateUserName(userName: String){

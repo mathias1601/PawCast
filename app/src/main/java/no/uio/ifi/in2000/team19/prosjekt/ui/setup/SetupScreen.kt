@@ -35,6 +35,8 @@ fun SetupManager(
     navController: NavHostController
 ) {
 
+    viewModel.initialize()
+
     Scaffold (
         topBar = {
             CenterAlignedTopAppBar(

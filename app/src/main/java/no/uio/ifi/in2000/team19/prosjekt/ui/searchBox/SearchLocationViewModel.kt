@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.searchBox
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -43,8 +42,8 @@ class SearchLocationViewModel @Inject constructor(
 
 
 
-    private val _showSavedConfirmation: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val showSavedConfirmation : StateFlow<Boolean> = _showSavedConfirmation.asStateFlow()
+    private val _isDone: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isDone : StateFlow<Boolean> = _isDone.asStateFlow()
 
 
 
@@ -135,7 +134,7 @@ class SearchLocationViewModel @Inject constructor(
                 )
             }
             updateSearchBoxToRepresentStoredLocation()
-            _showSavedConfirmation.value = true
+            _isDone.value = true
         }
 
     }
@@ -151,7 +150,7 @@ class SearchLocationViewModel @Inject constructor(
     }
 
     fun setSearchStateToIdle(){
-        _showSavedConfirmation.value = false
+        _isDone.value = false
         _searchState.value = SearchState.Idle
     }
 
@@ -159,6 +158,7 @@ class SearchLocationViewModel @Inject constructor(
         _searchState.value = SearchState.Hidden
     }
 
+    /*
     @SuppressLint("MissingPermission") // Supress MissingPermission since permisission gets checked in Composable
     fun setLocationToUserLocation(){
 
@@ -166,6 +166,7 @@ class SearchLocationViewModel @Inject constructor(
         Log.d("TAG", location.result.latitude.toString())
         Log.d("TAG", location.result.longitude.toString())
     }
+     */
 
     // Method is ran if user just presses done on their keyboard. Then we selected the top result from the earlier search
     fun pickTopResult() {
