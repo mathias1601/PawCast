@@ -18,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -37,12 +38,7 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ScreenManager(
-    settingsScreenViewModel: SettingsScreenViewModel,
-    homeScreenViewModel: HomeScreenViewModel,
     viewModel: ScreenManagerViewModel,
-    weatherScreenViewModel: WeatherScreenViewModel,
-    setupScreenViewModel: SetupScreenViewModel,
-    searchLocationViewModel : SearchLocationViewModel
 ) {
 
     val navController = rememberNavController()
@@ -91,30 +87,37 @@ fun ScreenManager(
 
             ){
                 composable("home") {
-                    HomeScreenManager(viewModel = homeScreenViewModel, navController)
+                    HomeScreenManager(
+                        viewModel = hiltViewModel<HomeScreenViewModel>(),
+                        navController)
                 }
 
                 composable("settings"){
-                    SettingsScreen(settingsScreenViewModel, searchLocationViewModel)
+                    SettingsScreen(
+                        viewModel = hiltViewModel<SettingsScreenViewModel>(),
+                        searchLocationViewModel = hiltViewModel<SearchLocationViewModel>()
+                    )
                 }
 
                 composable("weather"){
-                    WeatherScreen(weatherScreenViewModel)
+                    WeatherScreen(
+                        weatherScreenViewModel = hiltViewModel<WeatherScreenViewModel>()
+                    )
                 }
 
                 composable("setup/{STAGE}"){backStackEntry ->
                     val id = backStackEntry.arguments?.getString("STAGE") ?: "0"
                     SetupManager(
-                        viewModel = setupScreenViewModel,
+                        viewModel = hiltViewModel<SetupScreenViewModel>(),
                         id=id,
                         navController=navController,
-                        searchLocationViewModel = searchLocationViewModel
+                        searchLocationViewModel = hiltViewModel<SearchLocationViewModel>()
                     )
                 }
 
                 composable("advice/{id}") {backStackEntry->
                     val id = backStackEntry.arguments?.getString("id")?.let {
-                        AdviceScreen(adviceId = it.toInt(), navController, homeScreenViewModel)
+                        AdviceScreen(adviceId = it.toInt(), navController, viewModel = hiltViewModel<HomeScreenViewModel>())
                     }
                 }
             }
