@@ -267,7 +267,6 @@ class LocationForecastRepository @Inject constructor(
                 "HEATWAVE" -> adviceArray = context.resources.getStringArray(R.array.HEATWAVE)
                 "RAIN" -> adviceArray = context.resources.getStringArray(R.array.RAIN)
                 "THUNDER" -> adviceArray = context.resources.getStringArray(R.array.THUNDER)
-                "SNOW" -> adviceArray = context.resources.getStringArray(R.array.SNOW)
                 "SUNBURN" -> adviceArray = context.resources.getStringArray(R.array.SUNBURN)
                 "TICK" -> adviceArray = context.resources.getStringArray(R.array.TICK)
                 "VIPER" -> adviceArray = context.resources.getStringArray(R.array.VIPER)

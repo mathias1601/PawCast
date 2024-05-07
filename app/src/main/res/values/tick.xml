@@ -4,25 +4,25 @@
         <item> Det er flåttsesong </item>
 
         <item>
-            Veterinærer anbefaler
-            Sjekk hundens pels nøye etter tur.
-            Spesielt utsatte områder er de med lite pels, for eksempel:
-            • rundt øyne og munn,
-            • innsiden av ører
-            • under halefestet.
-            Kontakt veterinær for resept på flåttmiddel, eller kjøp reseptfritt på apoteket.
+            ~Veterinærer anbefaler\n
+            Sjekk hundens pels nøye etter tur.\n
+            Spesielt utsatte områder er de med lite pels, for eksempel:\n
+            • Rundt øyne og munn
+            • Innsiden av ører
+            • Under halefestet\n
+            Kontakt veterinær for resept på flåttmiddel, eller kjøp reseptfritt på apoteket.\n
 
-            Tegn å se etter
-            Flått kan variere mye i størrelse og farge, men det letteste er å kjenne etter.
-            Hvis hunden blir bitt kan det etterlate en kul og rød, hoven hud. Hvis den blir syk
-            av bittet er vanlige symptomer dårlig appetitt, nedstemthet, feber og leddsmerter.
+            ~Tegn å se etterṽ
+            Flått kan variere mye i størrelse og farge, men det letteste er å kjenne etter.\n
+            Hvis hunden blir bitt kan det etterlate en kul og rød, hoven hud.\n
+            Hvis den blir syk av bittet er vanlige symptomer dårlig appetitt, nedstemthet, feber og leddsmerter.\n
 
 
         </item>
 
         <item>
-            Sjekk hunden for flått etter tur.
-            Kontakt veterinær for resept på flåttmiddel eller kjøp reseptfritt på apoteket.
+            Sjekk hunden for flått etter tur.\n
+            Kontakt veterinær for resept på flåttmiddel eller kjøp reseptfritt på apoteket.\n
         </item>
     </string-array>
 </resources>

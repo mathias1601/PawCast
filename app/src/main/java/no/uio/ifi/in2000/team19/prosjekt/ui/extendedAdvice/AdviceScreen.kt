@@ -34,6 +34,7 @@ import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
@@ -56,7 +57,7 @@ fun AdviceScreen(adviceId: Int, navController: NavController, viewModel: HomeScr
                 ),
                 title = {
                     Text(
-                        text = "CocoMilo"
+                        text = advice.title
                     )
                 },
                 navigationIcon = {
@@ -75,29 +76,13 @@ fun AdviceScreen(adviceId: Int, navController: NavController, viewModel: HomeScr
 
         Box(modifier = Modifier.padding(innerpadding)) {
 
+
             LazyColumn(
                 modifier = Modifier
                     .padding(30.dp)
                     .fillMaxWidth()
                     .fillMaxHeight()) {
 
-                item {
-                    Text(advice.title, modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .fillMaxHeight()
-                        .padding(vertical = 10.dp, horizontal = 10.dp)
-                        .background(
-                            color = Color(MaterialTheme.colorScheme.primary.hashCode()),
-                            shape = RoundedCornerShape(
-                                topEnd = 23.dp,
-                                topStart = 23.dp
-                            )
-                        ),
-                        color = Color.White
-                    )
-
-                    Spacer(modifier = Modifier.padding(20.dp))
-                }
 
 
                 var description: String = advice.description

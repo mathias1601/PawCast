@@ -481,9 +481,6 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.3f)
-            .clickable {
-                navigateToMoreInfoScreen()
-            }
     ) {
                 Surface(
                     color = MaterialTheme.colorScheme.secondaryContainer
