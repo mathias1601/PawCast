@@ -8,5 +8,18 @@
 - Mathias Knudsen
 
 
-![image](https://media1.tenor.com/m/Og-IWGLP9IoAAAAC/cat-wtf.gif)
-![image](https://media1.tenor.com/m/qLhbUdKo4QMAAAAC/cat.gif)
+## Hvordan kjøre appen
++ Klone repository
++ Trykk play
+
+(idk om dette e riktig 💀) todo
+
+
+
+## Biblioteker
+
+- Vico graph (link)
+- MapBox Search SDK (link)
+- KTOR
+- Jetpack Compose
+- ++.... todo
