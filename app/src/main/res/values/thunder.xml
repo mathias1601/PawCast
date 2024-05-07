@@ -4,9 +4,16 @@
         <item> Torden </item>
 
         <item>
-            utdypende info
+            ~Veterinærer anbefaler\n
+            Hold hunden inne eller i bånd.\n
+            Sørg for at hunden har mikrochip tilfelle den skulle bli redd og rømme.\n
+
         </item>
 
-        <item> kort info </item>
+        <item>
+            Veterinærer anbefaler:\n
+            Hold hunden inne eller i bånd.\n
+            Sørg for at hunden har mikrochip tilfelle den skulle bli redd og rømme.\n
+        </item>
     </string-array>
 </resources>
