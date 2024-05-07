@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
@@ -64,7 +63,6 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 settingsRepository.getCords().collect {
-
                     loadWeatherForecast(it)
                 }
 
@@ -77,8 +75,12 @@ class HomeScreenViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun loadWeatherForecast(location: Cords) {
+
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
+
+                Log.d("HomeScreenViewModel", "kaller på getGeneralForecast...")
 
                 val generalForecast = locationForecastRepository.getGeneralForecast(
                     location.latitude,

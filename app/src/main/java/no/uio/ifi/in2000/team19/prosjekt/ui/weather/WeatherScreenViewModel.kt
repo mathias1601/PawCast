@@ -15,7 +15,6 @@ import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
-import no.uio.ifi.in2000.team19.prosjekt.ui.home.AdviceUiState
 import java.io.IOException
 import javax.inject.Inject
 
@@ -64,13 +63,10 @@ class WeatherScreenViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
 
             try {
+
+                Log.d("WeatherViewModel", "kaller på getGeneralForecast...")
+
                 val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, "0", 2)
-                Log.d("Debug", "Loader vær for timer")
-
-
-                //val weatherDaysDeferred = async {locationForecastRepository.getGeneralForecastForDays(cords.latitude,cords.longitude, "0", 2)}
-                //Log.d("Debug", "Loader vær for dager")
-
 
                 //weatherUiState = WeatherUiState.Success(weatherHours, weatherDays)
                 _weatherUiState.value = WeatherUiState.Success(weatherForecast)
