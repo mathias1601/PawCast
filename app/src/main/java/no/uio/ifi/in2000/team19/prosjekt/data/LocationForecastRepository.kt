@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.patrykandpatrick.vico.core.Animation.range
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
@@ -16,7 +15,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
+import java.time.MonthDay
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -102,9 +101,9 @@ class LocationForecastRepository @Inject constructor(
         }
 
         val dayForecastList = getWeatherForecastForDays(locationForecast, nrDays, startOfNextDay)
-        val meanHours = getWeatherForecastHours(locationForecast, startOfNextDay, 2)
+        val meanHours = getWeatherForecastHours(locationForecast, startOfNextDay)
 
-        val forecasts: ForecastTypes = ForecastTypes(genForecastList, dayForecastList, meanHours)
+        val forecasts = ForecastTypes(genForecastList, dayForecastList, meanHours)
 
         return forecasts
     }
@@ -150,7 +149,7 @@ class LocationForecastRepository @Inject constructor(
             //val symbolWarm = locationForecast.properties.timeseries[middleOfDay].data.next_1_hours.summary.symbol_code
             //val temperatureCold = locationForecast.properties.timeseries[coldestTime].data.instant.details.air_temperature
 
-            forecastList.add(WeatherForDay(symbolCode, dayOfWeekString, coldestTemperature, warmestTemperature, ""))
+            forecastList.add(WeatherForDay(symbolCode, dayOfWeekString, coldestTemperature, warmestTemperature))
 
             theHour += 24
         }
@@ -160,49 +159,125 @@ class LocationForecastRepository @Inject constructor(
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun getWeatherForecastHours(locationForecast: LocationForecast, startHour: Int, nrDays: Int): List<WeatherForDay> {
+    private fun getWeatherForecastHours(locationForecast: LocationForecast, startHour: Int): List<WeatherForDay> {
         //Tar 3 timer om gangen og finner gjennomsnitt og lager et WeatherForDay-object
         val forecastList = mutableListOf<WeatherForDay>()
 
-        var startOfFirstDay = startHour
+        var theHour = startHour
 
         val today = LocalDate.now()
         var nextDay = today.plusDays(1)
 
         //One day is 8, two is 16
-        for (i in 0 until 12) {
-            val temperatureFirstHour = locationForecast.properties.timeseries[startOfFirstDay].data.instant.details.air_temperature
-            val temperatureSecondHour = locationForecast.properties.timeseries[startOfFirstDay + 1].data.instant.details.air_temperature
-            val temperatureThirdHour = locationForecast.properties.timeseries[startOfFirstDay + 2].data.instant.details.air_temperature
-            val temperatureFourthHour = locationForecast.properties.timeseries[startOfFirstDay + 3].data.instant.details.air_temperature
+        for (i in 0 until 8) {
 
-            val meanTemperature = (temperatureFirstHour + temperatureSecondHour + temperatureThirdHour + temperatureFourthHour) / 4
+            val timeStart = locationForecast.properties.timeseries[theHour].time
+            val timeSecond = locationForecast.properties.timeseries[theHour + 1].time
+            //val zonedDateTimeStart = ZonedDateTime.parse(timeStart)
+            //val hourFormat = DateTimeFormatter.ofPattern("HH")
+            //val startHourAsInt = zonedDateTimeStart.format(hourFormat)
 
-            val roundedMean = String.format("%.1f", meanTemperature)
+            val timeEnd = locationForecast.properties.timeseries[theHour + 6].time
+            //val zonedDateTimeEnd = ZonedDateTime.parse(timeEnd)
+            //val hourFormatter = DateTimeFormatter.ofPattern("HH")
+            //val endHourAsInt = zonedDateTimeEnd.format(hourFormatter)
 
-            if (i == 6) {
+            val symbolCode = locationForecast.properties.timeseries[theHour].data.next_6_hours.summary.symbol_code
+            val percipitation = locationForecast.properties.timeseries[theHour].data.next_6_hours.details.precipitation_amount
+
+
+            val lastHour = timeEnd.substring(11, 13)
+            val start = timeStart.substring(11, 13)
+            val secondHour = timeSecond.substring(11, 13)
+
+            val endHour: String
+
+            val startHourInt = start.toInt()
+            val secondHourInt = secondHour.toInt()
+
+            val hoursBetween = if (startHourInt <= secondHourInt) {
+                secondHourInt - startHourInt
+            } else {
+                (24 - startHourInt + secondHourInt)
+            }
+
+            var meanTemperature: Double
+            val meanWind: Double
+            //val meanPercipitation: Double
+
+            Log.d("Debug vær", "hours between $start and $secondHour = $hoursBetween")
+
+            //Sometimes the differnece between two timeseries is 6 hours instead of one
+            if (hoursBetween == 6) {
+                meanTemperature = (locationForecast.properties.timeseries[theHour].data.instant.details.air_temperature +
+                        locationForecast.properties.timeseries[theHour + 1].data.instant.details.air_temperature) / 2
+                Log.d("Debug vær", "$hoursBetween slo inn")
+
+
+                meanWind = (locationForecast.properties.timeseries[theHour].data.instant.details.wind_speed +
+                        locationForecast.properties.timeseries[theHour + 1].data.instant.details.wind_speed) / 2
+
+
+                //meanPercipitation = (locationForecast.properties.timeseries[startOfFirstDay].data.next_1_hours.details.precipitation_amount +
+                //        locationForecast.properties.timeseries[startOfFirstDay + 1].data.next_1_hours.details.precipitation_amount) / 2
+
+                endHour = secondHour
+            }
+            else {
+
+                meanTemperature = locationForecast.properties.timeseries[theHour].data.next_6_hours.details.air_temperature_max
+                   /* (locationForecast.properties.timeseries[theHour].data.instant.details.air_temperature +
+                            locationForecast.properties.timeseries[theHour + 1].data.instant.details.air_temperature +
+                            locationForecast.properties.timeseries[theHour + 2].data.instant.details.air_temperature +
+                            locationForecast.properties.timeseries[theHour + 3].data.instant.details.air_temperature) / 4
+
+
+                    */
+
+                //TODO might use next_6_hours highest and lowest temperature from locationforecast then theres no need to repeat
+
+                /*repeat(6) {
+                    meanTemperature += locationForecast.properties.timeseries[theHour].data.instant.details.air_temperature
+                    theHour += 1
+                }
+
+                 */
+
+                meanWind =
+                    (locationForecast.properties.timeseries[theHour].data.instant.details.wind_speed +
+                            locationForecast.properties.timeseries[theHour + 1].data.instant.details.wind_speed +
+                            locationForecast.properties.timeseries[theHour + 2].data.instant.details.wind_speed +
+                            locationForecast.properties.timeseries[theHour + 3].data.instant.details.wind_speed) / 4
+
+
+                /*meanPercipitation =
+                    (locationForecast.properties.timeseries[startOfFirstDay].data.next_1_hours.details.precipitation_amount +
+                            locationForecast.properties.timeseries[startOfFirstDay + 1].data.next_1_hours.details.precipitation_amount +
+                            locationForecast.properties.timeseries[startOfFirstDay + 2].data.next_1_hours.details.precipitation_amount +
+                            locationForecast.properties.timeseries[startOfFirstDay + 3].data.next_1_hours.details.precipitation_amount / 4)
+
+                 */
+
+                endHour = lastHour
+            }
+
+
+            val roundedTemperature = String.format("%.1f", meanTemperature)
+            val roundedWind = String.format("%.1f", meanWind)
+            //val roundedPrecepitation = String.format("%.1f", meanPercipitation)
+
+
+            if (i == 4) {
                 nextDay = nextDay.plusDays( 1)
             }
 
             val dayOfWeek = nextDay.dayOfWeek
             val dayOfWeekString = dayOfWeek.getDisplayName(TextStyle.FULL, Locale("no", "NO"))
 
-            val nextHoursData = locationForecast.properties.timeseries[startOfFirstDay + 1].data.next_1_hours
-            val symbolCode = nextHoursData?.summary?.symbol_code ?: locationForecast.properties.timeseries[startOfFirstDay].data.next_6_hours.summary.symbol_code
 
-            val timeStart = locationForecast.properties.timeseries[startOfFirstDay].time
-            val zonedDateTimeStart = ZonedDateTime.parse(timeStart)
-            val hourFormat = DateTimeFormatter.ofPattern("HH")
-            val startHourAsInt = zonedDateTimeStart.format(hourFormat)
+            forecastList.add(WeatherForDay(symbolCode, dayOfWeekString, null, null, start, endHour, roundedTemperature, roundedWind, "12.1"))
 
-            val timeEnd = locationForecast.properties.timeseries[startOfFirstDay + 3].time
-            val zonedDateTimeEnd = ZonedDateTime.parse(timeEnd)
-            val hourFormatter = DateTimeFormatter.ofPattern("HH")
-            val endHourAsInt = zonedDateTimeEnd.format(hourFormatter)
-
-            forecastList.add(WeatherForDay(symbolCode, dayOfWeekString, null, null, startHourAsInt, endHourAsInt, roundedMean))
-
-            startOfFirstDay += 4
+            theHour += 6
         }
 
         return forecastList
@@ -210,6 +285,7 @@ class LocationForecastRepository @Inject constructor(
     }
 
     //Returnerer en liste av Advice-objekter
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getAdvice(generalForecast: ForecastTypes, typeOfDog: UserInfo): List<Advice> {
 
         val adviceForecast = getAdviceForecastData(generalForecast.general[0])
@@ -291,6 +367,7 @@ class LocationForecastRepository @Inject constructor(
     }
 
     // Refactored Code
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<AdviceCategory> {
         // Early return if typeOfDog is null or adviceForecast has no categories
 
@@ -364,7 +441,7 @@ class LocationForecastRepository @Inject constructor(
             categoryList.add(AdviceCategory.RAIN)
         }
 
-        //Finne datoen i dag og sjekke om den er innenfor en range hvor flått og hoggorm er aktive
+        //TODO lage en when for dato for flått, hoggorm og nyttår
 
 
         if (categoryList.size == 0) {

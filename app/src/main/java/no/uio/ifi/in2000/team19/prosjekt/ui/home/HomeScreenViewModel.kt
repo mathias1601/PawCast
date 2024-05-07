@@ -1,8 +1,10 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
+import android.net.http.HttpException
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresExtension
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
@@ -30,6 +32,7 @@ sealed interface AdviceUiState{
 }
 
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
@@ -56,6 +59,7 @@ class HomeScreenViewModel @Inject constructor(
         loadWeatherForecast()
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     @RequiresApi(Build.VERSION_CODES.O)
     fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -97,6 +101,9 @@ class HomeScreenViewModel @Inject constructor(
 
             } catch (e: IOException) {
                 _adviceUiState.value  = AdviceUiState.Error
+            }
+            catch(e: HttpException) {
+                _adviceUiState.value = AdviceUiState.Error
             }
         }
     }
