@@ -15,7 +15,6 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.MonthDay
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -27,11 +26,15 @@ import javax.inject.Inject
 class LocationForecastRepository @Inject constructor(
     private val locationForecastDataSource: LocationForecastDataSource,
     private val context: Context
-)  {
+) {
 
 
     //TODO find solution for only one API-call
-    private suspend fun fetchLocationForecast(latitude: String, longitude: String, height: String): LocationForecast {
+    private suspend fun fetchLocationForecast(
+        latitude: String,
+        longitude: String,
+        height: String
+    ): LocationForecast {
         return locationForecastDataSource.getLocationForecast(latitude, longitude, height)
     }
 
@@ -40,7 +43,7 @@ class LocationForecastRepository @Inject constructor(
 
         val adviceForecasts = mutableListOf<AdviceForecast>()
         val general: List<GeneralForecast> = listOfGeneralForecasts.general
-        general.forEach{
+        general.forEach {
             adviceForecasts.add(getAdviceForecastData(it))
         }
         return adviceForecasts
@@ -48,7 +51,12 @@ class LocationForecastRepository @Inject constructor(
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun getGeneralForecast(latitude: String, longitude: String, height: String, nrDays: Int): ForecastTypes {
+    suspend fun getGeneralForecast(
+        latitude: String,
+        longitude: String,
+        height: String,
+        nrDays: Int
+    ): ForecastTypes {
 
         val locationForecast = fetchLocationForecast(latitude, longitude, height)
 
@@ -59,43 +67,54 @@ class LocationForecastRepository @Inject constructor(
         val now = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS)
 
         val hours = ChronoUnit.HOURS.between(startHour, now)
-        Log.i("Debugger", "hours aka antall timer mellom starten og nå $hours")
 
         //If the time is past midnight, hours will get a negative value
         val adjustedStart = if (hours < 0) 24 + hours.toInt() else hours.toInt()
-        Log.i("Debugger", "adjusted: $adjustedStart")
-
 
         //Find ending point of for-loop.
-
         val hoursTo23 = (23 - now.hour + 24) % 24 + adjustedStart
-        Log.i("Debugger", "hoursTo23 $hoursTo23")
+
+        //Used for the other weather functions
         val startOfNextDay = hoursTo23 + 1
-        Log.i("Debugger", "startOfNextDay $startOfNextDay")
 
         val lastHour = (hoursTo23 + 12)
 
         val genForecastList = mutableListOf<GeneralForecast>()
-        //if (nrHours <= 3)
-        for( i in adjustedStart .. lastHour) {
-            val temperature = locationForecast.properties.timeseries[i].data.instant.details.air_temperature
+
+        for (i in adjustedStart..lastHour) {
+            val temperature =
+                locationForecast.properties.timeseries[i].data.instant.details.air_temperature
             val wind = locationForecast.properties.timeseries[i].data.instant.details.wind_speed
-            val symbol = locationForecast.properties.timeseries[i].data.next_1_hours.summary.symbol_code
+            val symbol =
+                locationForecast.properties.timeseries[i].data.next_1_hours.summary.symbol_code
 
             val time = locationForecast.properties.timeseries[i].time
             val zonedDateTime = ZonedDateTime.parse(time)
             val hourFormatter = DateTimeFormatter.ofPattern("HH")
             val hourAsInt = zonedDateTime.format(hourFormatter)
 
-            val dateFormatter = DateTimeFormatter.ofPattern("MM-dd")
-            val date = zonedDateTime.format(dateFormatter)
+            val date = zonedDateTime.toLocalDate()
 
+            val precipitation =
+                locationForecast.properties.timeseries[i].data.next_1_hours.details.precipitation_amount
+            val thunderProbability =
+                locationForecast.properties.timeseries[i].data.next_1_hours.details.probability_of_thunder
+            val uvIndex =
+                locationForecast.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky
 
-            val percipitation = locationForecast.properties.timeseries[i].data.next_1_hours.details.precipitation_amount
-            val thunderprobability = locationForecast.properties.timeseries[i].data.next_1_hours.details.probability_of_thunder
-            val UVindex = locationForecast.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky
-
-            genForecastList.add(GeneralForecast(temperature, wind, symbol, hourAsInt, date, percipitation, thunderprobability, UVindex, time))
+            genForecastList.add(
+                GeneralForecast(
+                    temperature,
+                    wind,
+                    symbol,
+                    hourAsInt,
+                    date,
+                    precipitation,
+                    thunderProbability,
+                    uvIndex,
+                    time
+                )
+            )
 
             //startingHour += 1
         }
@@ -103,53 +122,56 @@ class LocationForecastRepository @Inject constructor(
         val dayForecastList = getWeatherForecastForDays(locationForecast, nrDays, startOfNextDay)
         val meanHours = getWeatherForecastHours(locationForecast, startOfNextDay)
 
-        val forecasts = ForecastTypes(genForecastList, dayForecastList, meanHours)
-
-        return forecasts
+        return ForecastTypes(genForecastList, dayForecastList, meanHours)
     }
 
     //Also possible to do this in the same function. An If-check to see if you want to get for days or hours.
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun getWeatherForecastForDays(locationForecast: LocationForecast, nrDays: Int, startingHour: Int): List<WeatherForDay> {
+    private fun getWeatherForecastForDays(
+        locationForecast: LocationForecast,
+        nrDays: Int,
+        startingHour: Int
+    ): List<WeatherForDay> {
 
-        //var dayInTime = 24 - hour
         var theHour = startingHour
 
-        Log.i("Debugger", "theHour $theHour")
-
         var middleOfDay: Int
-        //var coldestTime: Int
-
-        val today = LocalDate.now()
-
 
         val forecastList = mutableListOf<WeatherForDay>()
 
         for (i in 0 until nrDays) {
 
-            val thisDay = today.plusDays(i.toLong() + 1)
-            val dayOfWeek = thisDay.dayOfWeek
-            val dayOfWeekString = dayOfWeek.getDisplayName(TextStyle.FULL, Locale("no", "NO"))
+            val thisDay = LocalDate.now().plusDays(i.toLong() + 1)
+            val dayOfWeekString =
+                thisDay.dayOfWeek.getDisplayName(TextStyle.FULL, Locale("no", "NO"))
 
-            //Klokka 14
-            middleOfDay = theHour + 14
+            //12:00
+            middleOfDay = theHour + 12
 
             val temperatures = mutableListOf<Double>()
 
-            for (j in theHour .. theHour + 23) {
-                temperatures.add(locationForecast.properties.timeseries[j].data.instant.details.air_temperature)
+            var hourCounter = theHour
+
+            repeat(4) {
+                temperatures.add(locationForecast.properties.timeseries[hourCounter].data.next_6_hours.details.air_temperature_max)
+                temperatures.add(locationForecast.properties.timeseries[hourCounter].data.next_6_hours.details.air_temperature_min)
+                hourCounter += 6
             }
 
             val warmestTemperature = temperatures.max()
             val coldestTemperature = temperatures.min()
 
-            //val temperatureWarm = locationForecast.properties.timeseries[warmestTime].data.instant.details.air_temperature
-            val nextHoursData = locationForecast.properties.timeseries[middleOfDay].data.next_1_hours
-            val symbolCode = nextHoursData?.summary?.symbol_code ?: locationForecast.properties.timeseries[middleOfDay].data.next_6_hours.summary.symbol_code
-            //val symbolWarm = locationForecast.properties.timeseries[middleOfDay].data.next_1_hours.summary.symbol_code
-            //val temperatureCold = locationForecast.properties.timeseries[coldestTime].data.instant.details.air_temperature
+            val symbolCode =
+                locationForecast.properties.timeseries[middleOfDay].data.next_6_hours.summary.symbol_code
 
-            forecastList.add(WeatherForDay(symbolCode, dayOfWeekString, coldestTemperature, warmestTemperature))
+            forecastList.add(
+                WeatherForDay(
+                    symbolCode,
+                    dayOfWeekString,
+                    coldestTemperature,
+                    warmestTemperature
+                )
+            )
 
             theHour += 24
         }
@@ -159,123 +181,94 @@ class LocationForecastRepository @Inject constructor(
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun getWeatherForecastHours(locationForecast: LocationForecast, startHour: Int): List<WeatherForDay> {
-        //Tar 3 timer om gangen og finner gjennomsnitt og lager et WeatherForDay-object
+    private fun getWeatherForecastHours(
+        locationForecast: LocationForecast,
+        startHour: Int
+    ): List<WeatherForDay> {
+
         val forecastList = mutableListOf<WeatherForDay>()
 
         var theHour = startHour
 
-        val today = LocalDate.now()
-        var nextDay = today.plusDays(1)
+        var nextDay = LocalDate.now().plusDays(1)
 
         //One day is 8, two is 16
-        for (i in 0 until 8) {
+        repeat(8) { i ->
 
-            val timeStart = locationForecast.properties.timeseries[theHour].time
-            val timeSecond = locationForecast.properties.timeseries[theHour + 1].time
-            //val zonedDateTimeStart = ZonedDateTime.parse(timeStart)
-            //val hourFormat = DateTimeFormatter.ofPattern("HH")
-            //val startHourAsInt = zonedDateTimeStart.format(hourFormat)
-
-            val timeEnd = locationForecast.properties.timeseries[theHour + 6].time
-            //val zonedDateTimeEnd = ZonedDateTime.parse(timeEnd)
-            //val hourFormatter = DateTimeFormatter.ofPattern("HH")
-            //val endHourAsInt = zonedDateTimeEnd.format(hourFormatter)
-
-            val symbolCode = locationForecast.properties.timeseries[theHour].data.next_6_hours.summary.symbol_code
-            val percipitation = locationForecast.properties.timeseries[theHour].data.next_6_hours.details.precipitation_amount
-
-
-            val lastHour = timeEnd.substring(11, 13)
-            val start = timeStart.substring(11, 13)
-            val secondHour = timeSecond.substring(11, 13)
+            var firstHour: String = locationForecast.properties.timeseries[theHour].time
+            var secondHour: String = locationForecast.properties.timeseries[theHour + 1].time
+            var lastHour: String = locationForecast.properties.timeseries[theHour + 6].time
 
             val endHour: String
+            var meanWind = 0.0
 
-            val startHourInt = start.toInt()
+            //Only want the hour
+            firstHour = firstHour.substring(11, 13)
+            secondHour = secondHour.substring(11, 13)
+            lastHour = lastHour.substring(11, 13)
+
+            val firstHourAsInt = firstHour.toInt()
             val secondHourInt = secondHour.toInt()
 
-            val hoursBetween = if (startHourInt <= secondHourInt) {
-                secondHourInt - startHourInt
+            val hoursBetween = if (firstHourAsInt <= secondHourInt) {
+                secondHourInt - firstHourAsInt
             } else {
-                (24 - startHourInt + secondHourInt)
+                (24 - firstHourAsInt + secondHourInt)
             }
 
-            var meanTemperature: Double
-            val meanWind: Double
-            //val meanPercipitation: Double
-
-            Log.d("Debug vær", "hours between $start and $secondHour = $hoursBetween")
-
-            //Sometimes the differnece between two timeseries is 6 hours instead of one
+            //Sometimes the difference between two timeseries is 6 hours instead of one
             if (hoursBetween == 6) {
-                meanTemperature = (locationForecast.properties.timeseries[theHour].data.instant.details.air_temperature +
-                        locationForecast.properties.timeseries[theHour + 1].data.instant.details.air_temperature) / 2
-                Log.d("Debug vær", "$hoursBetween slo inn")
-
-
-                meanWind = (locationForecast.properties.timeseries[theHour].data.instant.details.wind_speed +
-                        locationForecast.properties.timeseries[theHour + 1].data.instant.details.wind_speed) / 2
-
-
-                //meanPercipitation = (locationForecast.properties.timeseries[startOfFirstDay].data.next_1_hours.details.precipitation_amount +
-                //        locationForecast.properties.timeseries[startOfFirstDay + 1].data.next_1_hours.details.precipitation_amount) / 2
-
-                endHour = secondHour
-            }
-            else {
-
-                meanTemperature = locationForecast.properties.timeseries[theHour].data.next_6_hours.details.air_temperature_max
-                   /* (locationForecast.properties.timeseries[theHour].data.instant.details.air_temperature +
-                            locationForecast.properties.timeseries[theHour + 1].data.instant.details.air_temperature +
-                            locationForecast.properties.timeseries[theHour + 2].data.instant.details.air_temperature +
-                            locationForecast.properties.timeseries[theHour + 3].data.instant.details.air_temperature) / 4
-
-
-                    */
-
-                //TODO might use next_6_hours highest and lowest temperature from locationforecast then theres no need to repeat
-
-                /*repeat(6) {
-                    meanTemperature += locationForecast.properties.timeseries[theHour].data.instant.details.air_temperature
-                    theHour += 1
-                }
-
-                 */
 
                 meanWind =
                     (locationForecast.properties.timeseries[theHour].data.instant.details.wind_speed +
-                            locationForecast.properties.timeseries[theHour + 1].data.instant.details.wind_speed +
-                            locationForecast.properties.timeseries[theHour + 2].data.instant.details.wind_speed +
-                            locationForecast.properties.timeseries[theHour + 3].data.instant.details.wind_speed) / 4
+                            locationForecast.properties.timeseries[theHour + 1].data.instant.details.wind_speed) / 2
 
+                endHour = secondHour
+            } else {
 
-                /*meanPercipitation =
-                    (locationForecast.properties.timeseries[startOfFirstDay].data.next_1_hours.details.precipitation_amount +
-                            locationForecast.properties.timeseries[startOfFirstDay + 1].data.next_1_hours.details.precipitation_amount +
-                            locationForecast.properties.timeseries[startOfFirstDay + 2].data.next_1_hours.details.precipitation_amount +
-                            locationForecast.properties.timeseries[startOfFirstDay + 3].data.next_1_hours.details.precipitation_amount / 4)
+                var hourCounter = theHour
 
-                 */
+                repeat(6) {
+                    meanWind += locationForecast.properties.timeseries[hourCounter].data.instant.details.wind_speed
+                    hourCounter += 1
+                }
+
 
                 endHour = lastHour
             }
 
+            val meanTemperature =
+                (locationForecast.properties.timeseries[theHour].data.next_6_hours.details.air_temperature_max +
+                        locationForecast.properties.timeseries[theHour].data.next_6_hours.details.air_temperature_min) / 2
+
+            val symbolCode =
+                locationForecast.properties.timeseries[theHour].data.next_6_hours.summary.symbol_code
+            val precipitation =
+                locationForecast.properties.timeseries[theHour].data.next_6_hours.details.precipitation_amount
 
             val roundedTemperature = String.format("%.1f", meanTemperature)
             val roundedWind = String.format("%.1f", meanWind)
-            //val roundedPrecepitation = String.format("%.1f", meanPercipitation)
-
 
             if (i == 4) {
-                nextDay = nextDay.plusDays( 1)
+                nextDay = nextDay.plusDays(1)
             }
 
-            val dayOfWeek = nextDay.dayOfWeek
-            val dayOfWeekString = dayOfWeek.getDisplayName(TextStyle.FULL, Locale("no", "NO"))
+            val dayOfWeekString =
+                nextDay.dayOfWeek.getDisplayName(TextStyle.FULL, Locale("no", "NO"))
 
-
-            forecastList.add(WeatherForDay(symbolCode, dayOfWeekString, null, null, start, endHour, roundedTemperature, roundedWind, "12.1"))
+            forecastList.add(
+                WeatherForDay(
+                    symbolCode,
+                    dayOfWeekString,
+                    null,
+                    null,
+                    firstHour,
+                    endHour,
+                    roundedTemperature,
+                    roundedWind,
+                    precipitation
+                )
+            )
 
             theHour += 6
         }
@@ -297,9 +290,17 @@ class LocationForecastRepository @Inject constructor(
 
 
     //Gjør om fra GeneralForecast til AdviceForecast (fjerner unødvendig dsta)
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
 
-        return AdviceForecast(generalForecast.temperature, generalForecast.thunderprobability, generalForecast.percipitation, generalForecast.UVindex, generalForecast.date, generalForecast.hour)
+        return AdviceForecast(
+            generalForecast.temperature,
+            generalForecast.thunderprobability,
+            generalForecast.percipitation,
+            generalForecast.UVindex,
+            generalForecast.date,
+            generalForecast.hour
+        )
     }
 
 
@@ -317,7 +318,7 @@ class LocationForecastRepository @Inject constructor(
             return adviceList
         }
 
-        categories.forEach {category ->
+        categories.forEach { category ->
 
             var adviceArray: Array<String>? = null
             //val resId = context.resources.getIdentifier(category.toString(), "array", context.packageName)
@@ -333,7 +334,9 @@ class LocationForecastRepository @Inject constructor(
                 "WARM" -> adviceArray = context.resources.getStringArray(R.array.WARM)
                 "WARMFLAT" -> adviceArray = context.resources.getStringArray(R.array.WARMFLAT)
                 "VERYWARM" -> adviceArray = context.resources.getStringArray(R.array.VERYWARM)
-                "VERYWARMFLAT" -> adviceArray = context.resources.getStringArray(R.array.VERYWARMFLAT)
+                "VERYWARMFLAT" -> adviceArray =
+                    context.resources.getStringArray(R.array.VERYWARMFLAT)
+
                 "HEATWAVE" -> adviceArray = context.resources.getStringArray(R.array.HEATWAVE)
                 "RAIN" -> adviceArray = context.resources.getStringArray(R.array.RAIN)
                 "THUNDER" -> adviceArray = context.resources.getStringArray(R.array.THUNDER)
@@ -342,22 +345,23 @@ class LocationForecastRepository @Inject constructor(
                 "TICK" -> adviceArray = context.resources.getStringArray(R.array.TICK)
                 "VIPER" -> adviceArray = context.resources.getStringArray(R.array.VIPER)
                 "CAR" -> adviceArray = context.resources.getStringArray(R.array.CAR)
+                "NEWYEAR" -> adviceArray = context.resources.getStringArray(R.array.NEWYEAR)
 
 
             }
 
             var counter = 0
             if (adviceArray != null) {
-                while  (counter < adviceArray.size){
+                while (counter < adviceArray.size) {
 
-                    val title = adviceArray.get(counter).toString()
-                    val description = adviceArray?.get(counter+1).toString()
-                    val shortAdvice = adviceArray?.get(counter+2).toString()
+                    val title = adviceArray[counter]
+                    val description = adviceArray[counter + 1]
+                    val shortAdvice = adviceArray[counter + 2]
 
                     val advice = Advice(title, description, shortAdvice)
                     adviceList.add(advice)
 
-                    counter+=3
+                    counter += 3
 
                 }
             }
@@ -380,7 +384,7 @@ class LocationForecastRepository @Inject constructor(
 
         // Define a function to check temperature ranges based on category
         fun isTemperatureInRange(limits: List<Double>, temp: Double): Boolean {
-            return temp in limits[0] .. limits[1]
+            return temp in limits[0]..limits[1]
         }
 
         // Map of category-specific temperatures to check against
@@ -401,32 +405,39 @@ class LocationForecastRepository @Inject constructor(
                 categoryList.add(category)
             }
         }
-            //refactored based on result from KotlinRefactorer. Used to be multiple if checks
-            when {
-                typeOfDog.isThin || typeOfDog.isPuppy || typeOfDog.isShortHaired || typeOfDog.isSenior || typeOfDog.isThinHaired -> {
-                    if (AdviceCategory.COOL in categoryList) { categoryList.add(AdviceCategory.COOLOTHER)}
-                    if (AdviceCategory.COLD in categoryList) { categoryList.add(AdviceCategory.COLDOTHER)}
+        //refactored based on result from KotlinRefactorer. Used to be multiple if checks
+        when {
+            typeOfDog.isThin || typeOfDog.isPuppy || typeOfDog.isShortHaired || typeOfDog.isSenior || typeOfDog.isThinHaired -> {
+                if (AdviceCategory.COOL in categoryList) {
+                    categoryList.add(AdviceCategory.COOLOTHER)
                 }
-
-                typeOfDog.isFlatNosed -> {
-                    if (AdviceCategory.WARM in categoryList) {categoryList.add(AdviceCategory.WARMFLAT)}
-                    if (AdviceCategory.VERYWARM in categoryList) {categoryList.add(AdviceCategory.VERYWARMFLAT)}
-                }
-
-                typeOfDog.isLongHaired && AdviceCategory.COLD in categoryList -> {
-                    categoryList.add(AdviceCategory.COLDLONGFUR)
+                if (AdviceCategory.COLD in categoryList) {
+                    categoryList.add(AdviceCategory.COLDOTHER)
                 }
             }
+
+            typeOfDog.isFlatNosed -> {
+                if (AdviceCategory.WARM in categoryList) {
+                    categoryList.add(AdviceCategory.WARMFLAT)
+                }
+                if (AdviceCategory.VERYWARM in categoryList) {
+                    categoryList.add(AdviceCategory.VERYWARMFLAT)
+                }
+            }
+
+            typeOfDog.isLongHaired && AdviceCategory.COLD in categoryList -> {
+                categoryList.add(AdviceCategory.COLDLONGFUR)
+            }
+        }
 
 
 
         if (adviceForecast.UVindex >= 3 && (
-                    typeOfDog.isThinHaired  ||
+                    typeOfDog.isThinHaired ||
                     typeOfDog.isLightHaired ||
                     typeOfDog.isShortHaired
-                )
-            )
-        {
+                    )
+        ) {
             categoryList.add(AdviceCategory.SUNBURN)
         }
 
@@ -437,11 +448,34 @@ class LocationForecastRepository @Inject constructor(
         }
 
         //TODO find right number
-        if (adviceForecast.percipitation >= 0.1) {
+        if (adviceForecast.percipitation >= 1) {
             categoryList.add(AdviceCategory.RAIN)
         }
 
         //TODO lage en when for dato for flått, hoggorm og nyttår
+
+        val tickSeasonStart = LocalDate.of(2024, 3, 15)
+        val tickSeasonEnd = LocalDate.of(2024, 11, 15)
+
+        val viperSeasonStart = LocalDate.of(2024, 2, 28)
+        val viperSeasonEnd = LocalDate.of(2024, 11, 1)
+
+        val newYear = LocalDate.of(2024, 12, 31)
+
+        val theDate = adviceForecast.date
+
+
+        if (!theDate.isBefore(tickSeasonStart) && !theDate.isAfter(tickSeasonEnd)) {
+            categoryList.add(AdviceCategory.TICK)
+        }
+
+        if (!theDate.isBefore(viperSeasonStart) && !theDate.isAfter(viperSeasonEnd)) {
+            categoryList.add(AdviceCategory.VIPER)
+        }
+
+        if (theDate == newYear) {
+            categoryList.add(AdviceCategory.NEWYEAR)
+        }
 
 
         if (categoryList.size == 0) {
@@ -450,25 +484,25 @@ class LocationForecastRepository @Inject constructor(
 
         return categoryList
     }
-/*
+    /*
 
-    ### Changes Made:
-    1. **Early Return**: Simplified the condition by using `?:` operator which returns early if `typeOfDog` is not present or any other condition is met. This reduces nesting and makes the code more readable.
+        ### Changes Made:
+        1. **Early Return**: Simplified the condition by using `?:` operator which returns early if `typeOfDog` is not present or any other condition is met. This reduces nesting and makes the code more readable.
 
-    2. **Function Extraction**: Created a separate function `isTemperatureInRange` to encapsulate the logic for checking temperature ranges, making the main function cleaner and easier to understand.
+        2. **Function Extraction**: Created a separate function `isTemperatureInRange` to encapsulate the logic for checking temperature ranges, making the main function cleaner and easier to understand.
 
-    3. **Use of Destructuring Declarations**: Utilized destructuring declarations (`a to b`) to create pairs from tuples directly within the map initialization, reducing verbosity.
+        3. **Use of Destructuring Declarations**: Utilized destructuring declarations (`a to b`) to create pairs from tuples directly within the map initialization, reducing verbosity.
 
-    4. **Filter Not Nulls**: Replaced explicit null checks with `?.let` which simplifies the conditional logic and avoids unnecessary branching.
+        4. **Filter Not Nulls**: Replaced explicit null checks with `?.let` which simplifies the conditional logic and avoids unnecessary branching.
 
-    5. **Simplify Conditional Logic**: Combined similar conditions into single lines where possible to reduce cyclomatic complexity.
+        5. **Simplify Conditional Logic**: Combined similar conditions into single lines where possible to reduce cyclomatic complexity.
 
-    6. **Consolidation of Category Additions**: Grouped related operations together such as adding `COOLOTHER`, `COLDOTHER`, etc., to make the code more concise and easier to read.
+        6. **Consolidation of Category Additions**: Grouped related operations together such as adding `COOLOTHER`, `COLDOTHER`, etc., to make the code more concise and easier to read.
 
-    7. **Removed Redundant Comments**: Removed TODO comments that were resolved during refactoring process.
+        7. **Removed Redundant Comments**: Removed TODO comments that were resolved during refactoring process.
 
-    By applying these changes, the code should have reduced cyclomatic complexity due to fewer branches, improved maintainability due to better organization and readability, and potentially lower Halstead Effort due to less overall code volume and complexity.
-*/
+        By applying these changes, the code should have reduced cyclomatic complexity due to fewer branches, improved maintainability due to better organization and readability, and potentially lower Halstead Effort due to less overall code volume and complexity.
+    */
 }
 
 

@@ -9,5 +9,5 @@ data class WeatherForDay(
     val endingTime: String? = null,
     val meanTemperature: String? = null,
     val wind: String? = null,
-    val precipitation: String? = null
+    val precipitation: Double? = null
 ) 

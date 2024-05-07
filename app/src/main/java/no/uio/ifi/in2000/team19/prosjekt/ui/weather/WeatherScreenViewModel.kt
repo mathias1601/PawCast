@@ -20,8 +20,7 @@ import javax.inject.Inject
 
 sealed interface WeatherUiState {
     data class Success(
-        val weather: ForecastTypes
-    ) : WeatherUiState
+        val weather: ForecastTypes): WeatherUiState
 
     data object Loading: WeatherUiState
     data object Error: WeatherUiState
@@ -30,14 +29,15 @@ sealed interface WeatherUiState {
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class WeatherScreenViewModel @Inject constructor(
-    private val locationForecastRepository : LocationForecastRepository,
+    private val locationForecastRepository: LocationForecastRepository,
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
 
     //private var weatherUiState: WeatherUiState by mutableStateOf(WeatherUiState.Loading)
 
-    private val _weatherUiState: MutableStateFlow<WeatherUiState> = MutableStateFlow(WeatherUiState.Loading)
+    private val _weatherUiState: MutableStateFlow<WeatherUiState> =
+        MutableStateFlow(WeatherUiState.Loading)
     var weatherUiState: StateFlow<WeatherUiState> = _weatherUiState.asStateFlow()
 
     init {
@@ -51,22 +51,18 @@ class WeatherScreenViewModel @Inject constructor(
             val cords = settingsRepository.getCords()
 
             try {
-                val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, "0", 2)
+                val weatherForecast = locationForecastRepository.getGeneralForecast(
+                    cords.latitude,
+                    cords.longitude,
+                    "0",
+                    2
+                )
                 Log.d("Debug", "Loader vær for timer")
 
-
-                //val weatherDaysDeferred = async {locationForecastRepository.getGeneralForecastForDays(cords.latitude,cords.longitude, "0", 2)}
-                //Log.d("Debug", "Loader vær for dager")
-
-
-                //weatherUiState = WeatherUiState.Success(weatherHours, weatherDays)
                 _weatherUiState.value = WeatherUiState.Success(weatherForecast)
             } catch (e: IOException) {
                 _weatherUiState.value = WeatherUiState.Error
             }
         }
     }
-
-    //fun fetchWeatherUiState(): WeatherUiState = weatherUiState
-
 }

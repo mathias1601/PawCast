@@ -25,8 +25,8 @@ import java.io.IOException
 import javax.inject.Inject
 
 
-sealed interface AdviceUiState{
-    data class  Success(val allAdvice:List<Advice>) : AdviceUiState
+sealed interface AdviceUiState {
+    data class Success(val allAdvice: List<Advice>) : AdviceUiState
     data object Loading : AdviceUiState
     data object Error : AdviceUiState
 }
@@ -38,19 +38,37 @@ sealed interface AdviceUiState{
 class HomeScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val locationForecastRepository: LocationForecastRepository
-): ViewModel() {
+) : ViewModel() {
 
-    private var _adviceUiState: MutableStateFlow<AdviceUiState> = MutableStateFlow(AdviceUiState.Loading)
+    private var _adviceUiState: MutableStateFlow<AdviceUiState> =
+        MutableStateFlow(AdviceUiState.Loading)
     var adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
 
     private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
     var graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
 
-    private var _locationUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "69", "69"))
+    private var _locationUiState: MutableStateFlow<Cords> =
+        MutableStateFlow(Cords(0, "default", "default", "69", "69"))
     var locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
 
     // Is used show user name and dog name
-    private var _userInfoUiState:MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false, false))
+    private var _userInfoUiState: MutableStateFlow<UserInfo> = MutableStateFlow(
+        UserInfo(
+            0,
+            "loading",
+            "loading",
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+        )
+    )
     var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
     private lateinit var adviceList: List<Advice>
@@ -76,13 +94,16 @@ class HomeScreenViewModel @Inject constructor(
                     "0",
                     2
                 )
-                val allAdvice = locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
+                val allAdvice =
+                    locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
 
                 adviceList = allAdvice
 
 
-                val graphCoordinates = forecastGraphFunction(locationForecastRepository.getAdviceForecastList(generalForecast))
+                val graphCoordinates = forecastGraphFunction(
+                    locationForecastRepository.getAdviceForecastList(generalForecast)
+                )
 
                 val x = graphCoordinates[0]
                 val y = graphCoordinates[1]
@@ -93,16 +114,15 @@ class HomeScreenViewModel @Inject constructor(
                 _graphUiState.value.tryRunTransaction {
                     lineSeries {
                         series(
-                            x=x,
-                            y=y
+                            x = x,
+                            y = y
                         )
                     }
                 }
 
             } catch (e: IOException) {
-                _adviceUiState.value  = AdviceUiState.Error
-            }
-            catch(e: HttpException) {
+                _adviceUiState.value = AdviceUiState.Error
+            } catch (e: HttpException) {
                 _adviceUiState.value = AdviceUiState.Error
             }
         }
@@ -228,8 +248,8 @@ class HomeScreenViewModel @Inject constructor(
     //this function is used to fetch the rating of a given weather specification
     private fun rating(weatherTypeValue: Double, limitsMap: HashMap<List<Double>, Int>): Int {
 
-        for((key, value) in limitsMap) {
-            if (weatherTypeValue in key[0] .. key[1]) {
+        for ((key, value) in limitsMap) {
+            if (weatherTypeValue in key[0]..key[1]) {
                 return value
             }
         }
@@ -238,7 +258,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-    fun collectAdviceById(id: Int): Advice{
+    fun collectAdviceById(id: Int): Advice {
         return adviceList[id]
     }
 
