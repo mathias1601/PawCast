@@ -22,6 +22,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import java.io.IOException
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 
 sealed interface AdviceUiState{
@@ -43,6 +44,9 @@ class HomeScreenViewModel @Inject constructor(
 
     private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
     var graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
+
+    private val _firstYValueUiState = MutableStateFlow(0)
+    var firstYValueUiState: StateFlow<Int> = _firstYValueUiState.asStateFlow()
 
     private var _locationUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "69", "69"))
     var locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
@@ -105,6 +109,9 @@ class HomeScreenViewModel @Inject constructor(
                 Log.i("X:", graphCoordinates.x.toString())
                 Log.i("Y:", graphCoordinates.y.toString())
 
+
+
+                _firstYValueUiState.value = graphCoordinates.y[0]
 
                 _graphUiState.value.tryRunTransaction {
                     lineSeries {
