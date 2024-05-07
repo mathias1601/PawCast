@@ -5,14 +5,10 @@ import android.annotation.SuppressLint
 import android.icu.util.Calendar
 import android.os.Build
 import android.text.Layout
-import androidx.annotation.Dimension
-import androidx.annotation.FloatRange
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.expandHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +19,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -69,8 +64,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.rememberAxisGuidelineComponent
-import com.patrykandpatrick.vico.compose.axis.rememberAxisTickComponent
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
@@ -83,17 +76,13 @@ import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
-import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.shape.shader.TopBottomShader
-import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
-import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
@@ -245,8 +234,8 @@ fun HomeScreen(
 
 
     val colorStops = arrayOf(
-        0.0f to Color(0xFF02677d), // Top app bar is specified as this color. To change that color go to Themes.kt and change TOP_APP_BAR_COLOR
-        0.5f to Color(0xFFb4ebff)
+        0.0f to Color(0xFFF0080FF), // Top app bar is specified as this color. To change that color go to Themes.kt and change TOP_APP_BAR_COLOR
+        0.5f to Color(0xFFFFB1C1)
     )
 
     Box(
@@ -278,12 +267,7 @@ fun HomeScreen(
         ) {
 
             Text(
-                text = if (userInfo.userName != "" && userInfo.dogName != ""){
-                    "Heisann ${userInfo.userName} og ${userInfo.dogName}!"
-                    } else {
-                       "Heisann!"
-                    }
-                ,
+                text = "Heisann ${userInfo.userName} og ${userInfo.dogName}!",
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.White
             )
@@ -579,7 +563,9 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
             verticalArrangement = Arrangement.Center
         ){
             Text("Værvurdering for tur")
+
             CartesianChartHost(
+                // getXStep = { 1f }, // Show every X step on X axis.
                 chart =
                     rememberCartesianChart(
                         rememberLineCartesianLayer(
@@ -606,6 +592,9 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                             title = "Vurdering",
                         ),
                         bottomAxis = rememberBottomAxis(
+                            itemPlacer = AxisItemPlacer.Horizontal.default(
+                                spacing = 2
+                            ),
                             labelRotationDegrees = -30f,
                             valueFormatter = bottomAxisValueFormatter,
                             titleComponent = rememberTextComponent(
