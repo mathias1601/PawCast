@@ -131,7 +131,7 @@ fun ScreenManager(
                         )
                     }
 
-                    composable("setup/{STAGE}"){backStackEntry ->
+                    composable("setup/{STAGE}"){ backStackEntry ->
 
                         val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
                         val setupScreenViewModel: SetupScreenViewModel = hiltViewModel(parentEntry)
