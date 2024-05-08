@@ -1,8 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.weather
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,7 +53,6 @@ class WeatherScreenViewModel @Inject constructor(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun loadWeather(cords: Cords) {
         viewModelScope.launch(Dispatchers.IO) {
 
