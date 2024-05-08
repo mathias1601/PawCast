@@ -34,7 +34,6 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -58,6 +57,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -90,6 +90,7 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.ui.LoadingScreen
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -125,14 +126,7 @@ fun HomeScreenManager(
                     }
 
                     is AdviceUiState.Loading -> {
-                        Column(
-                            Modifier.padding(innerPadding),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            CircularProgressIndicator()
-                        }
-
+                        LoadingScreen()
                     }
 
                     is AdviceUiState.Error -> {
@@ -169,8 +163,8 @@ fun HomeScreen(
     location: Cords,
     advice: AdviceUiState.Success,
     graphUiState: CartesianChartModelProducer,
+    weather: GeneralForecast,
     firstYValueUiState: Int,
-    temperature: GeneralForecast,
     navController: NavController,
     innerPadding: PaddingValues,
 ) {
@@ -275,8 +269,6 @@ fun HomeScreen(
                 color = Color.White
             )
 
-
-            // WEATHER ROW
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -285,13 +277,15 @@ fun HomeScreen(
             ) {
 
                 Text(
-                    text = temperature.temperature.toString(),
+                    text = weather.temperature.toString(),
                     style = MaterialTheme.typography.titleLarge,
                     color = Color.White,
 
                     )
 
-                val drawableId = R.drawable.fair_day
+                val context = LocalContext.current
+                val drawableName = weather.symbol
+                val drawableId = context.resources.getIdentifier(drawableName, "drawable", context.packageName) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
 
                 Image(
                     painter = painterResource(id = drawableId),
@@ -314,13 +308,13 @@ fun HomeScreen(
                     )
                 }
                 Image(
-                    painter = painterResource(id = R.drawable.dog),
+                    painter = painterResource(id = R.drawable.dog_normal),
                     contentDescription = "dog avatar",
                     modifier = Modifier
-                        .scale(3f)
+                        .scale(1f)
                         .offset(
-                            x = (-10).dp,
-                            y = (-5).dp
+                            x = (0).dp,
+                            y = (50).dp
                         )
                 )
 

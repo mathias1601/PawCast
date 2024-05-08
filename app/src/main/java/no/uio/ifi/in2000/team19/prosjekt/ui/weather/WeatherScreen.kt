@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -44,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
+import no.uio.ifi.in2000.team19.prosjekt.ui.LoadingScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.NoConnectionScreen
 
 @Composable
@@ -51,7 +51,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
 
 
     when (val weatherUiState = weatherScreenViewModel.weatherUiState.collectAsState().value) {
-        is WeatherUiState.Loading -> CircularProgressIndicator()
+        is WeatherUiState.Loading -> LoadingScreen()
         is WeatherUiState.Error -> NoConnectionScreen()
         is WeatherUiState.Success -> {
 
@@ -297,48 +297,47 @@ fun SingleHourForecastCard(generalForecast: GeneralForecast) {
 
     val context = LocalContext.current
     val drawableName = generalForecast.symbol
-    val drawableId =
-        context.resources.getIdentifier(drawableName, "drawable", context.packageName) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
+    val drawableId = context.resources.getIdentifier(drawableName, "drawable", context.packageName) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
 
-        Surface(
-            color = MaterialTheme.colorScheme.secondaryContainer,
-            shape = MaterialTheme.shapes.medium
+    Surface(
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp, vertical = 5.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp, vertical = 5.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
 
 
-                Text(
-                    text = generalForecast.hour + ":00",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Image(
-                    painter = painterResource(id = drawableId),
-                    contentDescription = "Værsymbol"
-                )
+            Text(
+                text = generalForecast.hour + ":00",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Image(
+                painter = painterResource(id = drawableId),
+                contentDescription = "Værsymbol"
+            )
 
-                Text(
-                    text = "${generalForecast.temperature}°C",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+            Text(
+                text = "${generalForecast.temperature}°C",
+                style = MaterialTheme.typography.bodyMedium
+            )
 
 
-                Text(
-                    text = "${generalForecast.wind} m/s",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+            Text(
+                text = "${generalForecast.wind} m/s",
+                style = MaterialTheme.typography.bodyMedium
+            )
 
-                Text(
-                    text = "${generalForecast.percipitation} mm",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
+            Text(
+                text = "${generalForecast.percipitation} mm",
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
+    }
 
 
 }
