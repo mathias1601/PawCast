@@ -110,7 +110,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
                                 NextDaysForecastCard(weatherForDay = weatherDays[1], meanHours = meanHoursForDayAfterTomorrow)
                             }
 
-                            Spacer(modifier = Modifier.padding(0.dp)) // + 10.dp from Arrangement.spaceBy
+                            Spacer(modifier = Modifier.padding(10.dp)) //
                         }
 
                     }
@@ -135,7 +135,7 @@ fun WeatherNow(weather: GeneralForecast) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp),
+            .height(275.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -147,6 +147,8 @@ fun WeatherNow(weather: GeneralForecast) {
             text = "${weather.temperature} °C",
             style = MaterialTheme.typography.displaySmall
         )
+
+        Text(text = "Grader ute akkurat nå")
 
 
     }

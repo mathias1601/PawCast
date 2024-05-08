@@ -228,16 +228,16 @@ fun HomeScreen(
 
 
     val colorStops = arrayOf(
-        0.0f to Color.Blue, // Top app bar is specified as this color. To change that color go to Themes.kt and change TOP_APP_BAR_COLOR
-        0.5f to Color.Magenta
+        0.0f to Color.Blue,
+        0.5f to Color.Magenta,
     )
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                brush = Brush.verticalGradient(
-                    colorStops = colorStops
+                brush = Brush.linearGradient(
+                    colorStops = colorStops,
                 ),
             )
     )
