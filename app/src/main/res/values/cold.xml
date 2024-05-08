@@ -4,25 +4,25 @@
         <item> Det er kaldt </item>
 
         <item>
-            Veterinærer anbefaler
-            Dersom hunden er ute over lengre tid, burde den ha et skjermet område uten trekk fra snø eller regn.
-            Nå kan det være behov for å bruke potesokker, pungvarmer og/eller dekken.
-            Begrens lengden på turene.
+            ~Veterinærer anbefaler\n
+            Dersom hunden er ute over lengre tid, burde den ha et skjermet område uten trekk fra snø eller regn.\n
+            Nå kan det være behov for å bruke potesokker, pungvarmer og/eller dekken.\n
+            Begrens lengden på turene.\n
 
 
-            Tegn å se etter
-            • Skjelving.
+            ~Tegn å se etter\n
+            • Skjelving
             • Løfting av potene eller halting
             • Om hunden går sakte eller stopper å gå
 
-            Konsekvenser
-            Spesielt potene og testiklene er utsatte for frostskader, uavhengig av hundetype.
+            ~Konsekvenser\n
+            Spesielt potene og testiklene er utsatte for frostskader, uavhengig av hundetype.\n
 
         </item>
 
         <item>
-            Nå burde hunden din ha på klær og/eller potesokker.
-            Ved disse temperaturene risikerer hunden å få frostskader.
+            Nå burde hunden din ha på klær og/eller potesokker.\n
+            Ved disse temperaturene risikerer hunden å få frostskader.\n
         </item>
     </string-array>
 </resources>

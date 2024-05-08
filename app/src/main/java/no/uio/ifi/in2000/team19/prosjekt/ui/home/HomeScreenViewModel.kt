@@ -21,6 +21,7 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import java.io.IOException
 import javax.inject.Inject
 
@@ -71,22 +72,34 @@ class HomeScreenViewModel @Inject constructor(
     )
     var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
+    private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", "", 0.0, 0.0, 0.0, "",))
+    var temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
+
+    private val height: String = "0"
+
     private lateinit var adviceList: List<Advice>
 
     init {
-        loadWeatherForecast()
-    }
-
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun loadWeatherForecast() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val location = settingsRepository.getCords()
-                _locationUiState.value = location
+                settingsRepository.getCords().collect {cords ->
+                    loadWeatherForecast(cords)
+                }
 
-                val userInfo = settingsRepository.getUserInfo()
-                _userInfoUiState.value = userInfo
+            } catch (e: IOException) {
+                _adviceUiState.value = AdviceUiState.Error
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun loadWeatherForecast(location: Cords) {
+
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+
+                Log.d("HomeScreenViewModel", "kaller på getGeneralForecast...")
 
                 val generalForecast = locationForecastRepository.getGeneralForecast(
                     location.latitude,
@@ -94,8 +107,12 @@ class HomeScreenViewModel @Inject constructor(
                     "0",
                     2
                 )
-                val allAdvice =
-                    locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
+
+
+                _temperatureUiState.value = generalForecast.general[0]
+
+                val allAdvice = locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
+
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
 
                 adviceList = allAdvice
@@ -105,17 +122,15 @@ class HomeScreenViewModel @Inject constructor(
                     locationForecastRepository.getAdviceForecastList(generalForecast)
                 )
 
-                val x = graphCoordinates[0]
-                val y = graphCoordinates[1]
 
-                Log.i("X:", x.toString())
-                Log.i("Y:", y.toString())
+                Log.i("X:", graphCoordinates.x.toString())
+                Log.i("Y:", graphCoordinates.y.toString())
+
 
                 _graphUiState.value.tryRunTransaction {
                     lineSeries {
                         series(
-                            x = x,
-                            y = y
+                            y = graphCoordinates.y
                         )
                     }
                 }
@@ -135,14 +150,19 @@ class HomeScreenViewModel @Inject constructor(
 
     //we are using AdviceForecast because we only need temp, percipitation and UVLimit
 
-    //parameter: a list of (advice) forecast objects that each represent one hour of the day
+    //Parameter: a list of (advice) forecast objects that each represent one hour of the day
 
     // TODO move to repository or domain layer
 
-    fun forecastGraphFunction(forecasts: List<AdviceForecast>): List<List<Int>> {
+    // Data class for holding Axises for graph
+    data class GraphData(
+        val x: List<Int>,
+        val y: List<Int>
+    )
+
+    private fun forecastGraphFunction(forecasts: List<AdviceForecast>): GraphData {
 
         val overallRatingList = mutableListOf<Int>()
-
         val currentHours = mutableListOf<Int>()
 
         forecasts.forEach { forecast ->
@@ -150,14 +170,14 @@ class HomeScreenViewModel @Inject constructor(
             val hourOfDay = forecast.time.toInt()
             currentHours.add(hourOfDay)
 
-            var overallRating: Int
+
             val tempRating = rating(forecast.temperature, tempLimitMap)
             val percRating = rating(forecast.percipitation, percipitationLimitMap)
             val uvRating = rating(forecast.UVindex, UVLimitMap)
 
             val ratings = listOf(tempRating, percRating, uvRating)
 
-            overallRating = (tempRating + percRating + uvRating) / 3
+            var overallRating : Int = (tempRating + percRating + uvRating) / 3
 
             ratings.forEach {
                 if (it < 3) {
@@ -165,20 +185,18 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
 
-
             overallRatingList.add(overallRating)
         }
-
 
         val hourlength = currentHours.size
         val ratinglength = overallRatingList.size
 
-        Log.i("HOURS", "$hourlength")
+        Log.i("HOURS", currentHours.toString())
         Log.i("RATINGS", "$ratinglength")
 
         Log.i("rating list", overallRatingList.toString())
 
-        return listOf(currentHours, overallRatingList)
+        return GraphData(currentHours, overallRatingList)
     }
 
     //these maps are used to determine rating
@@ -214,7 +232,7 @@ class HomeScreenViewModel @Inject constructor(
             listOf(15.0, 16.5) to 10
         )
 
-    //basert på info fra Yr
+    //Basert på info fra Yr
     val percipitationLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
             listOf(2.1, 7.0) to 1,
@@ -229,7 +247,7 @@ class HomeScreenViewModel @Inject constructor(
             listOf(0.0, 0.0) to 10
         )
 
-    //basert på data fra SNL
+    //Basert på data fra SNL
     val UVLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
             listOf(8.1, 15.0) to 1,

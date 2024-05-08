@@ -9,9 +9,9 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -58,6 +58,8 @@ class LocationForecastRepository @Inject constructor(
         nrDays: Int
     ): ForecastTypes {
 
+        Log.d("DEBUG", "getGeneralForecast kalt på...")
+
         val locationForecast = fetchLocationForecast(latitude, longitude, height)
 
         val start = locationForecast.properties.timeseries[0].time
@@ -91,7 +93,7 @@ class LocationForecastRepository @Inject constructor(
             val time = locationForecast.properties.timeseries[i].time
             val zonedDateTime = ZonedDateTime.parse(time)
             val hourFormatter = DateTimeFormatter.ofPattern("HH")
-            val hourAsInt = zonedDateTime.format(hourFormatter)
+            val hourAsInt = zonedDateTime.format(hourFormatter).toString()
 
             val date = zonedDateTime.toLocalDate()
 
@@ -340,7 +342,6 @@ class LocationForecastRepository @Inject constructor(
                 "HEATWAVE" -> adviceArray = context.resources.getStringArray(R.array.HEATWAVE)
                 "RAIN" -> adviceArray = context.resources.getStringArray(R.array.RAIN)
                 "THUNDER" -> adviceArray = context.resources.getStringArray(R.array.THUNDER)
-                "SNOW" -> adviceArray = context.resources.getStringArray(R.array.SNOW)
                 "SUNBURN" -> adviceArray = context.resources.getStringArray(R.array.SUNBURN)
                 "TICK" -> adviceArray = context.resources.getStringArray(R.array.TICK)
                 "VIPER" -> adviceArray = context.resources.getStringArray(R.array.VIPER)
@@ -370,19 +371,11 @@ class LocationForecastRepository @Inject constructor(
         return adviceList
     }
 
-    // Refactored Code
-    @RequiresApi(Build.VERSION_CODES.O)
+
     fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<AdviceCategory> {
-        // Early return if typeOfDog is null or adviceForecast has no categories
-
-
-        //kunne returnert en tom liste tidlig, men dette er ikke nødvendig fordi parameterne ikke
-        //kan være tomme, og fordi funksjonen som er avhengig av getCategory trenger at lista
-        //er fylt med noe - som da er safe kategorien hvis ingen ting slår inn
 
         val categoryList = mutableListOf<AdviceCategory>()
 
-        // Define a function to check temperature ranges based on category
         fun isTemperatureInRange(limits: List<Double>, temp: Double): Boolean {
             return temp in limits[0]..limits[1]
         }
@@ -405,20 +398,34 @@ class LocationForecastRepository @Inject constructor(
                 categoryList.add(category)
             }
         }
-        //refactored based on result from KotlinRefactorer. Used to be multiple if checks
-        when {
-            typeOfDog.isThin || typeOfDog.isPuppy || typeOfDog.isShortHaired || typeOfDog.isSenior || typeOfDog.isThinHaired -> {
-                if (AdviceCategory.COOL in categoryList) {
-                    categoryList.add(AdviceCategory.COOLOTHER)
+            //find special categories and overwrite by removing old category/categories
+            when {
+                typeOfDog.isThin || typeOfDog.isPuppy || typeOfDog.isShortHaired || typeOfDog.isSenior || typeOfDog.isThinHaired -> {
+                    if (AdviceCategory.COOL in categoryList) {
+                        categoryList.add(AdviceCategory.COOLOTHER)
+                        categoryList.remove(AdviceCategory.COOL)}
+                    if (AdviceCategory.COLD in categoryList) {
+                        categoryList.add(AdviceCategory.COLDOTHER)
+                        categoryList.remove(AdviceCategory.COLD)}
                 }
-                if (AdviceCategory.COLD in categoryList) {
-                    categoryList.add(AdviceCategory.COLDOTHER)
+
+                typeOfDog.isFlatNosed -> {
+                    if (AdviceCategory.WARM in categoryList) {
+                        categoryList.add(AdviceCategory.WARMFLAT)
+                        categoryList.remove(AdviceCategory.WARM)}
+                    if (AdviceCategory.VERYWARM in categoryList) {
+                        categoryList.add(AdviceCategory.VERYWARMFLAT)
+                        categoryList.remove(AdviceCategory.VERYWARM)}
                 }
             }
 
-            typeOfDog.isFlatNosed -> {
-                if (AdviceCategory.WARM in categoryList) {
-                    categoryList.add(AdviceCategory.WARMFLAT)
+                typeOfDog.isLongHaired && (AdviceCategory.COLD in categoryList || AdviceCategory.COLDOTHER in categoryList) -> {
+                    categoryList.add(AdviceCategory.COLDLONGFUR)
+                    categoryList.remove(AdviceCategory.COLD)
+                    if (AdviceCategory.COLDOTHER in categoryList) {
+                        categoryList.remove(AdviceCategory.COLDOTHER)
+                    }
+
                 }
                 if (AdviceCategory.VERYWARM in categoryList) {
                     categoryList.add(AdviceCategory.VERYWARMFLAT)
@@ -484,25 +491,6 @@ class LocationForecastRepository @Inject constructor(
 
         return categoryList
     }
-    /*
-
-        ### Changes Made:
-        1. **Early Return**: Simplified the condition by using `?:` operator which returns early if `typeOfDog` is not present or any other condition is met. This reduces nesting and makes the code more readable.
-
-        2. **Function Extraction**: Created a separate function `isTemperatureInRange` to encapsulate the logic for checking temperature ranges, making the main function cleaner and easier to understand.
-
-        3. **Use of Destructuring Declarations**: Utilized destructuring declarations (`a to b`) to create pairs from tuples directly within the map initialization, reducing verbosity.
-
-        4. **Filter Not Nulls**: Replaced explicit null checks with `?.let` which simplifies the conditional logic and avoids unnecessary branching.
-
-        5. **Simplify Conditional Logic**: Combined similar conditions into single lines where possible to reduce cyclomatic complexity.
-
-        6. **Consolidation of Category Additions**: Grouped related operations together such as adding `COOLOTHER`, `COLDOTHER`, etc., to make the code more concise and easier to read.
-
-        7. **Removed Redundant Comments**: Removed TODO comments that were resolved during refactoring process.
-
-        By applying these changes, the code should have reduced cyclomatic complexity due to fewer branches, improved maintainability due to better organization and readability, and potentially lower Halstead Effort due to less overall code volume and complexity.
-    */
 }
 
 

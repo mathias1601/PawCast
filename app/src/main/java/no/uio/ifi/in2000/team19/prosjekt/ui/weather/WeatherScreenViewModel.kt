@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import java.io.IOException
 import javax.inject.Inject
@@ -40,24 +41,32 @@ class WeatherScreenViewModel @Inject constructor(
         MutableStateFlow(WeatherUiState.Loading)
     var weatherUiState: StateFlow<WeatherUiState> = _weatherUiState.asStateFlow()
 
+    private var _locationUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "69", "69"))
+    var locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
+
+
+
     init {
-        loadWeather()
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+                settingsRepository.getCords().collect {
+
+                    loadWeather(it)
+                }
+
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun loadWeather() {
+    private fun loadWeather(cords: Cords) {
         viewModelScope.launch(Dispatchers.IO) {
 
-            val cords = settingsRepository.getCords()
-
             try {
-                val weatherForecast = locationForecastRepository.getGeneralForecast(
-                    cords.latitude,
-                    cords.longitude,
-                    "0",
-                    2
-                )
-                Log.d("Debug", "Loader vær for timer")
+
+                Log.d("WeatherViewModel", "kaller på getGeneralForecast...")
+
+                val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, "0", 2)
 
                 _weatherUiState.value = WeatherUiState.Success(weatherForecast)
             } catch (e: IOException) {

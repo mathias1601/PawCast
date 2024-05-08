@@ -2,9 +2,13 @@ package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
 
 import android.annotation.SuppressLint
+import android.icu.util.Calendar
 import android.os.Build
 import android.text.Layout
+import androidx.annotation.Dimension
+import androidx.annotation.FloatRange
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,6 +20,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -62,25 +67,32 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.rememberAxisGuidelineComponent
+import com.patrykandpatrick.vico.compose.axis.rememberAxisTickComponent
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.chart.scroll.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
+import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
+import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.shape.shader.TopBottomShader
+import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
+import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.scroll.Scroll
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
@@ -88,7 +100,7 @@ import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
-import java.util.Calendar
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -103,11 +115,12 @@ fun HomeScreenManager(
     val graphUiState = viewModel.graphUiState.collectAsState().value
     val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
     val locationUiState = viewModel.locationUiState.collectAsState().value
+    val temperatureUiState = viewModel.temperatureUiState.collectAsState().value
 
     val isRefreshing by remember {
         mutableStateOf(false)
     }
-    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast()})
+    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast(locationUiState)})
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
@@ -118,7 +131,7 @@ fun HomeScreenManager(
             ) {
                 when (adviceUiState) {
                     is AdviceUiState.Success -> {
-                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, navController, innerPadding)
+                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, temperatureUiState, navController, innerPadding)
                     }
 
                     is AdviceUiState.Loading -> {
@@ -166,6 +179,7 @@ fun HomeScreen(
     location: Cords,
     advice: AdviceUiState.Success,
     graphUiState: CartesianChartModelProducer,
+    temperature: GeneralForecast,
     navController: NavController,
     innerPadding: PaddingValues,
 ) {
@@ -177,8 +191,7 @@ fun HomeScreen(
     if (showAdviceInfoSheet) {
         ModalBottomSheet(
             modifier = Modifier
-            .defaultMinSize(minHeight = 200.dp)
-            ,
+            .defaultMinSize(minHeight = 200.dp),
             onDismissRequest = { showAdviceInfoSheet = false }
         ) {
             Column(
@@ -198,8 +211,7 @@ fun HomeScreen(
     if (showGraphInfoSheet) {
         ModalBottomSheet(
             modifier = Modifier
-                .defaultMinSize(minHeight = 200.dp)
-            ,
+                .defaultMinSize(minHeight = 200.dp),
             onDismissRequest = { showGraphInfoSheet = false }
         ) {
             Column(
@@ -262,7 +274,12 @@ fun HomeScreen(
         ) {
 
             Text(
-                text = "Heisann ${userInfo.userName} og ${userInfo.dogName}!",
+                text = if (userInfo.userName != "" && userInfo.dogName != ""){
+                    "Heisann ${userInfo.userName} og ${userInfo.dogName}!"
+                    } else {
+                       "Heisann!"
+                    }
+                ,
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.White
             )
@@ -277,7 +294,7 @@ fun HomeScreen(
             ) {
 
                 Text(
-                    text = "18C",
+                    text = temperature.temperature.toString(),
                     style = MaterialTheme.typography.titleLarge,
                     color = Color.White,
 
@@ -425,8 +442,6 @@ fun HomeScreen(
                                 )
                             }
                         }
-
-
                     }
                 }
 
@@ -463,10 +478,7 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
-            .clickable {
-                navigateToMoreInfoScreen()
-            }
+            .fillMaxHeight(0.3f)
     ) {
                 Surface(
                     color = MaterialTheme.colorScheme.secondaryContainer
@@ -502,7 +514,6 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
                         ) {
                             Text("Les mer")
                         }
-
                     }
 
                 }
@@ -515,15 +526,36 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
 fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
 
     // Setting start state to current time
+    // val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour
+    //val scrollState = rememberVicoScrollState(
+    //    initialScroll = Scroll.Absolute.Companion.x(x = time.toFloat(), bias = 0f)
+    // )
+
+    //val hoursOfDay = listOf("00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13","14", "15", "16", "17", "18", "19", "20", "21", "22", "23")
     val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour
-    val scrollState = rememberVicoScrollState(
-        initialScroll = Scroll.Absolute.Companion.x(x = time.toFloat(), bias = 0f)
-    )
+
+    val bottomAxisValueFormatter =
+        AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _, _->
+
+            var label = time  + x.toInt() // Label = tid nå + x indeks... x = 0 = tiden nå, x = 1 = om en time... formatert som Int 0 <= 36
+
+            if (label > 23){ // Trekk fra 24 timer dersom
+               label = label - 24
+            }
+
+            if (label < 10){
+                "0$label"
+            } else  {
+                "$label"
+            }
+
+        }
+
+
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
     ){
         Column (
             modifier = Modifier
@@ -532,7 +564,6 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
             verticalArrangement = Arrangement.Center
         ){
             Text("Værvurdering for tur")
-
             CartesianChartHost(
                 chart =
                     rememberCartesianChart(
@@ -542,7 +573,6 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                                     shader = TopBottomShader(
                                         DynamicShaders.color(Color.Green),
                                         DynamicShaders.color(Color.Blue),
-                                        splitY = 9f
                                     ),
                                 )
                             ),
@@ -558,9 +588,12 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                                         padding = MutableDimensions(8f, 1f),
                                         textAlignment = Layout.Alignment.ALIGN_CENTER
                                 ),
+
                             title = "Vurdering",
                         ),
                         bottomAxis = rememberBottomAxis(
+                            labelRotationDegrees = -30f,
+                            valueFormatter = bottomAxisValueFormatter,
                             titleComponent = rememberTextComponent(
                                     background = ShapeComponent(
                                         shape = Shapes.pillShape,
@@ -576,15 +609,8 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                 modifier = Modifier.fillMaxSize(),
                 marker = rememberMarker(),
                 horizontalLayout = HorizontalLayout.fullWidth(),
-                scrollState = scrollState
-
-
-
-
             )
-
         }
-
     }
 }
 
