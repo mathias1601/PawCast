@@ -54,10 +54,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
@@ -100,6 +102,7 @@ fun HomeScreenManager(
 
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
     val graphUiState = viewModel.graphUiState.collectAsState().value
+    val firstYValueUiState = viewModel.firstYValueUiState.collectAsState().value
     val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
     val locationUiState = viewModel.locationUiState.collectAsState().value
     val temperatureUiState = viewModel.temperatureUiState.collectAsState().value
@@ -118,7 +121,7 @@ fun HomeScreenManager(
             ) {
                 when (adviceUiState) {
                     is AdviceUiState.Success -> {
-                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, temperatureUiState, navController, innerPadding)
+                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, firstYValueUiState, temperatureUiState, navController, innerPadding)
                     }
 
                     is AdviceUiState.Loading -> {
@@ -166,6 +169,7 @@ fun HomeScreen(
     location: Cords,
     advice: AdviceUiState.Success,
     graphUiState: CartesianChartModelProducer,
+    firstYValueUiState: Int,
     temperature: GeneralForecast,
     navController: NavController,
     innerPadding: PaddingValues,
@@ -189,7 +193,7 @@ fun HomeScreen(
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = "Lorem ipsium er en ......",
+                    text = stringResource(id = (R.string.adviceinfo)),
                     style = MaterialTheme.typography.bodyMedium
                     )
             }
@@ -205,11 +209,11 @@ fun HomeScreen(
                 modifier = Modifier.padding(20.dp)
             ) {
                 Text(
-                    text = "Graf!!",
+                    text = "Graf-forklaring",
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = "grafer er kult :D",
+                    text = stringResource(R.string.graphinfo),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -379,16 +383,6 @@ fun HomeScreen(
                             }
                         }
 
-                        
-                        TextButton(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier.align(Alignment.Bottom)
-                        ) {
-                            Text(
-                                text = "Vis alle",
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
                     }
 
 
@@ -447,7 +441,7 @@ fun HomeScreen(
                             Icon(imageVector = Icons.Filled.Info, contentDescription = "Info about graph")
                         }
                     }
-                    ForecastGraph(graphUiState)
+                    ForecastGraph(graphUiState, firstYValueUiState)
                 }
             }
         }
@@ -509,7 +503,7 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
 
 @SuppressLint("RestrictedApi")
 @Composable
-fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
+fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState: Int) {
 
     // Setting start state to current time
     // val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour
@@ -536,8 +530,21 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
             }
 
         }
+    //flytte til vm
+    val colorMap: Map<Int, Color> = mapOf(
+        1 to Color.Red,
+        2 to Color.Red,
+        3 to Color(242, 140, 40),
+        4 to Color(242, 140, 40),
+        5 to Color(242, 140, 40),
+        6 to Color.Yellow,
+        7 to Color.Yellow,
+        8 to Color(76, 187, 23),
+        9 to Color(76, 187, 23),
+        10 to Color(76, 187, 23)
+    )
 
-
+    val scoreColor: Color? = colorMap.get(firstYValueUiState)
 
     Card(
         modifier = Modifier
@@ -549,7 +556,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ){
-            Text("Værvurdering for tur")
+            Text("Jo flere poeng, jo bedre!")
             CartesianChartHost(
                 chart =
                     rememberCartesianChart(
@@ -557,8 +564,8 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                             listOf(
                                 rememberLineSpec(
                                     shader = TopBottomShader(
-                                        DynamicShaders.color(Color.Green),
-                                        DynamicShaders.color(Color.Blue),
+                                        DynamicShaders.color(scoreColor!!),
+                                        DynamicShaders.color(scoreColor),
                                     ),
                                 )
                             ),
@@ -569,13 +576,13 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                                 rememberTextComponent(
                                     background = ShapeComponent(
                                         shape = Shapes.pillShape,
-                                        color = MaterialTheme.colorScheme.tertiary
+                                        color = MaterialTheme.colorScheme.surface
                                         .hashCode()),
-                                        padding = MutableDimensions(8f, 1f),
-                                        textAlignment = Layout.Alignment.ALIGN_CENTER
+                                    padding = MutableDimensions(8f, 1f),
+                                    textAlignment = Layout.Alignment.ALIGN_CENTER
                                 ),
 
-                            title = "Vurdering",
+                            title = "Poeng"
                         ),
                         bottomAxis = rememberBottomAxis(
                             labelRotationDegrees = -30f,
@@ -583,7 +590,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                             titleComponent = rememberTextComponent(
                                     background = ShapeComponent(
                                         shape = Shapes.pillShape,
-                                        color =  MaterialTheme.colorScheme.tertiary.hashCode()),
+                                        color =  MaterialTheme.colorScheme.surface.hashCode()),
                                         padding = MutableDimensions(8f, 2f)
                             ),
                             title = "Klokkkeslett.",
