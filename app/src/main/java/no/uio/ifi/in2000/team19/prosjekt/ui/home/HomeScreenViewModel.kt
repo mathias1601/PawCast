@@ -107,10 +107,13 @@ class HomeScreenViewModel @Inject constructor(
                 adviceList = allAdvice
 
 
+
+
                 val graphCoordinates = forecastGraphFunction(
                     locationForecastRepository.getAdviceForecastList(generalForecast)
                 )
 
+                _firstYValueUiState.value = graphCoordinates.y[0]
 
                 Log.i("X:", graphCoordinates.x.toString())
                 Log.i("Y:", graphCoordinates.y.toString())
