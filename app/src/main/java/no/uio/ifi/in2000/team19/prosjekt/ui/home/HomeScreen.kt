@@ -53,7 +53,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -122,7 +121,7 @@ fun HomeScreenManager(
             ) {
                 when (adviceUiState) {
                     is AdviceUiState.Success -> {
-                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, firstYValueUiState, temperatureUiState, navController, innerPadding)
+                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, temperatureUiState, firstYValueUiState , navController, innerPadding)
                     }
 
                     is AdviceUiState.Loading -> {
