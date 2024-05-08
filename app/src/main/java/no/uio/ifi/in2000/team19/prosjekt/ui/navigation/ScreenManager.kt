@@ -78,7 +78,7 @@ fun ScreenManager(
                 }
             }
         }
-    ) {
+    ) {innerPadding ->
 
         Column(
         ) {
@@ -127,7 +127,10 @@ fun ScreenManager(
                         val weatherScreenViewModel: WeatherScreenViewModel = hiltViewModel(parentEntry)
 
                         WeatherScreen(
-                            weatherScreenViewModel = weatherScreenViewModel
+                            weatherScreenViewModel = weatherScreenViewModel,
+                            navController = navController,
+                            innerPadding = innerPadding,
+
                         )
                     }
 
