@@ -51,7 +51,6 @@ class HomeScreenViewModel @Inject constructor(
     private var _userInfoUiState:MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false, false))
     var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
-
     private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", "", 0.0, 0.0, 0.0, "",))
     var temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
 
@@ -59,19 +58,13 @@ class HomeScreenViewModel @Inject constructor(
 
     private lateinit var adviceList: List<Advice>
 
-    fun initialize() {
+    init {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val location = settingsRepository.getCords()
-                val userInfo = settingsRepository.getUserInfo()
-
-
-                if ((_locationUiState.value != location) || (_userInfoUiState.value != userInfo)) {
-                    _locationUiState.value = location
-                    _userInfoUiState.value = userInfo
-
-                    loadWeatherForecast(location, userInfo)
+                settingsRepository.getCords().collect {cords ->
+                    loadWeatherForecast(cords)
                 }
+
             } catch (e: IOException) {
                 _adviceUiState.value = AdviceUiState.Error
             }
@@ -80,9 +73,13 @@ class HomeScreenViewModel @Inject constructor(
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun loadWeatherForecast(location: Cords, userInfo: UserInfo) {
+    fun loadWeatherForecast(location: Cords) {
+
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
+
+                Log.d("HomeScreenViewModel", "kaller på getGeneralForecast...")
 
                 val generalForecast = locationForecastRepository.getGeneralForecast(
                     location.latitude,

@@ -4,19 +4,17 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.patrykandpatrick.vico.core.Animation.range
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -50,6 +48,8 @@ class LocationForecastRepository @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getGeneralForecast(latitude: String, longitude: String, height: String, nrDays: Int): ForecastTypes {
+
+        Log.d("DEBUG", "getGeneralForecast kalt på...")
 
         val locationForecast = fetchLocationForecast(latitude, longitude, height)
 

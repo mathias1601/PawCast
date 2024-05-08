@@ -51,8 +51,6 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.home.NoConnectionScreen
 @Composable
 fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
 
-    weatherScreenViewModel.initalize()
-
     var todayExpanded by remember { mutableStateOf(false) }
     var tomorrowExpanded by remember { mutableStateOf(false) }
     var dayAfterTomorrowExpanded by remember { mutableStateOf(false) }

@@ -111,8 +111,6 @@ fun HomeScreenManager(
     navController: NavController
 ) {
 
-    viewModel.initialize()
-
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
     val graphUiState = viewModel.graphUiState.collectAsState().value
     val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
@@ -122,7 +120,7 @@ fun HomeScreenManager(
     val isRefreshing by remember {
         mutableStateOf(false)
     }
-    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.initialize()})
+    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast(locationUiState)})
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
@@ -516,7 +514,6 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
                         ) {
                             Text("Les mer")
                         }
-
                     }
 
                 }
@@ -612,17 +609,8 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                 modifier = Modifier.fillMaxSize(),
                 marker = rememberMarker(),
                 horizontalLayout = HorizontalLayout.fullWidth(),
-
-
-                // scrollState = scrollState
-
-
-
-
             )
-
         }
-
     }
 }
 
