@@ -61,8 +61,8 @@ class HomeScreenViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                settingsRepository.getCords().collect {
-                    loadWeatherForecast(it)
+                settingsRepository.getCords().collect {cords ->
+                    loadWeatherForecast(cords)
                 }
 
             } catch (e: IOException) {
