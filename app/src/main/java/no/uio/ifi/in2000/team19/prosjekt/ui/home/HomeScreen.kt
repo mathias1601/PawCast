@@ -5,7 +5,10 @@ import android.annotation.SuppressLint
 import android.icu.util.Calendar
 import android.os.Build
 import android.text.Layout
+import androidx.annotation.Dimension
+import androidx.annotation.FloatRange
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,6 +20,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -63,6 +67,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.rememberAxisGuidelineComponent
+import com.patrykandpatrick.vico.compose.axis.rememberAxisTickComponent
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
@@ -75,13 +81,17 @@ import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
+import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
+import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.shape.shader.TopBottomShader
+import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
+import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
@@ -181,8 +191,7 @@ fun HomeScreen(
     if (showAdviceInfoSheet) {
         ModalBottomSheet(
             modifier = Modifier
-            .defaultMinSize(minHeight = 200.dp)
-            ,
+            .defaultMinSize(minHeight = 200.dp),
             onDismissRequest = { showAdviceInfoSheet = false }
         ) {
             Column(
@@ -202,8 +211,7 @@ fun HomeScreen(
     if (showGraphInfoSheet) {
         ModalBottomSheet(
             modifier = Modifier
-                .defaultMinSize(minHeight = 200.dp)
-            ,
+                .defaultMinSize(minHeight = 200.dp),
             onDismissRequest = { showGraphInfoSheet = false }
         ) {
             Column(
@@ -470,10 +478,7 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
-            .clickable {
-                navigateToMoreInfoScreen()
-            }
+            .fillMaxHeight(0.3f)
     ) {
                 Surface(
                     color = MaterialTheme.colorScheme.secondaryContainer
@@ -539,17 +544,18 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
             }
 
             if (label < 10){
-                "0$label:00"
+                "0$label"
             } else  {
-                "$label:00"
+                "$label"
             }
 
         }
 
+
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
     ){
         Column (
             modifier = Modifier
@@ -558,9 +564,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
             verticalArrangement = Arrangement.Center
         ){
             Text("Værvurdering for tur")
-
             CartesianChartHost(
-                getXStep = { 1f }, // Show every X step on X axis.
                 chart =
                     rememberCartesianChart(
                         rememberLineCartesianLayer(
@@ -588,10 +592,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                             title = "Vurdering",
                         ),
                         bottomAxis = rememberBottomAxis(
-                            itemPlacer = AxisItemPlacer.Horizontal.default(
-                                spacing = 1
-                            ),
-                            tickLength = 20.dp,
+                            labelRotationDegrees = -30f,
                             valueFormatter = bottomAxisValueFormatter,
                             titleComponent = rememberTextComponent(
                                     background = ShapeComponent(
@@ -608,15 +609,8 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer) {
                 modifier = Modifier.fillMaxSize(),
                 marker = rememberMarker(),
                 horizontalLayout = HorizontalLayout.fullWidth(),
-                // scrollState = scrollState
-
-
-
-
             )
-
         }
-
     }
 }
 
