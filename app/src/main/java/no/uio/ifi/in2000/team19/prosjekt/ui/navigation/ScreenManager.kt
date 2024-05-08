@@ -94,7 +94,6 @@ fun ScreenManager(
                     route = "parent"
                 ){
 
-
                     composable("home") { backStackEntry ->
 
                         // hiltViewModel creates new viewmodel model if there is none and stores it scoped to the navigation graph. https://developer.android.com/reference/kotlin/androidx/hilt/navigation/compose/package-summary
@@ -148,14 +147,18 @@ fun ScreenManager(
                     }
 
                     composable("advice/{id}") {backStackEntry->
+
+                        val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
+                        val homeScreenViewModel: HomeScreenViewModel = hiltViewModel(parentEntry)
+
                         val id = backStackEntry.arguments?.getString("id") ?: "0"
+
                         AdviceScreen(
                             navController = navController,
                             adviceId = id.toInt(),
-                            viewModel = hiltViewModel<HomeScreenViewModel>())
+                            viewModel = homeScreenViewModel)
                     }
                 }
-
             }
         }
     }
