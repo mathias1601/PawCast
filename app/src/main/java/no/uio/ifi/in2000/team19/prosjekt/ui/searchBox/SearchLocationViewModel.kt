@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.mapbox.search.autocomplete.PlaceAutocomplete
 import com.mapbox.search.autocomplete.PlaceAutocompleteSuggestion
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +14,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
@@ -38,7 +36,6 @@ sealed class SearchState {
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
-    private val fusedLocationClient : FusedLocationProviderClient
 ) : ViewModel(){
 
 
@@ -133,7 +130,7 @@ class SearchLocationViewModel @Inject constructor(
                     latitude = response.value!!.coordinate.latitude().toString(),
                     longitude = response.value!!.coordinate.longitude().toString(),
                     shortName = response.value!!.name,
-                    detailedName = response.value!!.address!!.formattedAddress!!,
+                    detailedName = response.value!!.address!!.formattedAddress ?: response.value!!.name, // some adresses dont have a detailedName.
                 )
             }
             updateSearchBoxToRepresentStoredLocation()
