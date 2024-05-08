@@ -21,6 +21,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import java.io.IOException
+import java.time.LocalDate
 import javax.inject.Inject
 import kotlin.math.absoluteValue
 
@@ -56,26 +57,21 @@ class HomeScreenViewModel @Inject constructor(
     var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
 
-    private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", "", 0.0, 0.0, 0.0, "",))
+    private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", LocalDate.now(), 0.0, 0.0, 0.0, ""))
     var temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
 
     private val height: String = "0"
 
     private lateinit var adviceList: List<Advice>
 
-    fun initialize() {
+    init {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val location = settingsRepository.getCords()
-                val userInfo = settingsRepository.getUserInfo()
-
-
-                if ((_locationUiState.value != location) || (_userInfoUiState.value != userInfo)) {
-                    _locationUiState.value = location
-                    _userInfoUiState.value = userInfo
-
-                    loadWeatherForecast(location, userInfo)
+                settingsRepository.getCords().collect {cords ->
+                    _locationUiState.value = cords
+                    loadWeatherForecast(cords)
                 }
+
             } catch (e: IOException) {
                 _adviceUiState.value = AdviceUiState.Error
             }
