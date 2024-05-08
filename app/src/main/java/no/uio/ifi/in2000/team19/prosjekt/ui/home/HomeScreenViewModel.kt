@@ -79,10 +79,14 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun loadWeatherForecast(location: Cords, userInfo: UserInfo) {
+    fun loadWeatherForecast(location: Cords) {
+
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
+
+
+                Log.d("HomeScreenViewModel", "kaller på getGeneralForecast...")
 
                 val generalForecast = locationForecastRepository.getGeneralForecast(
                     location.latitude,
@@ -91,23 +95,26 @@ class HomeScreenViewModel @Inject constructor(
                     2
                 )
 
+
                 _temperatureUiState.value = generalForecast.general[0]
 
+                _userInfoUiState.value = settingsRepository.getUserInfo()
+
                 val allAdvice = locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
+
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
 
                 adviceList = allAdvice
 
 
-                val graphCoordinates = forecastGraphFunction(locationForecastRepository.getAdviceForecastList(generalForecast))
+                val graphCoordinates = forecastGraphFunction(
+                    locationForecastRepository.getAdviceForecastList(generalForecast)
+                )
 
 
                 Log.i("X:", graphCoordinates.x.toString())
                 Log.i("Y:", graphCoordinates.y.toString())
 
-
-
-                _firstYValueUiState.value = graphCoordinates.y[0]
 
                 _graphUiState.value.tryRunTransaction {
                     lineSeries {
@@ -118,8 +125,15 @@ class HomeScreenViewModel @Inject constructor(
                 }
 
             } catch (e: IOException) {
-                _adviceUiState.value  = AdviceUiState.Error
+                _adviceUiState.value = AdviceUiState.Error
             }
+            /*
+             fjernet midlertidig fordi den krever oss til å legge til @Requires i toppen, ønsker å unngå dette / finne bedre løsning ...
+             catch (e: HttpException) {
+                _adviceUiState.value = AdviceUiState.Error
+            } */
+
+
         }
     }
 
