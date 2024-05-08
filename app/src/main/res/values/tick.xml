@@ -4,15 +4,14 @@
         <item> Det er flåttsesong </item>
 
         <item>
-            ~Veterinærer anbefaler\n
-            Sjekk hundens pels nøye etter tur.\n
+            ~Veterinærer anbefaler\nSjekk hundens pels nøye etter tur.\n
             Spesielt utsatte områder er de med lite pels, for eksempel:\n
-            • Rundt øyne og munn
-            • Innsiden av ører
+            • Rundt øyne og munn\n
+            • Innsiden av ører\n
             • Under halefestet\n
             Kontakt veterinær for resept på flåttmiddel, eller kjøp reseptfritt på apoteket.\n
 
-            ~Tegn å se etterṽ
+            ~Tegn å se etter\n
             Flått kan variere mye i størrelse og farge, men det letteste er å kjenne etter.\n
             Hvis hunden blir bitt kan det etterlate en kul og rød, hoven hud.\n
             Hvis den blir syk av bittet er vanlige symptomer dårlig appetitt, nedstemthet, feber og leddsmerter.\n
@@ -21,8 +20,8 @@
         </item>
 
         <item>
-            Sjekk hunden for flått etter tur.\n
-            Kontakt veterinær for resept på flåttmiddel eller kjøp reseptfritt på apoteket.\n
+            Sjekk hunden for flått etter tur.\nKontakt
+            veterinær for resept på flåttmiddel eller kjøp reseptfritt på apoteket.\n
         </item>
     </string-array>
 </resources>

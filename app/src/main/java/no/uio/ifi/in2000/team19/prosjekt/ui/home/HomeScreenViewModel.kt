@@ -1,6 +1,8 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
@@ -21,54 +23,44 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import java.io.IOException
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 
-sealed interface AdviceUiState {
-    data class Success(val allAdvice: List<Advice>) : AdviceUiState
+sealed interface AdviceUiState{
+    data class  Success(val allAdvice:List<Advice>) : AdviceUiState
     data object Loading : AdviceUiState
     data object Error : AdviceUiState
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val locationForecastRepository: LocationForecastRepository
-) : ViewModel() {
+): ViewModel() {
 
-    private var _adviceUiState: MutableStateFlow<AdviceUiState> =
-        MutableStateFlow(AdviceUiState.Loading)
+    private var _adviceUiState: MutableStateFlow<AdviceUiState> = MutableStateFlow(AdviceUiState.Loading)
     var adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
 
     private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
     var graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
 
-    private var _locationUiState: MutableStateFlow<Cords> =
-        MutableStateFlow(Cords(0, "default", "default", "0", "0"))
+    private val _firstYValueUiState = MutableStateFlow(0)
+    var firstYValueUiState: StateFlow<Int> = _firstYValueUiState.asStateFlow()
+
+    private var _locationUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "69", "69"))
     var locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
 
     // Is used show user name and dog name
-    private var _userInfoUiState: MutableStateFlow<UserInfo> = MutableStateFlow(
-        UserInfo(
-            0,
-            "loading",
-            "loading",
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-        )
-    )
+    private var _userInfoUiState:MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false, false))
     var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
-    private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", LocalDate.now(), 0.0, 0.0, 0.0, "",))
+
+    private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", LocalDate.now(), 0.0, 0.0, 0.0, ""))
     var temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
+
+    private val height: String = "0"
 
     private lateinit var adviceList: List<Advice>
 
@@ -85,6 +77,7 @@ class HomeScreenViewModel @Inject constructor(
             }
         }
     }
+
 
     fun loadWeatherForecast(location: Cords) {
 
@@ -114,10 +107,13 @@ class HomeScreenViewModel @Inject constructor(
                 adviceList = allAdvice
 
 
+
+
                 val graphCoordinates = forecastGraphFunction(
                     locationForecastRepository.getAdviceForecastList(generalForecast)
                 )
 
+                _firstYValueUiState.value = graphCoordinates.y[0]
 
                 Log.i("X:", graphCoordinates.x.toString())
                 Log.i("Y:", graphCoordinates.y.toString())
@@ -189,6 +185,14 @@ class HomeScreenViewModel @Inject constructor(
             overallRatingList.add(overallRating)
         }
 
+        val hourlength = currentHours.size
+        val ratinglength = overallRatingList.size
+
+        Log.i("HOURS", currentHours.toString())
+        Log.i("RATINGS", "$ratinglength")
+
+        Log.i("rating list", overallRatingList.toString())
+
         return GraphData(currentHours, overallRatingList)
     }
 
@@ -259,8 +263,8 @@ class HomeScreenViewModel @Inject constructor(
     //this function is used to fetch the rating of a given weather specification
     private fun rating(weatherTypeValue: Double, limitsMap: HashMap<List<Double>, Int>): Int {
 
-        for ((key, value) in limitsMap) {
-            if (weatherTypeValue in key[0]..key[1]) {
+        for((key, value) in limitsMap) {
+            if (weatherTypeValue in key[0] .. key[1]) {
                 return value
             }
         }
@@ -269,7 +273,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-    fun collectAdviceById(id: Int): Advice {
+    fun collectAdviceById(id: Int): Advice{
         return adviceList[id]
     }
 

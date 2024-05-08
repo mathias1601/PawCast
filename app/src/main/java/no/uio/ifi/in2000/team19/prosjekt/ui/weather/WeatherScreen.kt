@@ -148,7 +148,7 @@ fun WeatherNow(weather: GeneralForecast) {
             style = MaterialTheme.typography.displaySmall
         )
 
-        Text(text = "Grader ute akkurat nå")
+        Text(text = "Akkurat nå")
 
 
     }
