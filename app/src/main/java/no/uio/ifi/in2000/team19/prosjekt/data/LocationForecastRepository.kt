@@ -398,7 +398,7 @@ class LocationForecastRepository @Inject constructor(
                 categoryList.add(category)
             }
         }
-            //find special categories and overwrite by removing old category/categories
+            //Find special categories and overwrite by removing old category/categories
             when {
                 typeOfDog.isThin || typeOfDog.isPuppy || typeOfDog.isShortHaired || typeOfDog.isSenior || typeOfDog.isThinHaired -> {
                     if (AdviceCategory.COOL in categoryList) {
@@ -417,7 +417,6 @@ class LocationForecastRepository @Inject constructor(
                         categoryList.add(AdviceCategory.VERYWARMFLAT)
                         categoryList.remove(AdviceCategory.VERYWARM)}
                 }
-            }
 
                 typeOfDog.isLongHaired && (AdviceCategory.COLD in categoryList || AdviceCategory.COLDOTHER in categoryList) -> {
                     categoryList.add(AdviceCategory.COLDLONGFUR)
@@ -427,14 +426,15 @@ class LocationForecastRepository @Inject constructor(
                     }
 
                 }
-                if (AdviceCategory.VERYWARM in categoryList) {
-                    categoryList.add(AdviceCategory.VERYWARMFLAT)
-                }
-            }
 
-            typeOfDog.isLongHaired && AdviceCategory.COLD in categoryList -> {
-                categoryList.add(AdviceCategory.COLDLONGFUR)
-            }
+                typeOfDog.isLongHaired && AdviceCategory.COLD in categoryList -> {
+                    categoryList.add(AdviceCategory.COLDLONGFUR)
+
+                    if (AdviceCategory.VERYWARM in categoryList) {
+                        categoryList.add(AdviceCategory.VERYWARMFLAT)
+                    }
+
+                }
         }
 
 

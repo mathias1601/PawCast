@@ -23,6 +23,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import java.io.IOException
+import java.time.LocalDate
 import javax.inject.Inject
 
 
@@ -49,7 +50,7 @@ class HomeScreenViewModel @Inject constructor(
     var graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
 
     private var _locationUiState: MutableStateFlow<Cords> =
-        MutableStateFlow(Cords(0, "default", "default", "69", "69"))
+        MutableStateFlow(Cords(0, "default", "default", "0", "0"))
     var locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
 
     // Is used show user name and dog name
@@ -72,7 +73,7 @@ class HomeScreenViewModel @Inject constructor(
     )
     var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
-    private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", "", 0.0, 0.0, 0.0, "",))
+    private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", LocalDate.now(), 0.0, 0.0, 0.0, "",))
     var temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
 
     private val height: String = "0"
@@ -83,6 +84,7 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 settingsRepository.getCords().collect {cords ->
+                    _locationUiState.value = cords
                     loadWeatherForecast(cords)
                 }
 
@@ -92,12 +94,14 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     @RequiresApi(Build.VERSION_CODES.O)
     fun loadWeatherForecast(location: Cords) {
 
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
+
 
                 Log.d("HomeScreenViewModel", "kaller på getGeneralForecast...")
 
@@ -110,6 +114,8 @@ class HomeScreenViewModel @Inject constructor(
 
 
                 _temperatureUiState.value = generalForecast.general[0]
+
+                _userInfoUiState.value = settingsRepository.getUserInfo()
 
                 val allAdvice = locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
 
@@ -140,6 +146,8 @@ class HomeScreenViewModel @Inject constructor(
             } catch (e: HttpException) {
                 _adviceUiState.value = AdviceUiState.Error
             }
+
+
         }
     }
 
@@ -187,14 +195,6 @@ class HomeScreenViewModel @Inject constructor(
 
             overallRatingList.add(overallRating)
         }
-
-        val hourlength = currentHours.size
-        val ratinglength = overallRatingList.size
-
-        Log.i("HOURS", currentHours.toString())
-        Log.i("RATINGS", "$ratinglength")
-
-        Log.i("rating list", overallRatingList.toString())
 
         return GraphData(currentHours, overallRatingList)
     }
