@@ -121,6 +121,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
 }
 
 
+@SuppressLint("DiscouragedApi")
 @Composable
 fun WeatherNow(weather: GeneralForecast) {
 
@@ -287,6 +288,7 @@ fun NextDaysForecastCard(weatherForDay: WeatherForDay, meanHours:List<WeatherFor
     }
 }
 
+@SuppressLint("DiscouragedApi")
 @Composable
 fun SingleHourForecastCard(generalForecast: GeneralForecast) {
 
