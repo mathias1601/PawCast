@@ -58,7 +58,7 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, navController: NavHostContro
 
         ) {
             Image(
-                painter = painterResource(id = R.drawable.dog),
+                painter = painterResource(id = R.drawable.dog_normal),
                 contentDescription = "Avatar",
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier.height(125.dp)

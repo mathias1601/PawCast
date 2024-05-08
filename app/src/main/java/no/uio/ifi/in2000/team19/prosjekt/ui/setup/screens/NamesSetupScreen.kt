@@ -73,7 +73,7 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: 
             ){
 
                 Image(
-                    painter = painterResource(id = R.drawable.dog),
+                    painter = painterResource(id = R.drawable.dog_normal),
                     contentDescription = "Avatar",
                     contentScale = ContentScale.FillHeight,
                     modifier = Modifier.height(100.dp)
