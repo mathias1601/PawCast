@@ -36,7 +36,7 @@ class ScreenManagerViewModel @Inject constructor(
                 if (completed){
                     _startDestination.value = "home"
                 } else {
-                    _startDestination.value = "setup/0"
+                    _startDestination.value = "setup/{STAGE}"
                 }
 
             }

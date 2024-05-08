@@ -20,8 +20,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import no.uio.ifi.in2000.team19.prosjekt.ui.extendedAdvice.AdviceScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenManager
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
@@ -82,15 +82,10 @@ fun ScreenManager(
                 //Sjekk kun for når man åpner appen
             NavHost(
                 navController = navController,
-                startDestination = "parent",
+                startDestination = startDestination,
+                route = "parent"
 
             ){
-
-                navigation(
-                    startDestination = startDestination,
-                    route = "parent"
-                ){
-
                     composable("home") { backStackEntry ->
 
                         // hiltViewModel creates new viewmodel model if there is none and stores it scoped to the navigation graph. https://developer.android.com/reference/kotlin/androidx/hilt/navigation/compose/package-summary
@@ -131,7 +126,12 @@ fun ScreenManager(
                         )
                     }
 
-                    composable("setup/{STAGE}"){ backStackEntry ->
+                    composable(
+                        route = "setup/{STAGE}",
+                        arguments = listOf(navArgument("STAGE") { defaultValue = "0" })
+
+
+                    ){ backStackEntry ->
 
                         val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
                         val setupScreenViewModel: SetupScreenViewModel = hiltViewModel(parentEntry)
@@ -158,7 +158,7 @@ fun ScreenManager(
                             adviceId = id.toInt(),
                             viewModel = homeScreenViewModel)
                     }
-                }
+
             }
         }
     }

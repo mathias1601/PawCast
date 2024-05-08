@@ -513,7 +513,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
             var label = time  + x.toInt() // Label = tid nå + x indeks... x = 0 = tiden nå, x = 1 = om en time... formatert som Int 0 <= 36
 
             if (label > 23){ // Trekk fra 24 timer dersom
-               label = label - 24
+                label -= 24
             }
 
             if (label < 10){
@@ -537,7 +537,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
         10 to Color(76, 187, 23)
     )
 
-    val scoreColor: Color? = colorMap.get(firstYValueUiState)
+    val scoreColor: Color? = colorMap[firstYValueUiState]
 
     Card(
         modifier = Modifier
@@ -549,7 +549,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ){
-            Text("Jo flere poeng, jo bedre!")
+            Text("Høyere er bedre")
             CartesianChartHost(
                 chart =
                     rememberCartesianChart(

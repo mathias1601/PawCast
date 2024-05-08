@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="adviceinfo">Her får du anbefalninger basert på værforholdene akkurat nå.\nDisse er
-        basert på intervjuer med veterinærer og artikler skrevet
-        av veterinærer. Hvilke du får er basert på hundeprofilen din, men husk
-        at kategoriene er noe begrenset og at din hun kan ha behov som ikke er
-        dekket av anbefalningen, eller ikke ha behov for alt som blir anbefalt.
-        For å få mer utdypende informasjon kan du trykke på "Les mer".
+    <string name="adviceinfo">
+
+        Disse anbefalingene er basert på gjeldende værforhold og er laget med veiledning fra veterinærer for å ta best mulig vare på din firbente venn.
+
+        Husk at du alltid har det endelige ansvaret for hundens helse og velvære.
+
     </string>
 
 </resources>
