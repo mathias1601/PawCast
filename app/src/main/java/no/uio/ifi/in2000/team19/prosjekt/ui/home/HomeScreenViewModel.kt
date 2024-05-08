@@ -1,8 +1,10 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
+import android.net.http.HttpException
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresExtension
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
@@ -24,31 +26,50 @@ import java.io.IOException
 import javax.inject.Inject
 
 
-sealed interface AdviceUiState{
-    data class  Success(val allAdvice:List<Advice>) : AdviceUiState
+sealed interface AdviceUiState {
+    data class Success(val allAdvice: List<Advice>) : AdviceUiState
     data object Loading : AdviceUiState
     data object Error : AdviceUiState
 }
 
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val locationForecastRepository: LocationForecastRepository
-): ViewModel() {
+) : ViewModel() {
 
-    private var _adviceUiState: MutableStateFlow<AdviceUiState> = MutableStateFlow(AdviceUiState.Loading)
+    private var _adviceUiState: MutableStateFlow<AdviceUiState> =
+        MutableStateFlow(AdviceUiState.Loading)
     var adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
 
     private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
     var graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
 
-    private var _locationUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "69", "69"))
+    private var _locationUiState: MutableStateFlow<Cords> =
+        MutableStateFlow(Cords(0, "default", "default", "69", "69"))
     var locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
 
     // Is used show user name and dog name
-    private var _userInfoUiState:MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false, false))
+    private var _userInfoUiState: MutableStateFlow<UserInfo> = MutableStateFlow(
+        UserInfo(
+            0,
+            "loading",
+            "loading",
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+        )
+    )
     var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
     private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", "", 0.0, 0.0, 0.0, "",))
@@ -71,7 +92,6 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-
     @RequiresApi(Build.VERSION_CODES.O)
     fun loadWeatherForecast(location: Cords) {
 
@@ -88,15 +108,19 @@ class HomeScreenViewModel @Inject constructor(
                     2
                 )
 
+
                 _temperatureUiState.value = generalForecast.general[0]
 
                 val allAdvice = locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
+
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
 
                 adviceList = allAdvice
 
 
-                val graphCoordinates = forecastGraphFunction(locationForecastRepository.getAdviceForecastList(generalForecast))
+                val graphCoordinates = forecastGraphFunction(
+                    locationForecastRepository.getAdviceForecastList(generalForecast)
+                )
 
 
                 Log.i("X:", graphCoordinates.x.toString())
@@ -112,7 +136,9 @@ class HomeScreenViewModel @Inject constructor(
                 }
 
             } catch (e: IOException) {
-                _adviceUiState.value  = AdviceUiState.Error
+                _adviceUiState.value = AdviceUiState.Error
+            } catch (e: HttpException) {
+                _adviceUiState.value = AdviceUiState.Error
             }
         }
     }
@@ -240,8 +266,8 @@ class HomeScreenViewModel @Inject constructor(
     //this function is used to fetch the rating of a given weather specification
     private fun rating(weatherTypeValue: Double, limitsMap: HashMap<List<Double>, Int>): Int {
 
-        for((key, value) in limitsMap) {
-            if (weatherTypeValue in key[0] .. key[1]) {
+        for ((key, value) in limitsMap) {
+            if (weatherTypeValue in key[0]..key[1]) {
                 return value
             }
         }
@@ -250,7 +276,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-    fun collectAdviceById(id: Int): Advice{
+    fun collectAdviceById(id: Int): Advice {
         return adviceList[id]
     }
 

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,7 +25,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -68,16 +66,10 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
             val weatherDays = weatherUiState.weather.day
             val weatherMean = weatherUiState.weather.hours
 
-            var firstHours: List<GeneralForecast>
-
-            if (weatherHours.size > 3) {
-                val indices = listOf(1, 2, 3) // Definerer hvilke indekser du vil inkludere
-                firstHours = weatherHours.slice(indices)
-            }
-            else {
-                firstHours = weatherHours
-            }
             val allHours = weatherHours.drop(1)
+
+            val next12Hours = allHours.subList(0, 12)
+            val next3Hours = allHours.subList(0, 3)
 
             val differentDays = weatherDays.map { it.day }.distinct()
 
@@ -88,16 +80,20 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = Color(0xffdff5fd)),
-                contentAlignment = Alignment.Center
+                //contentAlignment = Alignment.BottomCenter
             ) {
 
-                LazyColumn (
+
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 20.dp)) {
+                        .padding(horizontal = 20.dp)
+                        .padding(bottom = 121.dp)
+                        .padding(top = 15.dp)
+                ) {
 
                     item {
-                        Spacer(modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.size(60.dp))
                         Text(
                             text = "Værvarsel",
                             fontSize = 30.sp,
@@ -107,7 +103,11 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
                             textAlign = TextAlign.Center
                             //modifier = Modifier.align(Alignment.Center)
                         )
-                        Spacer(modifier = Modifier.size(20.dp))
+
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.size(150.dp))
                     }
 
 
@@ -128,34 +128,43 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
                                     .fillMaxWidth()
                                     .clickable { todayExpanded = !todayExpanded }
                                     .padding(16.dp)) {
-                                //val dayWithCapitalizedFirst = weatherDays[0].day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-                                //Text(text = dayWithCapitalizedFirst)
-                                Text(
-                                    text = "I dag",
-                                    fontSize = 23.sp,
-                                    fontWeight = FontWeight.Bold,
-                                )
+
+                                if (!todayExpanded) {
+                                    Text(
+                                        text = "Neste 3 timer",
+                                        fontSize = 19.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                } else {
+                                    Text(
+                                        text = "Neste 12 timer",
+                                        fontSize = 19.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+
+
                                 Spacer(Modifier.weight(12f))
                                 Icon(
-                                    imageVector = if (todayExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
+                                    imageVector = if (todayExpanded) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropUp,
                                     contentDescription = if (todayExpanded) "Collapse" else "Expand",
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
-                            Spacer(modifier = Modifier.size(6.dp))
+                            //Spacer(modifier = Modifier.size(6.dp))
                         }
                     }
 
 
                     if (!todayExpanded) {
-                        items(firstHours) { weather ->
+                        items(next3Hours) { weather ->
                             WeatherForecastCard(weather, color)
                         }
                     }
 
 
                     if (todayExpanded) {
-                        items(allHours) { weather ->
+                        items(next12Hours) { weather ->
                             WeatherForecastCard(weather, color)
                         }
                     }
@@ -163,7 +172,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
 
 
                     item {
-                        Spacer(modifier = Modifier.size(10.dp))
+                        //Spacer(modifier = Modifier.size(10.dp))
 
                         Card(
                             modifier = Modifier
@@ -185,17 +194,16 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
                                     weatherDays[0].day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
                                 Text(
                                     text = dayWithCapitalizedFirst,
-                                    fontSize = 23.sp,
+                                    fontSize = 19.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Spacer(Modifier.weight(12f))
                                 Icon(
-                                    imageVector = if (tomorrowExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
+                                    imageVector = if (tomorrowExpanded) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropUp,
                                     contentDescription = if (tomorrowExpanded) "Collapse" else "Expand",
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
-                            Spacer(modifier = Modifier.size(6.dp))
                         }
                     }
 
@@ -215,7 +223,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
 
 
                     item {
-                        Spacer(modifier = Modifier.size(10.dp))
+                        //Spacer(modifier = Modifier.size(10.dp))
 
                         Card(
                             modifier = Modifier
@@ -239,17 +247,16 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
                                     weatherDays[1].day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
                                 Text(
                                     text = dayWithCapitalizedFirst,
-                                    fontSize = 23.sp,
+                                    fontSize = 19.sp,
                                     fontWeight = FontWeight.Bold,
                                 )
                                 Spacer(Modifier.weight(12f))
                                 Icon(
-                                    imageVector = if (dayAfterTomorrowExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
+                                    imageVector = if (dayAfterTomorrowExpanded) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropUp,
                                     contentDescription = if (dayAfterTomorrowExpanded) "Collapse" else "Expand",
                                     modifier = Modifier.size(24.dp)
                                 )
                             }
-                            Spacer(modifier = Modifier.size(6.dp))
                         }
                     }
 
@@ -262,7 +269,9 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
                     if (dayAfterTomorrowExpanded) {
                         items(meanHoursForDayAfterTomorrow) { weather ->
                             WeatherForecastMean(weatherForDay = weather, color)
+
                         }
+
                     }
 
 
@@ -273,38 +282,6 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
         }
     }
 }
-
-/*
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel) {
-
-    when (val weatherUiState = weatherScreenViewModel.weatherUiState.collectAsState().value) {
-        is WeatherUiState.Loading -> CircularProgressIndicator()
-        is WeatherUiState.Error -> NoConnectionScreen()
-        is WeatherUiState.Success -> {
-            val weatherHours = weatherUiState.weather.general
-            val weatherDays = weatherUiState.weather.day
-            val weatherMean = weatherUiState.weather.hours
-
-            LazyColumn {
-
-                items(weatherHours) { generalForecast ->
-                    WeatherForecastCard(generalForecast = generalForecast)
-                }
-
-                items(weatherDays) { weatherData ->
-                    WeatherForecastCardForDays(weatherForDay = weatherData)
-                }
-
-                items(weatherMean) { weatherHoursMean ->
-                    WeatherForecastMean(weatherForDay = weatherHoursMean)
-                }
-            }
-        }
-    }
-}
-*/
 
 
 
@@ -331,7 +308,6 @@ fun WeatherForecastCard(generalForecast: GeneralForecast, color: Color) {
         Row(
             modifier = Modifier
                 .fillMaxSize(),
-            //horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
             verticalAlignment = Alignment.CenterVertically
         ) {
 
@@ -353,7 +329,7 @@ fun WeatherForecastCard(generalForecast: GeneralForecast, color: Color) {
             Spacer(modifier = Modifier.size(20.dp))
 
             Text(
-                text = "${generalForecast.temperature}°C",
+                text = "${generalForecast.temperature}°",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
             )
@@ -378,11 +354,9 @@ fun WeatherForecastCard(generalForecast: GeneralForecast, color: Color) {
 }
 
 
-
 @SuppressLint("DiscouragedApi")
 @Composable
 fun WeatherForecastCardForDays(weatherForDay: WeatherForDay, color: Color) {
-
 
 
     //TODO find better way to showcase picture because of Discouraged API
@@ -404,49 +378,37 @@ fun WeatherForecastCardForDays(weatherForDay: WeatherForDay, color: Color) {
         Row(
             modifier = Modifier
                 .fillMaxSize(),
-            horizontalArrangement = Arrangement.Center, // Horisontalt midtstille alle elementer i raden
+            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             Spacer(modifier = Modifier.size(15.dp))
 
-                Image(
-                    painter = painterResource(id = drawableId),
-                    contentDescription = "Værsymbol",
-                    modifier = Modifier.size(83.dp)
-                )
-                Spacer(modifier = Modifier.size(45.dp))
-
-                Column {
-                    Text(
-                        text = "L: ${weatherForDay.lowestTemperature}°C",
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
+            Image(
+                painter = painterResource(id = drawableId),
+                contentDescription = "Værsymbol",
+                modifier = Modifier.size(83.dp)
+            )
+            Spacer(modifier = Modifier.size(45.dp))
 
 
             Column {
                 Text(
-                    text = "L: ${weatherForDay.lowestTemperature}°C",
+                    text = "L: ${weatherForDay.lowestTemperature}°",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                 )
 
-                    Text(
-                        text = "H: ${weatherForDay.highestTemperature}°C",
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-
-
-
+                Text(
+                    text = "H: ${weatherForDay.highestTemperature}°",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                )
             }
-
         }
+
     }
 }
-
 
 
 @SuppressLint("DiscouragedApi")
@@ -466,9 +428,6 @@ fun WeatherForecastMean(weatherForDay: WeatherForDay, color: Color) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-        //.size(width = 350.dp, height = 75.dp)
-        //.padding(9.dp)
-        //.height(23.dp)
     ) {
 
         Row(
@@ -503,7 +462,7 @@ fun WeatherForecastMean(weatherForDay: WeatherForDay, color: Color) {
 
             Spacer(modifier = Modifier.size(20.dp))
 
-            /*Text(
+            Text(
                 text = "${weatherForDay.wind} m/s",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold
@@ -512,12 +471,10 @@ fun WeatherForecastMean(weatherForDay: WeatherForDay, color: Color) {
             Spacer(modifier = Modifier.size(20.dp))
 
             Text(
-                text = "${generalForecast.percipitation} mm",
+                text = "${weatherForDay.precipitation} mm",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
             )
-
-             */
         }
     }
 }

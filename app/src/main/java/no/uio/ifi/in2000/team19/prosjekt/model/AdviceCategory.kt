@@ -20,5 +20,6 @@ enum class AdviceCategory {
     TICK,
     VIPER,
     SAFE,
-    CAR
+    CAR,
+    NEWYEAR
 } //HEATWAVEWHITENAKED, //VERYWARMWHITENAKED,

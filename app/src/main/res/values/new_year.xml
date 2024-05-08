@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="NEWYEAR">
+        <item> Godt nyttår! </item>
+
+        <item>
+            Veterinærer anbefaler
+            Bruk potesokker og dekken.
+            Gå korte turer.
+            Gjør andre aktiviteter for mental stimulering inne.
+
+            Alternative aktiviteter
+            • Leke gjemsel inne
+            • Lær hunden din nye triks
+            • Bytt ut hvilke leker som står fremme
+            • Bruk interaktive leker som får hunden til å tenke
+
+            Konsekvenser
+            Spesielt potene og testiklene er utsatte for alvorlige frostskader, uavhengig av hundetype.
+
+        </item>
+
+        <item>
+            Bruk potesokker og dekken, spesielt ved turer lengre enn 10 minutter.
+            Prøv å begrense lengden på turene.
+        </item>
+    </string-array>
+</resources>
