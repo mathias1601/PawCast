@@ -3,7 +3,6 @@ package no.uio.ifi.in2000.team19.prosjekt.ui.home
 import android.net.http.HttpException
 import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresExtension
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,8 +33,6 @@ sealed interface AdviceUiState {
 }
 
 
-@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
@@ -76,8 +73,6 @@ class HomeScreenViewModel @Inject constructor(
     private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", LocalDate.now(), 0.0, 0.0, 0.0, "",))
     var temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
 
-    private val height: String = "0"
-
     private lateinit var adviceList: List<Advice>
 
     init {
@@ -95,7 +90,6 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    @RequiresApi(Build.VERSION_CODES.O)
     fun loadWeatherForecast(location: Cords) {
 
 

@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "no.uio.ifi.in2000.team19.prosjekt"
-        minSdk = 24
+        minSdk = 26 // 26 to support more tools like LocalDate
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
