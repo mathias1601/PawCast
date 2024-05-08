@@ -5,14 +5,10 @@ import android.annotation.SuppressLint
 import android.icu.util.Calendar
 import android.os.Build
 import android.text.Layout
-import androidx.annotation.Dimension
-import androidx.annotation.FloatRange
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.expandHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +19,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -63,14 +58,11 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.rememberAxisGuidelineComponent
-import com.patrykandpatrick.vico.compose.axis.rememberAxisTickComponent
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
@@ -80,20 +72,15 @@ import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
-import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
-import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.shape.shader.TopBottomShader
-import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
-import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
@@ -113,8 +100,6 @@ fun HomeScreenManager(
     navController: NavController
 ) {
 
-    viewModel.initialize()
-
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
     val graphUiState = viewModel.graphUiState.collectAsState().value
     val firstYValueUiState = viewModel.firstYValueUiState.collectAsState().value
@@ -125,7 +110,7 @@ fun HomeScreenManager(
     val isRefreshing by remember {
         mutableStateOf(false)
     }
-    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.initialize()})
+    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast(locationUiState)})
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
@@ -247,16 +232,16 @@ fun HomeScreen(
 
 
     val colorStops = arrayOf(
-        0.0f to Color.Blue, // Top app bar is specified as this color. To change that color go to Themes.kt and change TOP_APP_BAR_COLOR
-        0.5f to Color.Magenta
+        0.0f to Color.Blue,
+        0.5f to Color.Magenta,
     )
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                brush = Brush.verticalGradient(
-                    colorStops = colorStops
+                brush = Brush.linearGradient(
+                    colorStops = colorStops,
                 ),
             )
     )
@@ -306,8 +291,7 @@ fun HomeScreen(
 
                     )
 
-                val context = LocalContext.current
-                val drawableId = context.resources.getIdentifier("clearsky_day", "drawable", context.packageName)
+                val drawableId = R.drawable.fair_day
 
                 Image(
                     painter = painterResource(id = drawableId),
@@ -510,7 +494,6 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
                         ) {
                             Text("Les mer")
                         }
-
                     }
 
                 }
@@ -619,17 +602,8 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                 modifier = Modifier.fillMaxSize(),
                 marker = rememberMarker(),
                 horizontalLayout = HorizontalLayout.fullWidth(),
-
-
-                // scrollState = scrollState
-
-
-
-
             )
-
         }
-
     }
 }
 

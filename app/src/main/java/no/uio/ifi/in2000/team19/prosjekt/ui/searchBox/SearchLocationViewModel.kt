@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.mapbox.search.autocomplete.PlaceAutocomplete
 import com.mapbox.search.autocomplete.PlaceAutocompleteSuggestion
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,7 +36,6 @@ sealed class SearchState {
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
-    private val fusedLocationClient : FusedLocationProviderClient
 ) : ViewModel(){
 
 
@@ -58,7 +56,9 @@ class SearchLocationViewModel @Inject constructor(
     // Set Text in TextField to match stored value
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            _searchFieldValue.value = settingsRepository.getCords().detailedName
+            settingsRepository.getCords().collect {
+                _searchFieldValue.value = it.detailedName
+            }
         }
     }
 
@@ -130,7 +130,7 @@ class SearchLocationViewModel @Inject constructor(
                     latitude = response.value!!.coordinate.latitude().toString(),
                     longitude = response.value!!.coordinate.longitude().toString(),
                     shortName = response.value!!.name,
-                    detailedName = response.value!!.address!!.formattedAddress!!,
+                    detailedName = response.value!!.address!!.formattedAddress ?: response.value!!.name, // some adresses dont have a detailedName.
                 )
             }
             updateSearchBoxToRepresentStoredLocation()
@@ -143,7 +143,9 @@ class SearchLocationViewModel @Inject constructor(
 
         viewModelScope.launch (Dispatchers.IO){
             val cords = settingsRepository.getCords()
-            _searchFieldValue.value = cords.shortName
+             cords.collect {
+                 _searchFieldValue.value = it.shortName
+            }
         }
 
 

@@ -1,8 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.navigation
 
 import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cloud
@@ -17,9 +15,12 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import no.uio.ifi.in2000.team19.prosjekt.ui.extendedAdvice.AdviceScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenManager
@@ -34,15 +35,9 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ScreenManager(
-    settingsScreenViewModel: SettingsScreenViewModel,
-    homeScreenViewModel: HomeScreenViewModel,
     viewModel: ScreenManagerViewModel,
-    weatherScreenViewModel: WeatherScreenViewModel,
-    setupScreenViewModel: SetupScreenViewModel,
-    searchLocationViewModel : SearchLocationViewModel
 ) {
 
     val navController = rememberNavController()
@@ -80,41 +75,88 @@ fun ScreenManager(
                 }
             }
         }
-    ) {
+    ) {innerPadding ->
 
         Column(
         ) {
                 //Sjekk kun for når man åpner appen
             NavHost(
                 navController = navController,
-                startDestination = startDestination,
+                startDestination = "parent",
 
             ){
-                composable("home") {
-                    HomeScreenManager(viewModel = homeScreenViewModel, navController)
-                }
 
-                composable("settings"){
-                    SettingsScreen(settingsScreenViewModel, searchLocationViewModel)
-                }
+                navigation(
+                    startDestination = startDestination,
+                    route = "parent"
+                ){
 
-                composable("weather"){
-                    WeatherScreen(weatherScreenViewModel)
-                }
+                    composable("home") { backStackEntry ->
 
-                composable("setup/{STAGE}"){backStackEntry ->
-                    val id = backStackEntry.arguments?.getString("STAGE") ?: "0"
-                    SetupManager(
-                        viewModel = setupScreenViewModel,
-                        id=id,
-                        navController=navController,
-                        searchLocationViewModel = searchLocationViewModel
-                    )
-                }
+                        // hiltViewModel creates new viewmodel model if there is none and stores it scoped to the navigation graph. https://developer.android.com/reference/kotlin/androidx/hilt/navigation/compose/package-summary
+                        val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
+                        val homeScreenViewModel: HomeScreenViewModel = hiltViewModel(parentEntry)
 
-                composable("advice/{id}") {backStackEntry->
-                    val id = backStackEntry.arguments?.getString("id")?.let {
-                        AdviceScreen(adviceId = it.toInt(), navController, homeScreenViewModel)
+                        HomeScreenManager(
+                            viewModel = homeScreenViewModel,
+                            navController = navController
+                        )
+
+                    }
+
+
+                    composable("settings"){ backStackEntry ->
+
+                        val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
+
+                        val settingsScreenViewModel: SettingsScreenViewModel = hiltViewModel(parentEntry)
+                        val searchLocationViewModel: SearchLocationViewModel = hiltViewModel(parentEntry)
+
+                        SettingsScreen(
+                            viewModel = settingsScreenViewModel,
+                            searchLocationViewModel = searchLocationViewModel
+                        )
+                    }
+
+                    composable("weather"){backStackEntry ->
+
+                        val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
+                        val weatherScreenViewModel: WeatherScreenViewModel = hiltViewModel(parentEntry)
+
+                        WeatherScreen(
+                            weatherScreenViewModel = weatherScreenViewModel,
+                            navController = navController,
+                            innerPadding = innerPadding,
+
+                        )
+                    }
+
+                    composable("setup/{STAGE}"){ backStackEntry ->
+
+                        val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
+                        val setupScreenViewModel: SetupScreenViewModel = hiltViewModel(parentEntry)
+                        val searchLocationViewModel : SearchLocationViewModel = hiltViewModel(parentEntry)
+
+                        val id = backStackEntry.arguments?.getString("STAGE") ?: "0" // 0 to force it to start if wrong parameter is supplied. Elvis operator needs to stay for when start destination supplies the argument
+                        SetupManager(
+                            id=id,
+                            navController = navController,
+                            viewModel = setupScreenViewModel,
+                            searchLocationViewModel = searchLocationViewModel
+                        )
+                    }
+
+                    composable("advice/{id}") {backStackEntry->
+
+                        val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
+                        val homeScreenViewModel: HomeScreenViewModel = hiltViewModel(parentEntry)
+
+                        val id = backStackEntry.arguments?.getString("id") ?: "0"
+
+                        AdviceScreen(
+                            navController = navController,
+                            adviceId = id.toInt(),
+                            viewModel = homeScreenViewModel)
                     }
                 }
             }

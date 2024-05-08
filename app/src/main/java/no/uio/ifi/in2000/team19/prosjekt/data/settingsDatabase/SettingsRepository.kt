@@ -1,5 +1,7 @@
 package no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.coordsDao
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
@@ -13,9 +15,10 @@ class SettingsRepository @Inject constructor(
 
 
     // CORDS
-    suspend fun getCords(): Cords {
+    suspend fun getCords(): Flow<Cords> {
+        val currentCords = coordsDao.getCords()?.firstOrNull()
 
-        if (coordsDao.getCords() == null){
+        if (currentCords == null){
             val defaultCoords =
                 Cords(
                     id = 0,

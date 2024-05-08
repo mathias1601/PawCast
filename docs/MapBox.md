@@ -2,8 +2,14 @@
 
 # MapBox API
 
+```
+OPPDATERING: Vi endte aldri opp med å implementere et kart i appen vår, så deler av dette ble ikke brukt. Setup av tokens gjelder enda MapBox Search SDK.
 
-MapBox er nok den letteste kart API vi kan implementere. 
+```
+
+
+MapBox er nok den letteste kart API vi kan implementere.
+ 
 
 ## Setup
 
