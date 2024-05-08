@@ -1,9 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
-import android.net.http.HttpException
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresExtension
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
@@ -89,7 +86,6 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun loadWeatherForecast(location: Cords) {
 
 
@@ -137,9 +133,12 @@ class HomeScreenViewModel @Inject constructor(
 
             } catch (e: IOException) {
                 _adviceUiState.value = AdviceUiState.Error
-            } catch (e: HttpException) {
-                _adviceUiState.value = AdviceUiState.Error
             }
+            /*
+             fjernet midlertidig fordi den krever oss til å legge til @Requires i toppen, ønsker å unngå dette / finne bedre løsning ...
+             catch (e: HttpException) {
+                _adviceUiState.value = AdviceUiState.Error
+            } */
 
 
         }
