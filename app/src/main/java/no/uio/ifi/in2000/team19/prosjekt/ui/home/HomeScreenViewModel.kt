@@ -51,7 +51,6 @@ class HomeScreenViewModel @Inject constructor(
     private var _userInfoUiState:MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false, false))
     var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
-
     private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", "", 0.0, 0.0, 0.0, "",))
     var temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
 

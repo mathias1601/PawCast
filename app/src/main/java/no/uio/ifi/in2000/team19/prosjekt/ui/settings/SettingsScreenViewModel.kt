@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.settings
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,26 +23,21 @@ class SettingsScreenViewModel @Inject constructor(
     private val _cordsUiState: MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "12", "34"))
     val cordsUiState: StateFlow<Cords> = _cordsUiState.asStateFlow()
 
+    private var isInitialized = false
 
     init {
+        Log.d("SettingScreenViewModel", "Running init{}. Is initialized: $isInitialized")
+        isInitialized = true
         viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.getCords().collect {
                 _cordsUiState.value = it
-            }
-
+                }
         }
     }
-
 
     fun clearDataStore(){
         viewModelScope.launch(Dispatchers.IO) {
             dataStoreRepository.clearDataStore()
         }
     }
-
-    ////////////////// MAPBOX SEARCH ///////////////////////////////////
-
-
-
-
 }
