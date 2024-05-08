@@ -1,8 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.navigation
 
 import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cloud
@@ -37,7 +35,6 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.weather.WeatherScreenViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ScreenManager(
     viewModel: ScreenManagerViewModel,
@@ -78,7 +75,7 @@ fun ScreenManager(
                 }
             }
         }
-    ) {
+    ) {innerPadding ->
 
         Column(
         ) {
@@ -127,7 +124,10 @@ fun ScreenManager(
                         val weatherScreenViewModel: WeatherScreenViewModel = hiltViewModel(parentEntry)
 
                         WeatherScreen(
-                            weatherScreenViewModel = weatherScreenViewModel
+                            weatherScreenViewModel = weatherScreenViewModel,
+                            navController = navController,
+                            innerPadding = innerPadding,
+
                         )
                     }
 
