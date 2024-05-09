@@ -33,7 +33,10 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -225,8 +228,8 @@ fun HomeScreen(
 
 
     val colorStops = arrayOf(
-        0.0f to Color.Blue,
-        0.5f to Color.Magenta,
+        0.0f to Color(0xFFF0080FF), // Top app bar is specified as this color. To change that color go to Themes.kt and change TOP_APP_BAR_COLOR
+        0.5f to Color(0xFFFFB1C1)
     )
 
     Box(
@@ -258,12 +261,7 @@ fun HomeScreen(
         ) {
 
             Text(
-                text = if (userInfo.userName != "" && userInfo.dogName != ""){
-                    "Heisann ${userInfo.userName} og ${userInfo.dogName}!"
-                    } else {
-                       "Heisann!"
-                    }
-                ,
+                text = "Heisann ${userInfo.userName} og ${userInfo.dogName}!",
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.White
             )
@@ -454,7 +452,8 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
             .fillMaxHeight(0.3f)
     ) {
                 Surface(
-                    color = MaterialTheme.colorScheme.secondaryContainer
+                    color = MaterialTheme.colorScheme.tertiaryContainer
+
                 ) {
                     Column(
                         modifier = Modifier
@@ -467,14 +466,16 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
                         Column {
                             Text(
                                 text = advice.title,
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer
                             )
 
                             Spacer(modifier = Modifier.size(10.dp))
 
                             Text(
                                 text = advice.shortAdvice,
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer
                             )
                         }
 
@@ -483,9 +484,13 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController) {
                                 navigateToMoreInfoScreen()
                             },
                             modifier = Modifier.align(Alignment.End),
-                            contentPadding = PaddingValues(horizontal = 18.dp, vertical = 4.dp)
+                            contentPadding = PaddingValues(horizontal = 22.dp, vertical = 8.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
+
                         ) {
-                            Text("Les mer")
+                            Text(
+                                text = "Les mer",
+                                color = MaterialTheme.colorScheme.onTertiary)
                         }
                     }
 
@@ -541,7 +546,10 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
 
     Card(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     ){
         Column (
             modifier = Modifier
@@ -551,6 +559,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
         ){
             Text("Høyere er bedre")
             CartesianChartHost(
+                // getXStep = { 1f }, // Show every X step on X axis.
                 chart =
                     rememberCartesianChart(
                         rememberLineCartesianLayer(
@@ -569,21 +578,23 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                                 rememberTextComponent(
                                     background = ShapeComponent(
                                         shape = Shapes.pillShape,
-                                        color = MaterialTheme.colorScheme.surface
-                                        .hashCode()),
-                                    padding = MutableDimensions(8f, 1f),
-                                    textAlignment = Layout.Alignment.ALIGN_CENTER
+                                        color = MaterialTheme.colorScheme.secondaryContainer.hashCode()),
+                                        padding = MutableDimensions(8f, 1f),
+                                        textAlignment = Layout.Alignment.ALIGN_CENTER
                                 ),
 
                             title = "Poeng"
                         ),
                         bottomAxis = rememberBottomAxis(
+                            itemPlacer = AxisItemPlacer.Horizontal.default(
+                                spacing = 2
+                            ),
                             labelRotationDegrees = -30f,
                             valueFormatter = bottomAxisValueFormatter,
                             titleComponent = rememberTextComponent(
                                     background = ShapeComponent(
                                         shape = Shapes.pillShape,
-                                        color =  MaterialTheme.colorScheme.surface.hashCode()),
+                                        color =  MaterialTheme.colorScheme.secondaryContainer.hashCode()),
                                         padding = MutableDimensions(8f, 2f)
                             ),
                             title = "Klokkkeslett.",

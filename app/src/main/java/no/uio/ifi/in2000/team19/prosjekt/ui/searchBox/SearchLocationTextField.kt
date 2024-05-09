@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.mapbox.search.autocomplete.PlaceAutocompleteSuggestion
 
 
-@Composable
+@Composable 
 fun SearchLocationTextField(
     viewModel: SearchLocationViewModel
 ){
