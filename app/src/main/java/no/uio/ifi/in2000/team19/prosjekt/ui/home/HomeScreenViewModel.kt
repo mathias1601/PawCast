@@ -44,6 +44,9 @@ class HomeScreenViewModel @Inject constructor(
     private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
     val graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
 
+    private val _bestTimeUiState = MutableStateFlow(mutableListOf("", "", ""))
+    val bestTimeUiState: StateFlow<List<String>> = _bestTimeUiState.asStateFlow()
+
     // Contains the value of graphs score on index 0. Used to set graph color to different color based on this value.
     private val _firstYValueUiState = MutableStateFlow(0)
     val firstYValueUiState: StateFlow<Int> = _firstYValueUiState.asStateFlow()
@@ -115,6 +118,7 @@ class HomeScreenViewModel @Inject constructor(
                     locationForecastRepository.getAdviceForecastList(generalForecast)
                 )
 
+
                 _firstYValueUiState.value = graphScores[0]
 
                 Log.i("Y:", graphScores.toString())
@@ -152,16 +156,19 @@ class HomeScreenViewModel @Inject constructor(
 
     // TODO move to repository or domain layer
 
+
     private fun forecastGraphFunction(forecasts: List<AdviceForecast>): MutableList<Int> {
 
         val overallRatingList = mutableListOf<Int>()
-        val currentHours = mutableListOf<Int>() // todo: delete this and refrences to hour in viewmodel.
+        val currentHours = mutableListOf<String>() // todo: delete this and refrences to hour in viewmodel.
+        var bestRatingMorning = 0
+        var bestRatingMidday = 0
+        var bestRatingEvening = 0
 
         forecasts.forEach { forecast ->
 
-            val hourOfDay = forecast.time.toInt()
+            val hourOfDay = forecast.time
             currentHours.add(hourOfDay)
-
 
             val tempRating = rating(forecast.temperature, tempLimitMap)
             val percRating = rating(forecast.percipitation, percipitationLimitMap)
@@ -176,9 +183,32 @@ class HomeScreenViewModel @Inject constructor(
                     overallRating = it
                 }
             }
+            //finner beste tiden å gå tur og legger til i ui state: morgen, midt på dagen og kveld
+
+            if (hourOfDay.toInt() in 5..10) {
+                if (overallRating >= bestRatingMorning) {
+                    bestRatingMorning = overallRating
+                    _bestTimeUiState.value[0] = hourOfDay
+                }
+            }
+
+            if (hourOfDay.toInt() in 10..15) {
+                if (overallRating >= bestRatingMidday) {
+                    bestRatingMidday = overallRating
+                    _bestTimeUiState.value[1] = hourOfDay
+                }
+            }
+
+            if (hourOfDay.toInt() in 15..22) {
+                if (overallRating >= bestRatingEvening) {
+                    bestRatingEvening = overallRating
+                    _bestTimeUiState.value[2] = hourOfDay
+                }
+            }
 
             overallRatingList.add(overallRating)
         }
+
 
 
         Log.i("RATINGS", "${overallRatingList.size}")
