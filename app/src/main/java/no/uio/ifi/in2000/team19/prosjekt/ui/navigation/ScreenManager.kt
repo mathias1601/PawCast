@@ -87,6 +87,7 @@ fun ScreenManager(
 
             ){
                     composable("home") { backStackEntry ->
+                        viewModel.updateNavBarSelectedIndex(0) // added to make sure index is correct, as when user re-enters home screen after going through setup from settings, the navbar would still remember its last position.
 
                         // hiltViewModel creates new viewmodel model if there is none and stores it scoped to the navigation graph. https://developer.android.com/reference/kotlin/androidx/hilt/navigation/compose/package-summary
                         val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
