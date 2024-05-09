@@ -8,14 +8,12 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -69,23 +67,19 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
             val meanHoursForTomorrow = weatherMean.filter { it.day == differentDays[0] }
             val meanHoursForDayAfterTomorrow = weatherMean.filter { it.day == differentDays[1] }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-
 
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 20.dp)
+                        .padding(horizontal = 10.dp)
                         .padding(bottom = innerPadding.calculateBottomPadding())
                         .padding(top = innerPadding.calculateTopPadding())
                 ) {
-
-
                     item {
-                        Column {
+                        Column(
+                            modifier = Modifier
+                        ) {
+
                             WeatherNow(weatherHours[0])
 
                             Row {
@@ -101,20 +95,24 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
                                 }
                             }
                             Spacer(modifier = Modifier.padding(5.dp))
+                        }
+                    }
 
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(20.dp),
-                            ) {
-                                TodayForecastCard(allHours = allHours)
-                                NextDaysForecastCard(weatherForDay = weatherDays[0], meanHours = meanHoursForTomorrow)
-                                NextDaysForecastCard(weatherForDay = weatherDays[1], meanHours = meanHoursForDayAfterTomorrow)
-                            }
-
-                            Spacer(modifier = Modifier.padding(10.dp)) //
+                    item {
+                        Column(
+                            modifier = Modifier,
+                            verticalArrangement = Arrangement.spacedBy(20.dp),
+                        ) {
+                            TodayForecastCard(allHours = allHours)
+                            NextDaysForecastCard(weatherForDay = weatherDays[0], meanHours = meanHoursForTomorrow)
+                            NextDaysForecastCard(weatherForDay = weatherDays[1], meanHours = meanHoursForDayAfterTomorrow)
                         }
 
+                        Spacer(modifier = Modifier.padding(10.dp)) // "bottom padding so items arent locked at top of navbar
                     }
-                }
+
+
+
             }
         }
     }
@@ -134,18 +132,17 @@ fun WeatherNow(weather: GeneralForecast) {
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(275.dp),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
 
 
-        Image(painter = painterResource(id = drawableId), contentDescription = "weather now")
+        Image(painter = painterResource(id = drawableId), contentDescription = drawableName)
 
         Text(
-            text = "${weather.temperature} °C",
-            style = MaterialTheme.typography.displaySmall
+            text = "${weather.temperature}°C",
+            style = MaterialTheme.typography.displayMedium
         )
 
         Text(text = "Akkurat nå")
@@ -158,8 +155,8 @@ fun WeatherNow(weather: GeneralForecast) {
 @Composable
 fun TodayForecastCard(allHours: List<GeneralForecast>) {
 
-    val AMOUNT_SHOWN_EXPANDED = 12
-    val AMOUNT_SHOW_HIDDEN = 3
+    val amountShownExpanded = 12 // amountShownHidden < allHours.length
+    val amountShownHidden = 3
 
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -183,14 +180,14 @@ fun TodayForecastCard(allHours: List<GeneralForecast>) {
                     .padding(vertical = 8.dp)
 
             ) {
-                val nextHoursTitle = if (isExpanded) "Neste $AMOUNT_SHOWN_EXPANDED timer" else "Neste $AMOUNT_SHOW_HIDDEN timer"
+                val nextHoursTitle = if (isExpanded) "Neste $amountShownExpanded timer" else "Neste $amountShownHidden timer"
                 Text(
                     text = nextHoursTitle,
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
 
-            val amountOfHoursShown = if (isExpanded) 12 else 3
+            val amountOfHoursShown = if (isExpanded) amountShownExpanded else amountShownHidden
 
             Column(
                 modifier = Modifier.animateContentSize(),

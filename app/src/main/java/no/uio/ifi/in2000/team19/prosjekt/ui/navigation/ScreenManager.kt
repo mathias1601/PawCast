@@ -100,8 +100,25 @@ fun ScreenManager(
 
                     }
 
+                    composable("weather"){backStackEntry ->
+
+                        viewModel.updateNavBarSelectedIndex(1)
+
+                        val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
+                        val weatherScreenViewModel: WeatherScreenViewModel = hiltViewModel(parentEntry)
+
+                        WeatherScreen(
+                            weatherScreenViewModel = weatherScreenViewModel,
+                            navController = navController,
+                            innerPadding = innerPadding,
+
+                            )
+                    }
+
 
                     composable("settings"){ backStackEntry ->
+
+                        viewModel.updateNavBarSelectedIndex(2)
 
                         val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
 
@@ -114,18 +131,7 @@ fun ScreenManager(
                         )
                     }
 
-                    composable("weather"){backStackEntry ->
 
-                        val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
-                        val weatherScreenViewModel: WeatherScreenViewModel = hiltViewModel(parentEntry)
-
-                        WeatherScreen(
-                            weatherScreenViewModel = weatherScreenViewModel,
-                            navController = navController,
-                            innerPadding = innerPadding,
-
-                        )
-                    }
 
                     composable(
                         route = "setup/{STAGE}",
