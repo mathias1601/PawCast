@@ -111,20 +111,19 @@ class HomeScreenViewModel @Inject constructor(
                 _dogImage.value = getWhichDogTypeSymbol(allAdvice, generalForecast.general[0])
                 Log.d("Debug", "New dog image: " + _dogImage.value)
 
-                val graphCoordinates = forecastGraphFunction(
+                val graphScores = forecastGraphFunction(
                     locationForecastRepository.getAdviceForecastList(generalForecast)
                 )
 
-                _firstYValueUiState.value = graphCoordinates.y[0]
+                _firstYValueUiState.value = graphScores[0]
 
-                Log.i("X:", graphCoordinates.x.toString())
-                Log.i("Y:", graphCoordinates.y.toString())
+                Log.i("Y:", graphScores.toString())
 
 
                 _graphUiState.value.tryRunTransaction {
                     lineSeries {
                         series(
-                            y = graphCoordinates.y
+                            y = graphScores
                         )
                     }
                 }
