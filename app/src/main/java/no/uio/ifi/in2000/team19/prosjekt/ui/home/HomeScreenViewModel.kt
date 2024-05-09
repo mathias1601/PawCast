@@ -191,16 +191,16 @@ class HomeScreenViewModel @Inject constructor(
     //these maps are used to determine rating
     private val tempLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
-            listOf(-20.0, -11.0) to 1,
-            listOf(35.1, 45.0) to 1,
+            listOf(-30.0, -10.1) to 1,
+            listOf(35.1, 50.0) to 1,
 
-            listOf(-10.0, -5.9) to 2,
+            listOf(-10.0, -6.0) to 2,
             listOf(32.1, 35.0) to 2,
 
-            listOf(-5.0, -2.9) to 3,
+            listOf(-5.9, -3.0) to 3,
             listOf(30.1, 32.0) to 3,
 
-            listOf(-2.0, 0.9) to 4,
+            listOf(-2.9, 0.9) to 4,
             listOf(28.1, 30.0) to 4,
 
             listOf(1.0, 2.9) to 5,

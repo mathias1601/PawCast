@@ -427,14 +427,6 @@ class LocationForecastRepository @Inject constructor(
 
                 }
 
-                typeOfDog.isLongHaired && AdviceCategory.COLD in categoryList -> {
-                    categoryList.add(AdviceCategory.COLDLONGFUR)
-
-                    if (AdviceCategory.VERYWARM in categoryList) {
-                        categoryList.add(AdviceCategory.VERYWARMFLAT)
-                    }
-
-                }
         }
 
 
