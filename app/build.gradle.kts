@@ -22,7 +22,14 @@ android {
         }
     }
 
+    buildFeatures {
+        android.buildFeatures.buildConfig = true // added by us
+        compose = true
+    }
+
+
     buildTypes {
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -38,9 +45,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildFeatures {
-        compose = true
-    }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
