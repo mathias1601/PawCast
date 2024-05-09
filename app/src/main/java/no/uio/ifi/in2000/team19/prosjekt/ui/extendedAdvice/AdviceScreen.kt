@@ -54,76 +54,67 @@ fun AdviceScreen(adviceId: Int, navController: NavController, viewModel: HomeScr
     val advice: Advice = viewModel.collectAdviceById(adviceId)
 
 
-    Box {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon( //Er ikke Material Design 3
-                        imageVector = Icons.Filled.ArrowBackIosNew,
-                        contentDescription = "Tilbake"
-                    )
-                }
-
+    Column(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colorScheme.primaryContainer)
+        ) {
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon( //Er ikke Material Design 3
+                    imageVector = Icons.Filled.ArrowBackIosNew,
+                    contentDescription = "Tilbake"
+                )
             }
 
-                Column(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .verticalScroll(ScrollState(0))) {
-
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)
-                            ),
-                        text = advice.title,
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = Color.White,
-                        textAlign = TextAlign.Center,
-
-                        )
-
-                    var description: String = advice.description
-
-                    val paragraphs = description.split("\n")
-
-                    paragraphs.forEach { paragraph ->
-
-                        val trimmedParagraph = paragraph.trim()
-
-                        if (trimmedParagraph.isNotEmpty()) {
-
-                            if (trimmedParagraph.startsWith("~")) {
-
-                                Spacer(modifier = Modifier.padding(5.dp))
-                                Text(
-                                    text = trimmedParagraph.substring(1),
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    modifier = Modifier
-                                        .background(
-                                        color = MaterialTheme.colorScheme.primaryContainer))
-                                Spacer(modifier = Modifier.padding(5.dp))
-                            }
-                            else {
-                                Text(text = trimmedParagraph)
-                            }
-                        }
-
-                    }
-                }
-
         }
+
+            Column(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxSize()
+                    .verticalScroll(ScrollState(0))) {
+
+                Text(
+                    text = advice.title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)
+                    )
+
+                var description: String = advice.description
+
+                val paragraphs = description.split("\n")
+
+                paragraphs.forEach { paragraph ->
+
+                    val trimmedParagraph = paragraph.trim()
+
+                    if (trimmedParagraph.isNotEmpty()) {
+
+                        if (trimmedParagraph.startsWith("~")) {
+
+                            Spacer(modifier = Modifier.padding(5.dp))
+                            Text(
+                                text = trimmedParagraph.substring(1),
+                                style = MaterialTheme.typography.titleLarge,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth())
+                            Spacer(modifier = Modifier.padding(5.dp))
+                        }
+                        else {
+                            Text(text = trimmedParagraph,
+                                modifier = Modifier.padding(horizontal = 20.dp))
+                        }
+                    }
+
+                }
+            }
+
     }
+
 
 }
 
