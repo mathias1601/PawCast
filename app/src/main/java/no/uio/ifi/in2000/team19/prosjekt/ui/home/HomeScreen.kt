@@ -59,6 +59,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
@@ -102,6 +103,7 @@ fun HomeScreenManager(
 
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
     val graphUiState = viewModel.graphUiState.collectAsState().value
+    val bestTimeUiState = viewModel.bestTimeUiState.collectAsState().value
     val firstYValueUiState = viewModel.firstYValueUiState.collectAsState().value
     val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
     val locationUiState = viewModel.locationUiState.collectAsState().value
@@ -122,7 +124,7 @@ fun HomeScreenManager(
             ) {
                 when (adviceUiState) {
                     is AdviceUiState.Success -> {
-                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, temperatureUiState, firstYValueUiState , navController, innerPadding, dogImage)
+                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, bestTimeUiState, temperatureUiState, firstYValueUiState , navController, innerPadding, dogImage)
                     }
 
                     is AdviceUiState.Loading -> {
@@ -163,6 +165,7 @@ fun HomeScreen(
     location: Cords,
     advice: AdviceUiState.Success,
     graphUiState: CartesianChartModelProducer,
+    bestTime: List<String>,
     weather: GeneralForecast,
     firstYValueUiState: Int,
     navController: NavController,
@@ -427,6 +430,9 @@ fun HomeScreen(
                                 Icon(imageVector = Icons.Filled.Info, contentDescription = "Info about graph")
                             }
                         }
+                        Text("Vi anbefaler morgentur klokken ${bestTime[0]}")
+                        Text("Vi anbefaler dagstur klokken ${bestTime[1]}")
+                        Text("Vi anbefaler kveldstur klokken ${bestTime[2]}")
                         ForecastGraph(graphUiState, firstYValueUiState)
                     }
                 }
