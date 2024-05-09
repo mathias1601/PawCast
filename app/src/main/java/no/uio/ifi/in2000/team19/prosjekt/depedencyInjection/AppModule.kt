@@ -2,8 +2,6 @@ package no.uio.ifi.in2000.team19.prosjekt.depedencyInjection
 
 import android.content.Context
 import androidx.room.Room
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -64,11 +62,6 @@ object AppModule {
     @Provides
     fun provideDataStoreRepository( @ApplicationContext context: Context ): DataStoreRepository {
         return DataStoreRepository(context)
-    }
-
-    @Provides
-    fun provideFusedLocationClient( @ApplicationContext context: Context) : FusedLocationProviderClient {
-        return LocationServices.getFusedLocationProviderClient(context)
     }
 
     @Provides
