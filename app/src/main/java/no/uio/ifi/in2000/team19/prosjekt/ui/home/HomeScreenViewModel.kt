@@ -1,8 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
@@ -23,7 +21,6 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import java.io.IOException
 import java.time.LocalDate
 import javax.inject.Inject
-import kotlin.math.absoluteValue
 
 
 sealed interface AdviceUiState{
@@ -33,34 +30,41 @@ sealed interface AdviceUiState{
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val locationForecastRepository: LocationForecastRepository
 ): ViewModel() {
 
+    // Contains all advice cards
     private var _adviceUiState: MutableStateFlow<AdviceUiState> = MutableStateFlow(AdviceUiState.Loading)
-    var adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
+    val adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
 
+    // Contains graph data
     private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
-    var graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
+    val graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
 
+    // Contains the value of graphs score on index 0. Used to set graph color to different color based on this value.
     private val _firstYValueUiState = MutableStateFlow(0)
-    var firstYValueUiState: StateFlow<Int> = _firstYValueUiState.asStateFlow()
+    val firstYValueUiState: StateFlow<Int> = _firstYValueUiState.asStateFlow()
 
-    private var _locationUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "69", "69"))
-    var locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
+    // Contains the users location. Exposed to UI so show location in HomeScreen.
+    private var _locationUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "not loaded", "not loaded", "0", "0"))
+    val locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
 
-    // Is used show user name and dog name
+    // Is exposed to UI to show username and dog name.
     private var _userInfoUiState:MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false, false))
-    var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
+    val userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
-
+    // Used to show current temperature.
     private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", LocalDate.now(), 0.0, 0.0, 0.0, ""))
-    var temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
+    val temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
 
-    private val height: String = "0"
+    // Is used to determine which to dog show.
+    private var _dogImage:MutableStateFlow<String> = MutableStateFlow("dog_normal.png")
+    val dogImage:StateFlow<String> = _dogImage.asStateFlow()
+
+    private val height: String = "0" // height doesnt matter for our use case, so is just always set to 0.
 
     private lateinit var adviceList: List<Advice>
 
@@ -85,16 +89,14 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
 
-
                 Log.d("HomeScreenViewModel", "kaller på getGeneralForecast...")
 
                 val generalForecast = locationForecastRepository.getGeneralForecast(
                     location.latitude,
                     location.longitude,
-                    "0",
+                    height,
                     2
                 )
-
 
                 _temperatureUiState.value = generalForecast.general[0]
 
@@ -106,8 +108,8 @@ class HomeScreenViewModel @Inject constructor(
 
                 adviceList = allAdvice
 
-
-
+                _dogImage.value = getWhichDogTypeSymbol(allAdvice, generalForecast.general[0])
+                Log.d("Debug", "New dog image: " + _dogImage.value)
 
                 val graphCoordinates = forecastGraphFunction(
                     locationForecastRepository.getAdviceForecastList(generalForecast)
@@ -151,16 +153,10 @@ class HomeScreenViewModel @Inject constructor(
 
     // TODO move to repository or domain layer
 
-    // Data class for holding Axises for graph
-    data class GraphData(
-        val x: List<Int>,
-        val y: List<Int>
-    )
-
-    private fun forecastGraphFunction(forecasts: List<AdviceForecast>): GraphData {
+    private fun forecastGraphFunction(forecasts: List<AdviceForecast>): MutableList<Int> {
 
         val overallRatingList = mutableListOf<Int>()
-        val currentHours = mutableListOf<Int>()
+        val currentHours = mutableListOf<Int>() // todo: delete this and refrences to hour in viewmodel.
 
         forecasts.forEach { forecast ->
 
@@ -185,19 +181,16 @@ class HomeScreenViewModel @Inject constructor(
             overallRatingList.add(overallRating)
         }
 
-        val hourlength = currentHours.size
-        val ratinglength = overallRatingList.size
 
-        Log.i("HOURS", currentHours.toString())
-        Log.i("RATINGS", "$ratinglength")
-
+        Log.i("RATINGS", "${overallRatingList.size}")
         Log.i("rating list", overallRatingList.toString())
 
-        return GraphData(currentHours, overallRatingList)
+        // x axis is defined in UI layer based on current time + index of y points.
+        return overallRatingList
     }
 
     //these maps are used to determine rating
-    val tempLimitMap: HashMap<List<Double>, Int> =
+    private val tempLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
             listOf(-20.0, -11.0) to 1,
             listOf(35.1, 45.0) to 1,
@@ -230,7 +223,7 @@ class HomeScreenViewModel @Inject constructor(
         )
 
     //Basert på info fra Yr
-    val percipitationLimitMap: HashMap<List<Double>, Int> =
+    private val percipitationLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
             listOf(2.1, 7.0) to 1,
             listOf(1.6, 2.0) to 2,
@@ -245,7 +238,7 @@ class HomeScreenViewModel @Inject constructor(
         )
 
     //Basert på data fra SNL
-    val UVLimitMap: HashMap<List<Double>, Int> =
+    private val UVLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
             listOf(8.1, 15.0) to 1,
             listOf(6.6, 8.0) to 2,
@@ -268,13 +261,35 @@ class HomeScreenViewModel @Inject constructor(
                 return value
             }
         }
-
-        return 0
+        return 1
     }
 
-
+    // used by advice screen. Really simple so didnt move to other viewmodel, as that would require sharing existing advice with that viewmodel.
     fun collectAdviceById(id: Int): Advice{
         return adviceList[id]
     }
+
+
+    private fun getWhichDogTypeSymbol(advice: List<Advice>, weather : GeneralForecast): String {
+
+        val temperatureToShowSunnyDog = 17.0
+        val temperatureToShowColdDog = 0.0
+
+        val useStickerVersion = true
+
+        val isNight = weather.symbol.contains("night", ignoreCase = true)
+        val isThundering = weather.symbol.contains("thunder", ignoreCase = true)
+
+        val dogImageString =
+
+            if (isThundering) "dog_thunder"
+            else if (isNight) "dog_normal" // todo change to SLEEPY
+            else if (weather.temperature >= temperatureToShowSunnyDog) "dog_sunny"
+            else if (weather.temperature <= temperatureToShowColdDog ) "dog_cold"
+            else "dog_normal"
+        Log.d("debug", "${weather.temperature} grader !!")
+        return  if (useStickerVersion) dogImageString + "_white_sticker" else dogImageString
+    }
+
 
 }

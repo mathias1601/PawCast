@@ -106,6 +106,7 @@ fun HomeScreenManager(
     val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
     val locationUiState = viewModel.locationUiState.collectAsState().value
     val temperatureUiState = viewModel.temperatureUiState.collectAsState().value
+    val dogImage = viewModel.dogImage.collectAsState().value
 
     val isRefreshing by remember {
         mutableStateOf(false)
@@ -121,7 +122,7 @@ fun HomeScreenManager(
             ) {
                 when (adviceUiState) {
                     is AdviceUiState.Success -> {
-                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, temperatureUiState, firstYValueUiState , navController, innerPadding)
+                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, temperatureUiState, firstYValueUiState , navController, innerPadding, dogImage)
                     }
 
                     is AdviceUiState.Loading -> {
@@ -166,6 +167,7 @@ fun HomeScreen(
     firstYValueUiState: Int,
     navController: NavController,
     innerPadding: PaddingValues,
+    dogImage: String,
 ) {
 
 
@@ -200,6 +202,9 @@ fun HomeScreen(
 
 
             // TOP CONTENT
+
+            val context = LocalContext.current
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -226,7 +231,7 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    val context = LocalContext.current
+
                     val drawableName = weather.symbol
                     val drawableId = context.resources.getIdentifier(drawableName, "drawable", context.packageName) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
 
@@ -259,8 +264,12 @@ fun HomeScreen(
                             style = MaterialTheme.typography.labelMedium,
                         )
                     }
+
+                    val dogId = context.resources.getIdentifier(dogImage, "drawable", context.packageName) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
+
+
                     Image(
-                        painter = painterResource(id = R.drawable.dog_normal),
+                        painter = painterResource(id = dogId),
                         contentDescription = "dog avatar",
                         modifier = Modifier
                             .height(175.dp)
