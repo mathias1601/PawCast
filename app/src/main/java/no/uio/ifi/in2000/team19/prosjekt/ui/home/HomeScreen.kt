@@ -542,7 +542,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
             }
 
         }
-    //flytte til vm
+    //TODO: flytte til VM
     val colorMap: Map<Int, Color> = mapOf(
         1 to Color.Red,
         2 to Color.Red,

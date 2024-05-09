@@ -30,7 +30,7 @@ fun AdviceScreen(adviceId: Int, navController: NavController, viewModel: HomeScr
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Anbefaling")},
+                title = { Text(text = advice.title)},
                 navigationIcon = {
                         IconButton(onClick = { navController.popBackStack() }
                         ) {
