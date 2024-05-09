@@ -280,7 +280,6 @@ class LocationForecastRepository @Inject constructor(
     }
 
     //Returnerer en liste av Advice-objekter
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getAdvice(generalForecast: ForecastTypes, typeOfDog: UserInfo): List<Advice> {
 
         val adviceForecast = getAdviceForecastData(generalForecast.general[0])
@@ -292,7 +291,6 @@ class LocationForecastRepository @Inject constructor(
 
 
     //Gjør om fra GeneralForecast til AdviceForecast (fjerner unødvendig dsta)
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
 
         return AdviceForecast(
