@@ -11,7 +11,6 @@ data class GeneralForecast(
     val percipitation: Double,
     val thunderprobability: Double,
     val UVindex: Double,
-    val time: String
 )
 
 //TODO add all relevant data

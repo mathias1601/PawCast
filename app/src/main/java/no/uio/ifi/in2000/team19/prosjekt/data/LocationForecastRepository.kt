@@ -114,7 +114,6 @@ class LocationForecastRepository @Inject constructor(
                     precipitation,
                     thunderProbability,
                     uvIndex,
-                    time
                 )
             )
 
@@ -346,7 +345,6 @@ class LocationForecastRepository @Inject constructor(
                 "TICK" -> adviceArray = context.resources.getStringArray(R.array.TICK)
                 "VIPER" -> adviceArray = context.resources.getStringArray(R.array.VIPER)
                 "CAR" -> adviceArray = context.resources.getStringArray(R.array.CAR)
-                "NEWYEAR" -> adviceArray = context.resources.getStringArray(R.array.NEWYEAR)
 
 
             }
@@ -371,126 +369,6 @@ class LocationForecastRepository @Inject constructor(
         return adviceList
     }
 
-
-    fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<AdviceCategory> {
-
-        val categoryList = mutableListOf<AdviceCategory>()
-
-        fun isTemperatureInRange(limits: List<Double>, temp: Double): Boolean {
-            return temp in limits[0]..limits[1]
-        }
-
-        // Map of category-specific temperatures to check against
-        val weatherLimitsMap = mapOf(
-            AdviceCategory.COOL to listOf(-5.0, 0.0),
-            AdviceCategory.COLD to listOf(-15.0, -5.0),
-            AdviceCategory.FREEZING to listOf(-70.0, -15.0),
-            AdviceCategory.SALT to listOf(-8.0, 4.0),
-            AdviceCategory.WARM to listOf(15.0, 23.0),
-            AdviceCategory.VERYWARM to listOf(23.0, 30.0),
-            AdviceCategory.HEATWAVE to listOf(30.0, 70.0),
-            AdviceCategory.CAR to listOf(18.0, 70.0)
-        )
-
-
-        weatherLimitsMap.forEach { (category, limits) ->
-            if (isTemperatureInRange(limits, adviceForecast.temperature)) {
-                categoryList.add(category)
-            }
-        }
-            //Find special categories and overwrite by removing old category/categories
-            when {
-                typeOfDog.isThin || typeOfDog.isPuppy || typeOfDog.isShortHaired || typeOfDog.isSenior || typeOfDog.isThinHaired -> {
-                    if (AdviceCategory.COOL in categoryList) {
-                        categoryList.add(AdviceCategory.COOLOTHER)
-                        categoryList.remove(AdviceCategory.COOL)}
-                    if (AdviceCategory.COLD in categoryList) {
-                        categoryList.add(AdviceCategory.COLDOTHER)
-                        categoryList.remove(AdviceCategory.COLD)}
-                }
-
-                typeOfDog.isFlatNosed -> {
-                    if (AdviceCategory.WARM in categoryList) {
-                        categoryList.add(AdviceCategory.WARMFLAT)
-                        categoryList.remove(AdviceCategory.WARM)}
-                    if (AdviceCategory.VERYWARM in categoryList) {
-                        categoryList.add(AdviceCategory.VERYWARMFLAT)
-                        categoryList.remove(AdviceCategory.VERYWARM)}
-                }
-
-                typeOfDog.isLongHaired && (AdviceCategory.COLD in categoryList || AdviceCategory.COLDOTHER in categoryList) -> {
-                    categoryList.add(AdviceCategory.COLDLONGFUR)
-                    categoryList.remove(AdviceCategory.COLD)
-                    if (AdviceCategory.COLDOTHER in categoryList) {
-                        categoryList.remove(AdviceCategory.COLDOTHER)
-                    }
-
-                }
-
-                typeOfDog.isLongHaired && AdviceCategory.COLD in categoryList -> {
-                    categoryList.add(AdviceCategory.COLDLONGFUR)
-
-                    if (AdviceCategory.VERYWARM in categoryList) {
-                        categoryList.add(AdviceCategory.VERYWARMFLAT)
-                    }
-
-                }
-        }
-
-
-
-        if (adviceForecast.UVindex >= 3 && (
-                    typeOfDog.isThinHaired ||
-                    typeOfDog.isLightHaired ||
-                    typeOfDog.isShortHaired
-                    )
-        ) {
-            categoryList.add(AdviceCategory.SUNBURN)
-        }
-
-        //TODO find right number
-        if (adviceForecast.thunderprobability >= 50) {
-            categoryList.add(AdviceCategory.THUNDER)
-            Log.i("KATEGORIER", "Legger til thunder")
-        }
-
-        //TODO find right number
-        if (adviceForecast.percipitation >= 1) {
-            categoryList.add(AdviceCategory.RAIN)
-        }
-
-        //TODO lage en when for dato for flått, hoggorm og nyttår
-
-        val tickSeasonStart = LocalDate.of(2024, 3, 15)
-        val tickSeasonEnd = LocalDate.of(2024, 11, 15)
-
-        val viperSeasonStart = LocalDate.of(2024, 2, 28)
-        val viperSeasonEnd = LocalDate.of(2024, 11, 1)
-
-        val newYear = LocalDate.of(2024, 12, 31)
-
-        val theDate = adviceForecast.date
-
-
-        if (!theDate.isBefore(tickSeasonStart) && !theDate.isAfter(tickSeasonEnd)) {
-            categoryList.add(AdviceCategory.TICK)
-        }
-
-        if (!theDate.isBefore(viperSeasonStart) && !theDate.isAfter(viperSeasonEnd)) {
-            categoryList.add(AdviceCategory.VIPER)
-        }
-
-        if (theDate == newYear) {
-            categoryList.add(AdviceCategory.NEWYEAR)
-        }
-
-
-        if (categoryList.size == 0) {
-            categoryList.add(AdviceCategory.SAFE)
-        }
-
-        return categoryList
-    }
 }
 
 

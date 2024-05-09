@@ -57,7 +57,7 @@ class HomeScreenViewModel @Inject constructor(
     var userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
 
-    private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", LocalDate.now(), 0.0, 0.0, 0.0, ""))
+    private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", LocalDate.now(), 0.0, 0.0, 0.0))
     var temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
 
     private val height: String = "0"
