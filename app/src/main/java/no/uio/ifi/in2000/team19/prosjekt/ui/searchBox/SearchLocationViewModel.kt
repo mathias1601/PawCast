@@ -56,8 +56,6 @@ class SearchLocationViewModel @Inject constructor(
 
     // Set Text in TextField to match stored value
     init {
-        Log.d("debug", "!!!!!: token: $mapboxAccessToken")
-
         viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.getCords().collect {
                 _searchFieldValue.value = it.detailedName

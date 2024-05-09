@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.weather
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,22 +45,22 @@ class WeatherScreenViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
                 settingsRepository.getCords().collect {cords ->
-                    loadWeather(cords)
                     _locationUiState.value = cords
+                    loadWeather()
+
                 }
 
         }
     }
 
-    private fun loadWeather(cords: Cords) {
+    fun loadWeather() {
+
+        val cords = _locationUiState.value
+        _weatherUiState.value = WeatherUiState.Loading
+
         viewModelScope.launch(Dispatchers.IO) {
-
             try {
-
-                Log.d("WeatherViewModel", "kaller på getGeneralForecast...")
-
                 val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, "0", 2)
-
                 _weatherUiState.value = WeatherUiState.Success(weatherForecast)
             } catch (e: IOException) {
                 _weatherUiState.value = WeatherUiState.Error
