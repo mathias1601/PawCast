@@ -47,7 +47,6 @@ fun ScreenManager(
     val startDestination = viewModel.startDestination.collectAsState().value
     val isLoading = viewModel.isLoading.collectAsState().value
 
-
     Scaffold(
 
         bottomBar = {
@@ -93,6 +92,10 @@ fun ScreenManager(
                         val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
                         val homeScreenViewModel: HomeScreenViewModel = hiltViewModel(parentEntry)
 
+                        if (homeScreenViewModel.checkIfUiStateIsError()){
+                            homeScreenViewModel.loadWeatherForecast()
+                        }
+
                         HomeScreenManager(
                             viewModel = homeScreenViewModel,
                             navController = navController
@@ -106,6 +109,10 @@ fun ScreenManager(
 
                         val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
                         val weatherScreenViewModel: WeatherScreenViewModel = hiltViewModel(parentEntry)
+
+                        if (weatherScreenViewModel.checkIfUiStateIsError()){
+                            weatherScreenViewModel.loadWeather()
+                        }
 
                         WeatherScreen(
                             weatherScreenViewModel = weatherScreenViewModel,

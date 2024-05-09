@@ -3,7 +3,6 @@ package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
 import android.annotation.SuppressLint
 import android.icu.util.Calendar
-import android.net.ConnectivityManager
 import android.text.Layout
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -58,7 +57,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.NavController
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
@@ -90,7 +88,7 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.ui.LoadingScreen
-import no.uio.ifi.in2000.team19.prosjekt.ui.noConnection.NoConnectionScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.error.ErrorScreen
 import kotlin.math.absoluteValue
 
 
@@ -113,9 +111,7 @@ fun HomeScreenManager(
     val isRefreshing by remember {
         mutableStateOf(false)
     }
-    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast(locationUiState)})
-
-    val connectivityManager = getSystemService(ConnectivityManager::class.java)
+    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast()})
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
@@ -134,7 +130,10 @@ fun HomeScreenManager(
                     }
 
                     is AdviceUiState.Error -> {
-                        NoConnectionScreen()
+                        ErrorScreen (
+                            reason = adviceUiState.errorReason,
+                            onReload = { viewModel.loadWeatherForecast() }
+                        )
                     }
                 }
 

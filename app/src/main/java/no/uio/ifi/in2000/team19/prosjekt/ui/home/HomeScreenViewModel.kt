@@ -18,7 +18,9 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.ErrorReasons
 import java.io.IOException
+import java.nio.channels.UnresolvedAddressException
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -26,7 +28,7 @@ import javax.inject.Inject
 sealed interface AdviceUiState{
     data class  Success(val allAdvice:List<Advice>) : AdviceUiState
     data object Loading : AdviceUiState
-    data object Error : AdviceUiState
+    data class Error(val errorReason : ErrorReasons) : AdviceUiState
 }
 
 
@@ -76,18 +78,19 @@ class HomeScreenViewModel @Inject constructor(
             try {
                 settingsRepository.getCords().collect {cords ->
                     _locationUiState.value = cords
-                    loadWeatherForecast(cords)
+                    loadWeatherForecast()
                 }
 
             } catch (e: IOException) {
-                _adviceUiState.value = AdviceUiState.Error
+                _adviceUiState.value = AdviceUiState.Error(ErrorReasons.DATABASE)
             }
         }
     }
 
+    fun loadWeatherForecast() {
 
-    fun loadWeatherForecast(location: Cords) {
-
+        val location = _locationUiState.value
+        _adviceUiState.value = AdviceUiState.Loading
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -132,14 +135,20 @@ class HomeScreenViewModel @Inject constructor(
                     }
                 }
 
+                // This is how we handle connectivity. Instead of using connectivity manager (which is the correct way).
+                // Essentially we catch our errors, and use the error message to decode if we lost internet, and update
+                // our screen to reflect this. This solution is a LOT simpler, although not as flexible. Landed on this
+                // mostly due to time constraints.
+
+                // TODO: Isolate functions of this function into own modules, to better know if internet is the problem of something going wrong....
+
             } catch (e: IOException) {
-                _adviceUiState.value = AdviceUiState.Error
+                _adviceUiState.value = AdviceUiState.Error(ErrorReasons.INTERRUPTION)
+            } catch (e: UnresolvedAddressException){
+                _adviceUiState.value = AdviceUiState.Error(ErrorReasons.INTERNET)
+            } catch (e: Exception){
+                _adviceUiState.value = AdviceUiState.Error(ErrorReasons.UNKNOWN)
             }
-            /*
-             fjernet midlertidig fordi den krever oss til å legge til @Requires i toppen, ønsker å unngå dette / finne bedre løsning ...
-             catch (e: HttpException) {
-                _adviceUiState.value = AdviceUiState.Error
-            } */
 
 
         }
@@ -319,6 +328,10 @@ class HomeScreenViewModel @Inject constructor(
             else "dog_normal"
         Log.d("debug", "${weather.temperature} grader !!")
         return  if (useStickerVersion) dogImageString + "_white_sticker" else dogImageString
+    }
+
+    fun checkIfUiStateIsError(): Boolean {
+        return _adviceUiState.value is AdviceUiState.Error
     }
 
 
