@@ -61,7 +61,7 @@ class HomeScreenViewModel @Inject constructor(
     val temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
 
     // Is used to determine which to dog show.
-    private var _dogImage:MutableStateFlow<String> = MutableStateFlow("dog_normal.png")
+    private var _dogImage:MutableStateFlow<String> = MutableStateFlow("dog_normal_white_sticker")
     val dogImage:StateFlow<String> = _dogImage.asStateFlow()
 
     private val height: String = "0" // height doesnt matter for our use case, so is just always set to 0.
@@ -108,7 +108,7 @@ class HomeScreenViewModel @Inject constructor(
 
                 adviceList = allAdvice
 
-                _dogImage.value = getWhichDogTypeSymbol(allAdvice, generalForecast.general[0])
+                _dogImage.value = getWhichDogTypeSymbol(generalForecast.general[0])
                 Log.d("Debug", "New dog image: " + _dogImage.value)
 
                 val graphScores = forecastGraphFunction(
@@ -269,7 +269,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-    private fun getWhichDogTypeSymbol(advice: List<Advice>, weather : GeneralForecast): String {
+    private fun getWhichDogTypeSymbol(weather : GeneralForecast): String {
 
         val temperatureToShowSunnyDog = 17.0
         val temperatureToShowColdDog = 0.0

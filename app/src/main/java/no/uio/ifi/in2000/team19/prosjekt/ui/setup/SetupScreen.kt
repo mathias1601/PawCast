@@ -35,7 +35,6 @@ fun SetupManager(
     navController: NavHostController
 ) {
 
-    viewModel.initialize()
 
     Scaffold (
         topBar = {
@@ -63,7 +62,6 @@ fun SetupManager(
                                 imageVector = Icons.Filled.ArrowBackIosNew,
                                 contentDescription = "Tilbake"
                             )
-
                         }
                     }
                 }

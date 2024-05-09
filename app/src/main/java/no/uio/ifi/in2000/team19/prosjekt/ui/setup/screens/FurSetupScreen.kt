@@ -89,10 +89,7 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, navController: NavHostContro
                         .padding(
                             top = 10.dp,
                             bottom = 10.dp,
-
-
-                        )
-                    ,
+                        ),
                     maxItemsInEachRow = 3,
                     horizontalArrangement = Arrangement.Center
                 ) {
@@ -132,7 +129,6 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, navController: NavHostContro
                     viewModel.saveSetupState(isCompleted = true) // store info that setup is completed so next app launch doesnt ask for setup.
                     // navController.popBackStack() // removes history from backstack. Stops user from being able to click back, navigating the user back to setup 👎
                     navController.navigate("home")
-
                 }
             ) {
                 Text (text="Fullfør")
