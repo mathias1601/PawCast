@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,7 +25,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -51,8 +51,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -170,73 +168,18 @@ fun HomeScreen(
     innerPadding: PaddingValues,
 ) {
 
-    // ======INFO OPEN / CLOSE BOXES
-    var showGraphInfoSheet by remember { mutableStateOf(false) }
-    var showAdviceInfoSheet by remember { mutableStateOf(false)}
-
-    if (showAdviceInfoSheet) {
-        ModalBottomSheet(
-            modifier = Modifier
-            .defaultMinSize(minHeight = 200.dp),
-            onDismissRequest = { showAdviceInfoSheet = false }
-        ) {
-            Column(
-                modifier = Modifier.padding(20.dp)
-            ) {
-                Text(
-                    text = "Anbefalinger",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                
-                Spacer(modifier = Modifier.padding(10.dp))
-                
-                Text(
-                    text = stringResource(id = (R.string.adviceinfo)),
-                    style = MaterialTheme.typography.bodyLarge
-                    )
-            }
-        }
-    }
-    if (showGraphInfoSheet) {
-        ModalBottomSheet(
-            modifier = Modifier
-                .defaultMinSize(minHeight = 200.dp),
-            onDismissRequest = { showGraphInfoSheet = false }
-        ) {
-            Column(
-                modifier = Modifier.padding(20.dp)
-            ) {
-                Text(
-                    text = "Graf-forklaring",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = stringResource(R.string.graphinfo),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
-    }
-
-
-
-
-
-
 
     // ============================ TOP BLUE WEATHER SECTION =================================
-    // Box is outside of Column hierarchy and therefor stretches for the entire
-    // size of screen without interfering with content.
 
 
+    // Graident colors from 0% to 50% of height
     val colorStops = arrayOf(
-        0.0f to Color(0xFFF0080FF),
+        0.0f to Color(0xFF0080FF),
         0.5f to Color(0xFFFFB1C1)
     )
 
 
-    // MAIN column containing ALL content of rest of screen.
-
+    // Column containing ALL content of rest of screen.
     val scrollState = rememberScrollState()
 
     Box(
@@ -245,27 +188,29 @@ fun HomeScreen(
             .background(
                 brush = Brush.linearGradient(
                     colorStops = colorStops,
-                ),
+                )
             )
-            ){
+        ){
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(scrollState),
+                .verticalScroll(scrollState)
         ) {
 
-            Spacer(modifier = Modifier.padding(10.dp)) // Spacer to avoid top app bar.
 
+            // TOP CONTENT
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp),
+                    .padding(horizontal = 10.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 /*
+
+
                 val welcomeMsg = if (userInfo.userName == "" && userInfo.dogName == "") "Heisann!" else "Heisann ${userInfo.userName} og ${userInfo.dogName}!"
                 Text(
                     text = welcomeMsg,
@@ -292,7 +237,7 @@ fun HomeScreen(
 
                     Text(
                         text = weather.temperature.toString() + "°C",
-                        style = MaterialTheme.typography.displayMedium,
+                        style = MaterialTheme.typography.displayMedium  ,
                         color = Color.White,
 
                         )
@@ -318,24 +263,77 @@ fun HomeScreen(
                         painter = painterResource(id = R.drawable.dog_normal),
                         contentDescription = "dog avatar",
                         modifier = Modifier
-                            .scale(1f)
+                            .height(175.dp)
                             .offset(
                                 x = (0).dp,
-                                y = (60).dp
+                                y = (30).dp
                             )
-                    )
+                        )
+                    }
 
+                Spacer(modifier = Modifier.padding(10.dp))
+            }
+
+
+            // ================================ MAIN CONTENT =====================.
+
+
+
+            // ======INFO OPEN / CLOSE BOXES =============
+            var showGraphInfoSheet by remember { mutableStateOf(false) }
+            var showAdviceInfoSheet by remember { mutableStateOf(false)}
+
+            // Advice Info Sheet.
+            if (showAdviceInfoSheet) {
+                ModalBottomSheet(
+                    modifier = Modifier
+                        .defaultMinSize(minHeight = 200.dp),
+                    onDismissRequest = { showAdviceInfoSheet = false }
+                ) {
+                    Column(
+                        modifier = Modifier.padding(20.dp)
+                    ) {
+                        Text(
+                            text = "Anbefalinger",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        Spacer(modifier = Modifier.padding(10.dp))
+
+                        Text(
+                            text = stringResource(id = (R.string.adviceinfo)),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
+
+            // Graph Info Sheet
+            if (showGraphInfoSheet) {
+                ModalBottomSheet(
+                    modifier = Modifier
+                        .defaultMinSize(minHeight = 200.dp),
+                    onDismissRequest = { showGraphInfoSheet = false }
+                ) {
+                    Column(
+                        modifier = Modifier.padding(20.dp)
+                    ) {
+                        Text(
+                            text = "Graf-forklaring",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = stringResource(R.string.graphinfo),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
             }
 
 
-
-            // ================================ SURFACE MAIN CONTENT =====================.
+            // This is the Surface containing Advice + Graph cards.
             Surface(
                 color = MaterialTheme.colorScheme.surface,
-                modifier = Modifier
-                ,
-
                 shape = MaterialTheme.shapes.extraLarge
 
             ) {
@@ -351,7 +349,6 @@ fun HomeScreen(
                 Wrapped in column so advice content is grouped together
                 */
                     Column(
-
                     ) {
                         Row (
                             verticalAlignment = Alignment.CenterVertically,
@@ -391,22 +388,16 @@ fun HomeScreen(
                                     pagerState = pagerState
                                 )
                             }
-                            // Active card thing. Seems to lag emulator quite alot..
+                            // Active card thing. Gray Circles indicating which card is shown.
                             Spacer(modifier = Modifier.padding(2.dp))
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                ,
                                 horizontalArrangement = Arrangement.Center
                             ) {
-                                repeat(pagerState.pageCount){iteration ->
-                                    val color = if (pagerState.currentPage == iteration) Color.Gray else Color.LightGray
-                                    Box (
-                                        modifier = Modifier
-                                            .padding(2.dp)
-                                            .clip(CircleShape)
-                                            .background(color)
-                                            .size(7.dp)
-                                    )
-                                }
+                                // used to have gray circle showing current card, but this lagged quite alot even though it taken from documentation, so we landed on numbers which lags alot less.
+                                Text(text = "${pagerState.currentPage+1}/${advice.allAdvice.size}", style = MaterialTheme.typography.labelLarge)
                             }
                         }
                     }
@@ -449,6 +440,7 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
             .fillMaxHeight(0.3f)
 
 
+            // Scroll "animation" changing the cards opacity while scrolling.
             // Gotten from android offical documentation: https://developer.android.com/develop/ui/compose/layouts/pager
             .graphicsLayer {
                 val pageOffset = (
@@ -464,7 +456,7 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
                 )
             }
 
-    ) {
+        ) {
                 Surface(
                     color = MaterialTheme.colorScheme.primaryContainer
 

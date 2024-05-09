@@ -71,7 +71,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 20.dp)
+                        .padding(horizontal = 10.dp)
                         .padding(bottom = innerPadding.calculateBottomPadding())
                         .padding(top = innerPadding.calculateTopPadding())
                 ) {
@@ -141,8 +141,8 @@ fun WeatherNow(weather: GeneralForecast) {
         Image(painter = painterResource(id = drawableId), contentDescription = drawableName)
 
         Text(
-            text = "${weather.temperature} °C",
-            style = MaterialTheme.typography.displaySmall
+            text = "${weather.temperature}°C",
+            style = MaterialTheme.typography.displayMedium
         )
 
         Text(text = "Akkurat nå")
@@ -155,8 +155,8 @@ fun WeatherNow(weather: GeneralForecast) {
 @Composable
 fun TodayForecastCard(allHours: List<GeneralForecast>) {
 
-    val AMOUNT_SHOWN_EXPANDED = 12
-    val AMOUNT_SHOW_HIDDEN = 3
+    val amountShownExpanded = 12 // amountShownHidden < allHours.length
+    val amountShownHidden = 3
 
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -180,14 +180,14 @@ fun TodayForecastCard(allHours: List<GeneralForecast>) {
                     .padding(vertical = 8.dp)
 
             ) {
-                val nextHoursTitle = if (isExpanded) "Neste $AMOUNT_SHOWN_EXPANDED timer" else "Neste $AMOUNT_SHOW_HIDDEN timer"
+                val nextHoursTitle = if (isExpanded) "Neste $amountShownExpanded timer" else "Neste $amountShownHidden timer"
                 Text(
                     text = nextHoursTitle,
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
 
-            val amountOfHoursShown = if (isExpanded) 12 else 3
+            val amountOfHoursShown = if (isExpanded) amountShownExpanded else amountShownHidden
 
             Column(
                 modifier = Modifier.animateContentSize(),
