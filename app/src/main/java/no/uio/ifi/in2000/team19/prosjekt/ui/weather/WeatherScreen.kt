@@ -8,14 +8,12 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -69,11 +67,6 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
             val meanHoursForTomorrow = weatherMean.filter { it.day == differentDays[0] }
             val meanHoursForDayAfterTomorrow = weatherMean.filter { it.day == differentDays[1] }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-
 
                 LazyColumn(
                     modifier = Modifier
@@ -82,10 +75,11 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
                         .padding(bottom = innerPadding.calculateBottomPadding())
                         .padding(top = innerPadding.calculateTopPadding())
                 ) {
-
-
                     item {
-                        Column {
+                        Column(
+                            modifier = Modifier
+                        ) {
+
                             WeatherNow(weatherHours[0])
 
                             Row {
@@ -101,20 +95,24 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
                                 }
                             }
                             Spacer(modifier = Modifier.padding(5.dp))
+                        }
+                    }
 
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(20.dp),
-                            ) {
-                                TodayForecastCard(allHours = allHours)
-                                NextDaysForecastCard(weatherForDay = weatherDays[0], meanHours = meanHoursForTomorrow)
-                                NextDaysForecastCard(weatherForDay = weatherDays[1], meanHours = meanHoursForDayAfterTomorrow)
-                            }
-
-                            Spacer(modifier = Modifier.padding(10.dp)) //
+                    item {
+                        Column(
+                            modifier = Modifier,
+                            verticalArrangement = Arrangement.spacedBy(20.dp),
+                        ) {
+                            TodayForecastCard(allHours = allHours)
+                            NextDaysForecastCard(weatherForDay = weatherDays[0], meanHours = meanHoursForTomorrow)
+                            NextDaysForecastCard(weatherForDay = weatherDays[1], meanHours = meanHoursForDayAfterTomorrow)
                         }
 
+                        Spacer(modifier = Modifier.padding(10.dp)) // "bottom padding so items arent locked at top of navbar
                     }
-                }
+
+
+
             }
         }
     }
@@ -134,14 +132,13 @@ fun WeatherNow(weather: GeneralForecast) {
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(275.dp),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
 
 
-        Image(painter = painterResource(id = drawableId), contentDescription = "weather now")
+        Image(painter = painterResource(id = drawableId), contentDescription = drawableName)
 
         Text(
             text = "${weather.temperature} °C",
