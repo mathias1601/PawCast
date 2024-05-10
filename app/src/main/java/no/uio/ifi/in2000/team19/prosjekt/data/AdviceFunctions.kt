@@ -1,8 +1,11 @@
 package no.uio.ifi.in2000.team19.prosjekt.data
 
+import android.content.Context
 import android.util.Log
+import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import java.time.LocalDate
@@ -118,10 +121,16 @@ fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<Advic
         }
     }
 
-    if (typeOfDog.isLongHaired && AdviceCategory.COLD in categoryList) {
-        categoryList.remove(AdviceCategory.COLD)
-        categoryList.add(AdviceCategory.COLDLONGFUR)
-    }
+    if (typeOfDog.isLongHaired)
+        if (AdviceCategory.COLD in categoryList) {
+            categoryList.remove(AdviceCategory.COLD)
+            categoryList.add(AdviceCategory.COLDLONGFUR)
+        }
+
+        else if (AdviceCategory.COLDOTHER in categoryList) {
+            categoryList.remove(AdviceCategory.COLDOTHER)
+            categoryList.add(AdviceCategory.COLDOTHERLONGFUR)
+        }
 
 
     if (adviceForecast.UVindex >= 3 && (
@@ -174,4 +183,68 @@ fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<Advic
     }
 
     return categoryList
+}
+
+fun createAdvice(categories: List<AdviceCategory>, context: Context): List<Advice> {
+
+    val adviceList = mutableListOf<Advice>()
+
+    if (categories[0] == AdviceCategory.SAFE) {
+        val safeArray = context.resources.getStringArray(R.array.SAFE)
+
+
+        val advice = Advice(safeArray[0], safeArray[1], safeArray[2])
+        adviceList.add(advice)
+        return adviceList
+    }
+
+    categories.forEach { category ->
+
+        var adviceArray: Array<String>? = null
+        //val resId = context.resources.getIdentifier(category.toString(), "array", context.packageName)
+        //val adviceArray: Array<String> = context.resources.getStringArray(resId)
+        when (category.toString()) {
+            "COOL" -> adviceArray = context.resources.getStringArray(R.array.COOL)
+            "COOLOTHER" -> adviceArray = context.resources.getStringArray(R.array.COOLOTHER)
+            "COLD" -> adviceArray = context.resources.getStringArray(R.array.COLD)
+            "COLDLONGFUR" -> adviceArray = context.resources.getStringArray(R.array.COLDLONGFUR)
+            "COLDOTHER" -> adviceArray = context.resources.getStringArray(R.array.COLDOTHER)
+            "COLDOTHERLONGFUR" -> adviceArray = context.resources.getStringArray(R.array.COLDOTHERLONGFUR)
+            "FREEZING" -> adviceArray = context.resources.getStringArray(R.array.FREEZING)
+            "SALT" -> adviceArray = context.resources.getStringArray(R.array.SALT)
+            "WARM" -> adviceArray = context.resources.getStringArray(R.array.WARM)
+            "WARMFLAT" -> adviceArray = context.resources.getStringArray(R.array.WARMFLAT)
+            "VERYWARM" -> adviceArray = context.resources.getStringArray(R.array.VERYWARM)
+            "VERYWARMFLAT" -> adviceArray =
+                context.resources.getStringArray(R.array.VERYWARMFLAT)
+
+            "HEATWAVE" -> adviceArray = context.resources.getStringArray(R.array.HEATWAVE)
+            "RAIN" -> adviceArray = context.resources.getStringArray(R.array.RAIN)
+            "THUNDER" -> adviceArray = context.resources.getStringArray(R.array.THUNDER)
+            "SUNBURN" -> adviceArray = context.resources.getStringArray(R.array.SUNBURN)
+            "TICK" -> adviceArray = context.resources.getStringArray(R.array.TICK)
+            "VIPER" -> adviceArray = context.resources.getStringArray(R.array.VIPER)
+            "CAR" -> adviceArray = context.resources.getStringArray(R.array.CAR)
+
+
+        }
+
+        var counter = 0
+        if (adviceArray != null) {
+            while (counter < adviceArray.size) {
+
+                val title = adviceArray[counter]
+                val description = adviceArray[counter + 1]
+                val shortAdvice = adviceArray[counter + 2]
+
+                val advice = Advice(title, description, shortAdvice)
+                adviceList.add(advice)
+
+                counter += 3
+
+            }
+        }
+    }
+
+    return adviceList
 }
