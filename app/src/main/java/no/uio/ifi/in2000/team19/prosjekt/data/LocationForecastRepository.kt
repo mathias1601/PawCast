@@ -139,7 +139,6 @@ class LocationForecastRepository @Inject constructor(
                     precipitation,
                     thunderProbability,
                     uvIndex,
-                    time
                 )
             )
 
@@ -309,6 +308,7 @@ class LocationForecastRepository @Inject constructor(
 
     //this function collects all necessary categories based on forecast and dog type
     //it uses AdviceForecast because it contains the necessary data
+
 
     private fun getCategory(
         adviceForecast: AdviceForecast,
@@ -516,6 +516,8 @@ class LocationForecastRepository @Inject constructor(
 
         return adviceList
     }
+
+
 }
 
 

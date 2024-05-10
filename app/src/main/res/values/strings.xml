@@ -28,7 +28,7 @@
     <string name="see_more_hours">Se flere timer</string>
     <string name="see_hourly">Se timesvis</string>
     <string name="wind_speed">%1$s m/s</string>
-    <string name="percipitation">%1$s mm</string>
+    <string name="precipitation">%1$s mm</string>
     <string name="low_degrees">L: %1$s</string>
     <string name="high_degrees">H: %1$s</string>
     <string name="timespan_between_hours">%1$s - %2$s</string>
@@ -40,7 +40,7 @@
     <string name="dog_normal_description">Søt hund med snakkeboble over seg</string>
     <string name="what_is_your_name_and_dog_name_title">Først, hva er navnet ditt og navnet til hunden din?</string>
     <string name="your_name">Navnet ditt</string>
-    <string name="your_dogs_name">Hunden dins navn</string>
+    <string name="your_dogs_name">Hunden din sitt navn</string>
     <string name="icon_of_pet_description">Icon of pet</string>
     <string name="icon_of_person_description">Icon of person</string>
     <string name="why_store_name_disclaimer">Navn blir kun brukt til å personalisere appen for deg.</string>
@@ -69,7 +69,7 @@
     <string name="normal_nose">Vanlig snute</string>
     <string name="flat_nose">Flat snute</string>
     <string name="loading_text">Laster…</string>
-    <string name="no_internet_text">Ingen internett tilgang</string>
+    <string name="no_internet_text">Ingen internett-tilgang</string>
     <string name="interruption_text">Noe gikk galt under henting av vær</string>
     <string name="database_text">Henting av lokal-lagret data gikk galt</string>
     <string name="unknown_error_text">En ukjent feil oppstod.</string>
@@ -78,4 +78,15 @@
     <string name="an_error_occured_reading_from_the_database">an icon symbolizing data</string>
     <string name="an_unkown_error_occured">A question mark</string>
     <string name="press_to_try_again">Trykk på knappen for å prøve igjen</string>
+    <string name="morning_walk_time">Morgentur: %1$s:00</string>
+    <string name="morning_walk_is_not_recommended">Anbefaler ikke morgentur idag</string>
+    <string name="midday_walk_time">Dagstur: %1$s:00</string>
+    <string name="midday_walk_not_recommended">Anbefaler ikke dagstur idag</string>
+    <string name="evening_walk_time">Kveldstur: %1$s:00</string>
+    <string name="evening_walk_not_recommened">Anbefaler ikke kveldstur i dag.</string>
+    <string name="bad_weather_alert">I dag er det bittert vær. Vurder å aktivisere hunden din på andre måter og hold turer korte.</string>
+    <string name="warning_icon_description">Varsels ikon</string>
+    <string name="klokke_ikon_description">Klokke ikon</string>
+    <string name="lightbulb_icon_description">Ikon av lysepære</string>
+    <string name="body_setup_screen_tip">Tynnere hunder kan fryse raskere, mens tykkere hunder kan tåle mer kulde. Dersom du er i tvil kan du velge middels.</string>
 </resources>

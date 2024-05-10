@@ -6,6 +6,7 @@ enum class AdviceCategory {
     COLD,
     COLDLONGFUR,
     COLDOTHER,
+    COLDOTHERLONGFUR,
     FREEZING,
     SALT,
     WARM,
