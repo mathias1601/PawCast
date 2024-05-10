@@ -169,7 +169,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun forecastGraphFunction(forecasts: List<AdviceForecast>): MutableList<Int> {
 
         val overallRatingList = mutableListOf<Int>()
-        val currentHours = mutableListOf<String>() // todo: delete this and refrences to hour in viewmodel.
+        val currentHours = mutableListOf<String>()
         var bestRatingMorning = 0
         var bestRatingMidday = 0
         var bestRatingEvening = 0
@@ -221,6 +221,16 @@ class HomeScreenViewModel @Inject constructor(
             overallRatingList.add(overallRating)
         }
 
+        if (bestRatingMorning < 4) {
+            _bestTimeUiState.value[0] = "none"
+        }
+        if (bestRatingMidday < 4) {
+            _bestTimeUiState.value[1] = "none"
+        }
+        if (bestRatingEvening < 4) {
+            _bestTimeUiState.value[2] = "none"
+        }
+
 
 
         Log.i("RATINGS", "${overallRatingList.size}")
@@ -234,31 +244,31 @@ class HomeScreenViewModel @Inject constructor(
     private val tempLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
             listOf(-30.0, -10.1) to 1,
-            listOf(35.1, 50.0) to 1,
+            listOf(30.1, 50.0) to 1,
 
             listOf(-10.0, -6.0) to 2,
-            listOf(32.1, 35.0) to 2,
+            listOf(29.1, 30.0) to 2,
 
             listOf(-5.9, -3.0) to 3,
-            listOf(30.1, 32.0) to 3,
+            listOf(28.1, 29.0) to 3,
 
             listOf(-2.9, 0.9) to 4,
-            listOf(28.1, 30.0) to 4,
+            listOf(25.1, 28.0) to 4,
 
             listOf(1.0, 2.9) to 5,
-            listOf(26.1, 28.0) to 5,
+            listOf(22.1, 25.0) to 5,
 
             listOf(3.0, 5.9) to 6,
-            listOf(23.1, 26.0) to 6,
+            listOf(21.1, 22.0) to 6,
 
             listOf(6.0, 9.9) to 7,
-            listOf(21.1, 23.0) to 7,
+            listOf(19.1, 21.0) to 7,
 
             listOf(10.0, 12.9) to 8,
-            listOf(19.1, 21.0) to 8,
+            listOf(18.1, 19.0) to 8,
 
             listOf(13.0, 14.9) to 9,
-            listOf(16.6, 19.0) to 9,
+            listOf(16.6, 18.0) to 9,
 
             listOf(15.0, 16.5) to 10
         )

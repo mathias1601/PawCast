@@ -53,6 +53,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.navigation.NavController
@@ -438,9 +441,22 @@ fun HomeScreen(
                                 Icon(imageVector = Icons.Filled.Info, contentDescription = stringResource(R.string.info_about_graph))
                             }
                         }
-                        Text(stringResource(R.string.morning_recomendation, bestTime[0]))
-                        Text(stringResource(R.string.midday_recomendation, bestTime[1]))
-                        Text(stringResource(R.string.evening_recomendation, bestTime[2]))
+
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer
+                            )){
+                            Column(
+                                modifier = Modifier.padding(15.dp)
+                            ) {
+                                GetWalkTimes(bestTime)
+                            }
+
+                        }
+
+                        Spacer(modifier = Modifier.padding(10.dp))
                         ForecastGraph(graphUiState, firstYValueUiState)
                     }
 
@@ -471,6 +487,46 @@ fun BottomInfo(lastUpdated: LocalDateTime){
     )
 
 }
+
+
+@Composable
+fun GetWalkTimes(bestTime: List<String>) {
+
+    var morgentur: Boolean = true
+    var dagstur: Boolean = true
+    var kveldstur: Boolean = true
+
+    if (bestTime[0] == "none" && bestTime[1] == "none" && bestTime[2] == "none") {
+        Text("Du bør begrense tur i dag", modifier = Modifier.padding(horizontal = 15.dp),
+            style = MaterialTheme.typography.headlineSmall)
+    }
+    else {
+        if (bestTime[0] == "none") {
+            Text("Du bør begrense morgentur i dag.\n", modifier = Modifier.padding(horizontal = 15.dp))
+            morgentur = false
+        }
+        if (bestTime[1] == "none") {
+            Text("Du bør begrense dagstur i dag.\n", modifier = Modifier.padding(horizontal = 15.dp))
+
+            dagstur = false
+        }
+        if (bestTime[2] == "none") {
+            Text("Du bør begrense kveldstur i dag.\n", modifier = Modifier.padding(horizontal = 15.dp))
+            kveldstur = false
+        }
+        Text("Anbefalte tidspunkter:", modifier = Modifier.padding(horizontal = 15.dp))
+        if (morgentur) {
+            Text("Morgentur: kl. ${bestTime[0]}", modifier = Modifier.padding(horizontal = 15.dp))
+        }
+        if (dagstur) {
+            Text("Dagstur: kl. ${bestTime[1]}", modifier = Modifier.padding(horizontal = 15.dp))
+        }
+        if (kveldstur) {
+            Text("Kveldstur: kl. ${bestTime[2]}", modifier = Modifier.padding(horizontal = 15.dp))
+        }
+        }
+    }
+
 
 
 
@@ -524,10 +580,10 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
 
                             Spacer(modifier = Modifier.size(10.dp))
 
-                            MarkdownText(markdown = advice.shortAdvice,
+                            MarkdownText(
+                                markdown = advice.shortAdvice,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
+                                linkColor = MaterialTheme.colorScheme.onPrimaryContainer)
                         }
 
                         Button(
@@ -612,13 +668,15 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                         ),
                         startAxis = rememberStartAxis(
                             titleComponent = rememberTextComponent(
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                background = ShapeComponent(
+                                    shape = Shapes.pillShape,
+                                    color = MaterialTheme.colorScheme.secondaryContainer.hashCode()
+                                ),
 
-                                    background = ShapeComponent(
-                                        shape = Shapes.pillShape,
-                                        color = MaterialTheme.colorScheme.secondaryContainer.hashCode()
-                                    ),
-                                    textAlignment = Layout.Alignment.ALIGN_CENTER
+                                padding = MutableDimensions(8f, 1f),
+                                textAlignment = Layout.Alignment.ALIGN_CENTER,
+                                textSize = MaterialTheme.typography.bodyMedium.fontSize
                                 ),
 
                             title = stringResource(R.string.y_axis_title)
@@ -637,8 +695,9 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                                     shape = Shapes.pillShape,
                                     color = MaterialTheme.colorScheme.secondaryContainer.hashCode()
                                 ),
-
-                                textAlignment = Layout.Alignment.ALIGN_CENTER
+                                padding = MutableDimensions(8f, 1f),
+                                textAlignment = Layout.Alignment.ALIGN_CENTER,
+                                textSize = MaterialTheme.typography.bodyMedium.fontSize
                             ),
                             title = stringResource(R.string.x_axis_title),
                             guideline = null
