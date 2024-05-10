@@ -384,7 +384,7 @@ fun SingleHourForecastCard(generalForecast: GeneralForecast) {
             )
 
             Text(
-                text = stringResource(R.string.percipitation, generalForecast.percipitation),
+                text = stringResource(R.string.precipitation, generalForecast.percipitation),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -497,7 +497,7 @@ fun SixHourMeanForecastCard(weatherForDay: WeatherForDay) {
             )
 
             Text(
-                text = stringResource(id = R.string.percipitation, weatherForDay.precipitation!!),
+                text = stringResource(id = R.string.precipitation, weatherForDay.precipitation!!),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
