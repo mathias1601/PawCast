@@ -9,8 +9,11 @@ import androidx.compose.ui.unit.dp
 // of having hard-coded padding... etc.
 
 enum class Measurements(val measurement : Dp){
+
     HorizontalPadding(16.dp),
+
     BetweenSectionVerticalGap(16.dp),
+
     WithinSectionVerticalGap(12.dp),
     WithinSectionHorizontalGap(16.dp),
 

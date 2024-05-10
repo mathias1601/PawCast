@@ -483,7 +483,7 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(Measurements.AdviceCardHeight.measurement)
+            .defaultMinSize(minHeight = Measurements.AdviceCardHeight.measurement)
 
 
             // Scroll "animation" changing the cards opacity while scrolling.

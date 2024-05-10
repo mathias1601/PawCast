@@ -440,26 +440,24 @@ class LocationForecastRepository @Inject constructor(
             categoryList.add(AdviceCategory.SUNBURN)
         }
 
-        //TODO find right number
         if (adviceForecast.thunderprobability >= 50) {
             categoryList.add(AdviceCategory.THUNDER)
             Log.i("KATEGORIER", "Legger til thunder")
         }
 
-        //TODO find right number
         if (adviceForecast.percipitation >= 1) {
             categoryList.add(AdviceCategory.RAIN)
         }
 
         //TODO lage en when for dato for flått, hoggorm og nyttår
-
         val tickSeasonStart = LocalDateTime.of(
             2024,
             3,
             15,
             0,
             0
-        ) // Year, Month, Day, Hour, Minute (defaults to 00:00)
+        )
+        // Year, Month, Day, Hour, Minute (defaults to 00:00)
 
         val tickSeasonEnd = LocalDateTime.of(2024, 11, 15, 0, 0)
 
