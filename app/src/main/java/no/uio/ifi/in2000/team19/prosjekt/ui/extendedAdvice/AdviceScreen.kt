@@ -61,7 +61,6 @@ fun AdviceScreen(adviceId: Int, navController: NavController, viewModel: HomeScr
             )
         ) {
             MarkdownText(markdown = advice.description)
-
         }
 
     }
