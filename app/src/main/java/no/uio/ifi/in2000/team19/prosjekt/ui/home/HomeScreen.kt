@@ -29,13 +29,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -90,6 +88,7 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.ui.LoadingScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.error.ErrorScreen
 import kotlin.math.absoluteValue
 
 
@@ -102,6 +101,7 @@ fun HomeScreenManager(
 
     val adviceUiState = viewModel.adviceUiState.collectAsState().value
     val graphUiState = viewModel.graphUiState.collectAsState().value
+    val bestTimeUiState = viewModel.bestTimeUiState.collectAsState().value
     val firstYValueUiState = viewModel.firstYValueUiState.collectAsState().value
     val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
     val locationUiState = viewModel.locationUiState.collectAsState().value
@@ -111,7 +111,7 @@ fun HomeScreenManager(
     val isRefreshing by remember {
         mutableStateOf(false)
     }
-    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast(locationUiState)})
+    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast()})
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
@@ -122,7 +122,7 @@ fun HomeScreenManager(
             ) {
                 when (adviceUiState) {
                     is AdviceUiState.Success -> {
-                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, temperatureUiState, firstYValueUiState , navController, innerPadding, dogImage)
+                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, bestTimeUiState, temperatureUiState, firstYValueUiState , navController, innerPadding, dogImage)
                     }
 
                     is AdviceUiState.Loading -> {
@@ -130,7 +130,10 @@ fun HomeScreenManager(
                     }
 
                     is AdviceUiState.Error -> {
-                        NoConnectionScreen()
+                        ErrorScreen (
+                            reason = adviceUiState.errorReason,
+                            onReload = { viewModel.loadWeatherForecast() }
+                        )
                     }
                 }
 
@@ -143,19 +146,6 @@ fun HomeScreenManager(
     }
 }
 
-
-
-@Composable
-fun NoConnectionScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        ExtendedFloatingActionButton(
-            text = { Text("Ingen internett-tilgang") },
-            icon = { Icon(Icons.Filled.Warning, contentDescription = "Advarsel") },
-            onClick = { /* TODO change later if we want to update */ }
-        )
-    }
-}
-
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -163,6 +153,7 @@ fun HomeScreen(
     location: Cords,
     advice: AdviceUiState.Success,
     graphUiState: CartesianChartModelProducer,
+    bestTime: List<String>,
     weather: GeneralForecast,
     firstYValueUiState: Int,
     navController: NavController,
@@ -427,6 +418,9 @@ fun HomeScreen(
                                 Icon(imageVector = Icons.Filled.Info, contentDescription = "Info about graph")
                             }
                         }
+                        Text("Vi anbefaler morgentur klokken ${bestTime[0]}")
+                        Text("Vi anbefaler dagstur klokken ${bestTime[1]}")
+                        Text("Vi anbefaler kveldstur klokken ${bestTime[2]}")
                         ForecastGraph(graphUiState, firstYValueUiState)
                     }
                 }

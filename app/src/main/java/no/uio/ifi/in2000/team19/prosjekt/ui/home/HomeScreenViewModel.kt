@@ -18,7 +18,9 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.ErrorReasons
 import java.io.IOException
+import java.nio.channels.UnresolvedAddressException
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -26,7 +28,7 @@ import javax.inject.Inject
 sealed interface AdviceUiState{
     data class  Success(val allAdvice:List<Advice>) : AdviceUiState
     data object Loading : AdviceUiState
-    data object Error : AdviceUiState
+    data class Error(val errorReason : ErrorReasons) : AdviceUiState
 }
 
 
@@ -43,6 +45,9 @@ class HomeScreenViewModel @Inject constructor(
     // Contains graph data
     private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
     val graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
+
+    private val _bestTimeUiState = MutableStateFlow(mutableListOf("", "", ""))
+    val bestTimeUiState: StateFlow<List<String>> = _bestTimeUiState.asStateFlow()
 
     // Contains the value of graphs score on index 0. Used to set graph color to different color based on this value.
     private val _firstYValueUiState = MutableStateFlow(0)
@@ -73,18 +78,19 @@ class HomeScreenViewModel @Inject constructor(
             try {
                 settingsRepository.getCords().collect {cords ->
                     _locationUiState.value = cords
-                    loadWeatherForecast(cords)
+                    loadWeatherForecast()
                 }
 
             } catch (e: IOException) {
-                _adviceUiState.value = AdviceUiState.Error
+                _adviceUiState.value = AdviceUiState.Error(ErrorReasons.DATABASE)
             }
         }
     }
 
+    fun loadWeatherForecast() {
 
-    fun loadWeatherForecast(location: Cords) {
-
+        val location = _locationUiState.value
+        _adviceUiState.value = AdviceUiState.Loading
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -115,6 +121,7 @@ class HomeScreenViewModel @Inject constructor(
                     locationForecastRepository.getAdviceForecastList(generalForecast)
                 )
 
+
                 _firstYValueUiState.value = graphScores[0]
 
                 Log.i("Y:", graphScores.toString())
@@ -128,14 +135,20 @@ class HomeScreenViewModel @Inject constructor(
                     }
                 }
 
+                // This is how we handle connectivity. Instead of using connectivity manager (which is the correct way).
+                // Essentially we catch our errors, and use the error message to decode if we lost internet, and update
+                // our screen to reflect this. This solution is a LOT simpler, although not as flexible. Landed on this
+                // mostly due to time constraints.
+
+                // TODO: Isolate functions of this function into own modules, to better know if internet is the problem of something going wrong....
+
             } catch (e: IOException) {
-                _adviceUiState.value = AdviceUiState.Error
+                _adviceUiState.value = AdviceUiState.Error(ErrorReasons.INTERRUPTION)
+            } catch (e: UnresolvedAddressException){
+                _adviceUiState.value = AdviceUiState.Error(ErrorReasons.INTERNET)
+            } catch (e: Exception){
+                _adviceUiState.value = AdviceUiState.Error(ErrorReasons.UNKNOWN)
             }
-            /*
-             fjernet midlertidig fordi den krever oss til å legge til @Requires i toppen, ønsker å unngå dette / finne bedre løsning ...
-             catch (e: HttpException) {
-                _adviceUiState.value = AdviceUiState.Error
-            } */
 
 
         }
@@ -152,16 +165,19 @@ class HomeScreenViewModel @Inject constructor(
 
     // TODO move to repository or domain layer
 
+
     private fun forecastGraphFunction(forecasts: List<AdviceForecast>): MutableList<Int> {
 
         val overallRatingList = mutableListOf<Int>()
-        val currentHours = mutableListOf<Int>() // todo: delete this and refrences to hour in viewmodel.
+        val currentHours = mutableListOf<String>() // todo: delete this and refrences to hour in viewmodel.
+        var bestRatingMorning = 0
+        var bestRatingMidday = 0
+        var bestRatingEvening = 0
 
         forecasts.forEach { forecast ->
 
-            val hourOfDay = forecast.time.toInt()
+            val hourOfDay = forecast.time
             currentHours.add(hourOfDay)
-
 
             val tempRating = rating(forecast.temperature, tempLimitMap)
             val percRating = rating(forecast.percipitation, percipitationLimitMap)
@@ -176,9 +192,32 @@ class HomeScreenViewModel @Inject constructor(
                     overallRating = it
                 }
             }
+            //finner beste tiden å gå tur og legger til i ui state: morgen, midt på dagen og kveld
+
+            if (hourOfDay.toInt() in 5..10) {
+                if (overallRating >= bestRatingMorning) {
+                    bestRatingMorning = overallRating
+                    _bestTimeUiState.value[0] = hourOfDay
+                }
+            }
+
+            if (hourOfDay.toInt() in 10..15) {
+                if (overallRating >= bestRatingMidday) {
+                    bestRatingMidday = overallRating
+                    _bestTimeUiState.value[1] = hourOfDay
+                }
+            }
+
+            if (hourOfDay.toInt() in 15..22) {
+                if (overallRating >= bestRatingEvening) {
+                    bestRatingEvening = overallRating
+                    _bestTimeUiState.value[2] = hourOfDay
+                }
+            }
 
             overallRatingList.add(overallRating)
         }
+
 
 
         Log.i("RATINGS", "${overallRatingList.size}")
@@ -191,16 +230,16 @@ class HomeScreenViewModel @Inject constructor(
     //these maps are used to determine rating
     private val tempLimitMap: HashMap<List<Double>, Int> =
         hashMapOf(
-            listOf(-20.0, -11.0) to 1,
-            listOf(35.1, 45.0) to 1,
+            listOf(-30.0, -10.1) to 1,
+            listOf(35.1, 50.0) to 1,
 
-            listOf(-10.0, -5.9) to 2,
+            listOf(-10.0, -6.0) to 2,
             listOf(32.1, 35.0) to 2,
 
-            listOf(-5.0, -2.9) to 3,
+            listOf(-5.9, -3.0) to 3,
             listOf(30.1, 32.0) to 3,
 
-            listOf(-2.0, 0.9) to 4,
+            listOf(-2.9, 0.9) to 4,
             listOf(28.1, 30.0) to 4,
 
             listOf(1.0, 2.9) to 5,
@@ -282,13 +321,17 @@ class HomeScreenViewModel @Inject constructor(
         val dogImageString =
 
             if (isThundering) "dog_thunder"
-            else if (isNight) "dog_normal" // todo change to SLEEPY
+            else if (isNight) "dog_sleepy"
             else if (weather.percipitation > 1 ) "dog_rain"
             else if (weather.temperature >= temperatureToShowSunnyDog) "dog_sunny"
             else if (weather.temperature <= temperatureToShowColdDog ) "dog_cold"
             else "dog_normal"
         Log.d("debug", "${weather.temperature} grader !!")
         return  if (useStickerVersion) dogImageString + "_white_sticker" else dogImageString
+    }
+
+    fun checkIfUiStateIsError(): Boolean {
+        return _adviceUiState.value is AdviceUiState.Error
     }
 
 

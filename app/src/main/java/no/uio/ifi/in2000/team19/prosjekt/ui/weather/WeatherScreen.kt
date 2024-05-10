@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,18 +41,32 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
+import eu.bambooapps.material3.pullrefresh.pullRefresh
+import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
 import no.uio.ifi.in2000.team19.prosjekt.ui.LoadingScreen
-import no.uio.ifi.in2000.team19.prosjekt.ui.home.NoConnectionScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.error.ErrorScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:PaddingValues, navController: NavController) {
 
 
+    val isRefreshing by remember {
+        mutableStateOf(false)
+    }
+    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { weatherScreenViewModel.loadWeather()})
+
+
+
     when (val weatherUiState = weatherScreenViewModel.weatherUiState.collectAsState().value) {
         is WeatherUiState.Loading -> LoadingScreen()
-        is WeatherUiState.Error -> NoConnectionScreen()
+        is WeatherUiState.Error -> ErrorScreen (
+            onReload = { weatherScreenViewModel.loadWeather() },
+            reason = weatherUiState.errorReason
+        )
         is WeatherUiState.Success -> {
 
 
@@ -68,13 +84,31 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
             val meanHoursForDayAfterTomorrow = weatherMean.filter { it.day == differentDays[1] }
 
 
+
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
+                        .pullRefresh(state)
                         .padding(horizontal = 10.dp)
                         .padding(bottom = innerPadding.calculateBottomPadding())
                         .padding(top = innerPadding.calculateTopPadding())
                 ) {
+
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            PullRefreshIndicator(
+                                refreshing = isRefreshing, state = state,
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
+                            )
+                        }
+
+                    }
+
+
                     item {
                         Column(
                             modifier = Modifier

@@ -2,13 +2,12 @@ package no.uio.ifi.in2000.team19.prosjekt.depedencyInjection
 
 import android.content.Context
 import androidx.room.Room
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastDataSource
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.dataStore.DataStoreRepository
@@ -16,6 +15,7 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsDatabase
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.coordsDao
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.userInfoDao
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -65,7 +65,6 @@ object AppModule {
     }
 
     @Provides
-    fun provideFusedLocationClient( @ApplicationContext context: Context) : FusedLocationProviderClient {
-        return LocationServices.getFusedLocationProviderClient(context)
-    }
+    @Named("mapboxAccessToken")
+    fun provideMapBoxAccessToken(@ApplicationContext context : Context): String = context.getString(R.string.mapbox_access_token)
 }

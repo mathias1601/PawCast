@@ -18,6 +18,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import javax.inject.Inject
+import javax.inject.Named
 
 
 sealed class SearchState {
@@ -36,6 +37,7 @@ sealed class SearchState {
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
+    @Named("mapboxAccessToken") private val mapboxAccessToken: String
 ) : ViewModel(){
 
 
@@ -46,7 +48,6 @@ class SearchLocationViewModel @Inject constructor(
 
 
     // TODO: Access token should be handled better. Ask veileder
-    private val mapboxAccessToken = "pk.eyJ1IjoibWFya3VzZXYiLCJhIjoiY2x0ZWFydGZnMGQyeTJpcnQ2ZXd6ZWdjciJ9.09_6aHo-sftYJs6mTXhOyA"
     private val placeAutocomplete = PlaceAutocomplete.create(mapboxAccessToken)
 
     private val _searchFieldValue: MutableStateFlow<String> = MutableStateFlow("initial")
