@@ -7,6 +7,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import org.junit.Assert.*
 import org.junit.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 class GetCategoryTest {
@@ -19,9 +20,9 @@ class GetCategoryTest {
             AdviceForecast(
                 temperature = 29.1,
                 thunderprobability = 54.2,
-                percipitation = 0.2,
+                precipitation = 0.2,
                 UVindex = 4.1,
-                date = LocalDate.of(2024, 7, 4),
+                date = LocalDateTime.of(2024, 7, 4, 0, 0),
                 time = "14")
 
         val userInfo = UserInfo(
@@ -64,9 +65,9 @@ class GetCategoryTest {
             AdviceForecast(
                 temperature = 18.9,
                 thunderprobability = 0.0,
-                percipitation = 0.1,
+                precipitation = 0.1,
                 UVindex = 3.5,
-                date = LocalDate.of(2024, 11, 19),
+                date = LocalDateTime.of(2024, 11, 19, 0, 0),
                 time = "18")
 
         val userInfo = UserInfo(
@@ -106,9 +107,9 @@ class GetCategoryTest {
             AdviceForecast(
                 temperature = 14.5,
                 thunderprobability = 0.0,
-                percipitation = 0.0,
+                precipitation = 0.0,
                 UVindex = 5.1,
-                date = LocalDate.of(2024, 7, 4),
+                date = LocalDateTime.of(2024, 7, 4, 0, 0),
                 time = "15")
 
         val userInfo = UserInfo(
@@ -148,9 +149,9 @@ class GetCategoryTest {
             AdviceForecast(
                 temperature = 14.5,
                 thunderprobability = 0.0,
-                percipitation = 0.0,
+                precipitation = 0.0,
                 UVindex = 5.1,
-                date = LocalDate.of(2024, 7, 4),
+                date = LocalDateTime.of(2024, 7, 4, 0, 0),
                 time = "15")
 
         val userInfo = UserInfo(
@@ -190,9 +191,9 @@ class GetCategoryTest {
             AdviceForecast(
                 temperature = -7.9,
                 thunderprobability = 0.0,
-                percipitation = 0.0,
+                precipitation = 0.0,
                 UVindex = 0.0,
-                date = LocalDate.of(2024, 12, 9),
+                date = LocalDateTime.of(2024, 12, 9, 0, 0),
                 time = "20")
 
         val userInfo = UserInfo(
@@ -231,9 +232,9 @@ class GetCategoryTest {
             AdviceForecast(
                 temperature = 7.3,
                 thunderprobability = 0.0,
-                percipitation = 0.0,
+                precipitation = 0.0,
                 UVindex = 0.0,
-                date = LocalDate.of(2024, 12, 31),
+                date = LocalDateTime.of(2024, 12, 31, 0, 0),
                 time = "12")
 
         val userInfo = UserInfo(

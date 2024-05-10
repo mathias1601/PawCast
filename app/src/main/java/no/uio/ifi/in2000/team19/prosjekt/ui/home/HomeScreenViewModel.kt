@@ -192,7 +192,7 @@ class HomeScreenViewModel @Inject constructor(
             currentHours.add(hourOfDay)
 
             val tempRating = rating(forecast.temperature, tempLimitMap)
-            val percRating = rating(forecast.percipitation, percipitationLimitMap)
+            val percRating = rating(forecast.precipitation, percipitationLimitMap)
             val uvRating = rating(forecast.UVindex, UVLimitMap)
 
             val ratings = listOf(tempRating, percRating, uvRating)
@@ -338,7 +338,7 @@ class HomeScreenViewModel @Inject constructor(
             if (isThundering) "dog_thunder"
             else if (isNight) "dog_sleepy"
             else if (weather.wind!! > 5) "dog_wind"
-            else if (weather.percipitation > 1 ) "dog_rain"
+            else if (weather.precipitation > 1 ) "dog_rain"
             else if (weather.temperature >= temperatureToShowSunnyDog) "dog_sunny"
             else if (weather.temperature <= temperatureToShowColdDog ) "dog_cold"
             else "dog_normal"

@@ -2,25 +2,26 @@
 <resources>
     <string-array name="CAR">
         <item>
-            Ikke sett hunden din i bilen
+            Ikke etterlat hunden din i bilen
         </item>
 
         <item>
-            Temperaturen øker raskere enn du tror,
-            og å ha vinduet på gløtt er ikke nok!\n
-            Den kan nemlig øke med hele 10 grader
-            på bare 10 minutter, som setter hunden
-            din i fare for å få heteslag.\n
-            La hunden være hjemme eller sørg for
-            at den får vente ute hvis du må ta den
-            med.\n
+
+            ### Temperaturer i bilen\n
+            - 18 grader i skyggen tilsvarer 38 grader i bilen\n
+            - 22 grader i sola tilsvarer 85 grader i bilen\n
+
+            ### Konsekvenser\n
+
+            Hvert år reddes dyr ut av altfor varme biler, ikke la dette være hunden din. Temperaturen i bilen kan bli farlig høy, uavhengig av om den står i skygge eller om vinduet er åpent.
+            Temperaturen kan øke med hele 10 grader på bare 10 minutter, som setter hunden din i fare for å få heteslag.
+            La hunden være hjemme eller sørg for å vente ute med den hvis du må ta den med.\n
         </item>
 
         <item>
-            Temperaturen øker raskere enn du tror!\n
-            La hunden være hjemme eller sørg for
-            at den får vente ute hvis du må ta den
-            med.
+            Temperaturen i bilen kan bli farlig høy!\n
+            Kun 18 grader i skyggen tilsvarer 38 grader i bilen.\n
+            La hunden være hjemme eller sørg for å vente ute med den hvis du må ta den med.
           
         </item>
     </string-array>
