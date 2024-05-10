@@ -8,9 +8,11 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -30,6 +32,13 @@ fun AdviceScreen(adviceId: Int, navController: NavController, viewModel: HomeScr
         topBar = {
             TopAppBar(
                 title = { Text(text = advice.title) },
+                colors = TopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    scrolledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    actionIconContentColor = MaterialTheme.colorScheme.primaryContainer
+                ),
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }
                     ) {
@@ -44,7 +53,7 @@ fun AdviceScreen(adviceId: Int, navController: NavController, viewModel: HomeScr
     ) { innerPadding ->
         Column(
             Modifier.padding(
-                top = innerPadding.calculateTopPadding(),
+                top = innerPadding.calculateTopPadding() + 20.dp,
                 bottom = innerPadding.calculateBottomPadding(),
                 start = 20.dp,
                 end = 20.dp
