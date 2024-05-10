@@ -12,6 +12,8 @@ import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.ErrorReasons
 import java.io.IOException
 import java.nio.channels.UnresolvedAddressException
@@ -19,7 +21,11 @@ import javax.inject.Inject
 
 
 sealed interface WeatherUiState {
-    data class Success(val weather: ForecastTypes): WeatherUiState
+    data class Success(
+        val weatherHours: List<GeneralForecast>,
+        val weatherDays: List<WeatherForecast>,
+        val meanHoursTomorrow: List<WeatherForecast>,
+        val meanHoursDayAfterTomorrow: List<WeatherForecast>): WeatherUiState
     data object Loading: WeatherUiState
     data class Error(val errorReason : ErrorReasons): WeatherUiState
 }
@@ -60,7 +66,16 @@ class WeatherScreenViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, "0", 2)
-                _weatherUiState.value = WeatherUiState.Success(weatherForecast)
+                val weatherHours = weatherForecast.general
+                val weatherDays = weatherForecast.day
+                val weatherMean = weatherForecast.hours
+
+                val differentDays = weatherDays.map { it.day }.distinct()
+
+                val meanHoursForTomorrow = weatherMean.filter { it.day == differentDays[0] }
+                val meanHoursForDayAfterTomorrow = weatherMean.filter { it.day == differentDays[1] }
+
+                _weatherUiState.value = WeatherUiState.Success(weatherHours, weatherDays, meanHoursForTomorrow, meanHoursForDayAfterTomorrow)
 
                // See similar try-catch in HomeScreenViewModel for explanation of connection handling.
             } catch (e: IOException) {
