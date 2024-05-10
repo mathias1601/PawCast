@@ -49,7 +49,7 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
         ) {
             Image(
                 painter = painterResource(id = R.drawable.dog_normal),
-                contentDescription = "Avatar",
+                contentDescription = stringResource(id = R.string.dog_normal_description),
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier.height(125.dp)
             )
@@ -61,7 +61,7 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
 
         ) {
             Text(
-                text="Hva slags snute har hunden din?",
+                text= stringResource(R.string.nose_setup_screen_title),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -101,7 +101,7 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ){
-                        Text(text = "Vanlig snute")
+                        Text(text = stringResource(R.string.normal_nose))
                     }
 
                 }
@@ -129,7 +129,7 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ){
-                        Text(text = "Flat snute")
+                        Text(text = stringResource(R.string.flat_nose))
                     }
                 }
             }

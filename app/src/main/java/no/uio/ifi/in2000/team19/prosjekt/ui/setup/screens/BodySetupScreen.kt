@@ -52,7 +52,7 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
         ) {
             Image(
                 painter = painterResource(id = R.drawable.dog_normal),
-                contentDescription = "Avatar",
+                contentDescription = stringResource(id = R.string.dog_normal_description),
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier.height(125.dp)
             )
@@ -64,7 +64,7 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                 ){
 
             Text(
-                text="Hvilken beskriver hunden din best?",
+                text= stringResource(R.string.body_setup_title),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -101,7 +101,7 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ) {
-                        Text(text = "Tynn")
+                        Text(text = stringResource(R.string.skinnyBody))
                     }
 
                 }
@@ -129,7 +129,7 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ) {
-                        Text(text = "Middels")
+                        Text(text = stringResource(R.string.mediumBody))
                     }
 
                 }
@@ -157,7 +157,7 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ) {
-                        Text(text = "Tykk")
+                        Text(text = stringResource(R.string.fatBody))
                     }
                 }
             }

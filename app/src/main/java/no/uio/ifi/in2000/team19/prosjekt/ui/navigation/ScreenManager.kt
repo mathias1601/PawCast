@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team19.prosjekt.ui.navigation
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Home
@@ -16,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -45,10 +47,8 @@ fun ScreenManager(
 
     val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
     val startDestination = viewModel.startDestination.collectAsState().value
-    val isLoading = viewModel.isLoading.collectAsState().value
 
     Scaffold(
-
         bottomBar = {
             if (startDestination == "home" || startDestination == "weather" || startDestination == "settings")  {
                 NavigationBar {
@@ -77,6 +77,7 @@ fun ScreenManager(
     ) {innerPadding ->
 
         Column(
+            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
         ) {
                 //Sjekk kun for når man åpner appen
             NavHost(
@@ -117,8 +118,6 @@ fun ScreenManager(
                         WeatherScreen(
                             weatherScreenViewModel = weatherScreenViewModel,
                             navController = navController,
-                            innerPadding = innerPadding,
-
                             )
                     }
 
