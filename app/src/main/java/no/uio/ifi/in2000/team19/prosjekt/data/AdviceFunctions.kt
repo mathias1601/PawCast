@@ -10,6 +10,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import java.time.LocalDateTime
 
 
+
 fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
 
     return AdviceForecast(
@@ -22,6 +23,8 @@ fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
     )
 }
 
+//this function collects all necessary categories based on forecast and dog type
+//it uses AdviceForecast because it contains the necessary data
 fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<AdviceCategory> {
 
     val categoryList = mutableListOf<AdviceCategory>()
