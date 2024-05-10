@@ -325,6 +325,7 @@ class HomeScreenViewModel @Inject constructor(
 
             if (isThundering) "dog_thunder"
             else if (isNight) "dog_sleepy"
+            else if (weather.wind!! > 5) "dog_wind"
             else if (weather.percipitation > 1 ) "dog_rain"
             else if (weather.temperature >= temperatureToShowSunnyDog) "dog_sunny"
             else if (weather.temperature <= temperatureToShowColdDog ) "dog_cold"
