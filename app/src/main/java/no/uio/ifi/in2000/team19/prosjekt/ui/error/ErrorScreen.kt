@@ -29,10 +29,10 @@ fun ErrorScreen(onReload: () -> Unit, reason:ErrorReasons) {
         ExtendedFloatingActionButton(
             text = { Text(
                 when (reason) {
-                    ErrorReasons.INTERNET -> stringResource(R.string.no_internet_text)
-                    ErrorReasons.INTERRUPTION -> stringResource(R.string.interruption_text)
-                    ErrorReasons.DATABASE -> stringResource(R.string.database_text)
-                    ErrorReasons.UNKNOWN -> stringResource(R.string.unknown_error_text)
+                    ErrorReasons.INTERNET -> stringResource(R.string.no_internet_button_text)
+                    ErrorReasons.INTERRUPTION -> stringResource(R.string.unknown_error_button_text)
+                    ErrorReasons.DATABASE -> stringResource(R.string.database_error_button_text)
+                    ErrorReasons.UNKNOWN -> stringResource(R.string.unknown_error_button_text)
                 }
             )
            },
@@ -40,8 +40,8 @@ fun ErrorScreen(onReload: () -> Unit, reason:ErrorReasons) {
                 when (reason){
                     ErrorReasons.INTERNET -> Icon(imageVector = Icons.Filled.WifiOff, contentDescription = stringResource(R.string.no_wifi_icon_description))
                     ErrorReasons.INTERRUPTION -> Icon(imageVector = Icons.Filled.Close, contentDescription = stringResource(R.string.close_icon_description))
-                    ErrorReasons.DATABASE -> Icon(imageVector = Icons.Filled.DataObject, contentDescription = stringResource(R.string.an_error_occured_reading_from_the_database))
-                    ErrorReasons.UNKNOWN -> Icon(imageVector = Icons.Filled.QuestionMark, contentDescription = stringResource(R.string.an_unkown_error_occured))
+                    ErrorReasons.DATABASE -> Icon(imageVector = Icons.Filled.DataObject, contentDescription = stringResource(R.string.database_icon_description))
+                    ErrorReasons.UNKNOWN -> Icon(imageVector = Icons.Filled.QuestionMark, contentDescription = stringResource(R.string.question_mark_icon_description))
                 }
             },
 

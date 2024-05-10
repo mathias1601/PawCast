@@ -52,6 +52,8 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.error.ErrorScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.BottomInfo
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController: NavController) {
@@ -114,8 +116,9 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController:
 
 
 
-                item {
-                    Column {
+                    item {
+                        Column(
+                        ) {
 
 
                         WeatherNow(weatherHours[0])
@@ -194,7 +197,7 @@ fun WeatherNow(weather: GeneralForecast) {
         Image(painter = painterResource(id = drawableId), contentDescription = drawableName)
 
         Text(
-            text = "${weather.temperature}" + stringResource(id = R.string.celciues),
+            text = "${weather.temperature}" + stringResource(id = R.string.celcius),
             style = MaterialTheme.typography.displayMedium
         )
 
@@ -387,7 +390,7 @@ fun SingleHourForecastCard(generalForecast: GeneralForecast) {
             )
 
             Text(
-                text = "${generalForecast.temperature} ${stringResource(id = R.string.celciues)}",
+                text = "${generalForecast.temperature} ${stringResource(id = R.string.celcius)}",
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -445,20 +448,21 @@ fun WholeDayAverageWeatherCard(weatherForecast: WeatherForecast) {
 
             Column {
                 Text(
+
                     text = stringResource(
                         R.string.low_degrees,
                         weatherForecast.lowestTemperature!!
                     ) + stringResource(id = R.string.celciues),
+
                     style = MaterialTheme.typography.titleSmall
                 )
 
 
 
                 Text(
-                    text = stringResource(
-                        R.string.high_degrees,
-                        weatherForecast.highestTemperature!!
-                    ) + stringResource(id = R.string.celciues),
+
+                    text = stringResource(R.string.high_degrees, weatherForDay.highestTemperature!!)  + stringResource(id = R.string.celcius),
+
                     style = MaterialTheme.typography.titleSmall
                 )
             }
@@ -506,7 +510,7 @@ fun SixHourMeanForecastCard(weatherForecast: WeatherForecast) {
             )
 
             Text(
-                text = "${weatherForecast.meanTemperature}" + stringResource(id = R.string.celciues),
+                text = "${weatherForDay.meanTemperature}" + stringResource(id = R.string.celcius),
                 style = MaterialTheme.typography.bodyMedium,
             )
 

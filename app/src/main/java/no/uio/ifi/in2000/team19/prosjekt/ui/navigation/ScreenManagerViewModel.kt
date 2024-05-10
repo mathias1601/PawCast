@@ -26,8 +26,6 @@ class ScreenManagerViewModel @Inject constructor(
     private val _startDestination : MutableStateFlow<String> = MutableStateFlow("home")
     val startDestination : StateFlow<String> = _startDestination.asStateFlow()
 
-    private val _isLoading:MutableStateFlow<Boolean> = MutableStateFlow(true)
-
     init {
         viewModelScope.launch {
             dataStoreRepository.readSetupState().collect() { completed ->
@@ -40,7 +38,6 @@ class ScreenManagerViewModel @Inject constructor(
 
             }
         }
-        _isLoading.value = false // stop saying loading
     }
 
 }
