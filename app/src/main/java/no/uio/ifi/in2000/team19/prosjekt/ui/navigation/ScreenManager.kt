@@ -118,8 +118,6 @@ fun ScreenManager(
                         WeatherScreen(
                             weatherScreenViewModel = weatherScreenViewModel,
                             navController = navController,
-                            innerPadding = innerPadding,
-
                             )
                     }
 

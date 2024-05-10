@@ -1,9 +1,7 @@
 package no.uio.ifi.in2000.team19.prosjekt.data
 
 import android.content.Context
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
@@ -50,7 +48,6 @@ class LocationForecastRepository @Inject constructor(
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getGeneralForecast(
         latitude: String,
         longitude: String,
@@ -128,7 +125,6 @@ class LocationForecastRepository @Inject constructor(
     }
 
     //Also possible to do this in the same function. An If-check to see if you want to get for days or hours.
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun getWeatherForecastForDays(
         locationForecast: LocationForecast,
         nrDays: Int,
@@ -182,7 +178,6 @@ class LocationForecastRepository @Inject constructor(
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun getWeatherForecastHours(
         locationForecast: LocationForecast,
         startHour: Int
