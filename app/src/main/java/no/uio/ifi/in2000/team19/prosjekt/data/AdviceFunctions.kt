@@ -1,14 +1,12 @@
 package no.uio.ifi.in2000.team19.prosjekt.data
 
 import android.content.Context
-import android.util.Log
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 
@@ -143,17 +141,14 @@ fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<Advic
         categoryList.add(AdviceCategory.SUNBURN)
     }
 
-    //TODO find right number
     if (adviceForecast.thunderprobability >= 50) {
         categoryList.add(AdviceCategory.THUNDER)
     }
 
-    //TODO find right number
     if (adviceForecast.percipitation >= 1) {
         categoryList.add(AdviceCategory.RAIN)
     }
 
-    //TODO lage en when for dato for flått, hoggorm og nyttår
 
     val tickSeasonStart = LocalDateTime.of(2024, 3, 15, 0, 0
     )
@@ -181,7 +176,6 @@ fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<Advic
         categoryList.add(AdviceCategory.NEWYEAR)
     }
 
-
     if (categoryList.size == 0) {
         categoryList.add(AdviceCategory.SAFE)
     }
@@ -195,8 +189,6 @@ fun createAdvice(categories: List<AdviceCategory>, context: Context): List<Advic
 
     if (categories[0] == AdviceCategory.SAFE) {
         val safeArray = context.resources.getStringArray(R.array.SAFE)
-
-
         val advice = Advice(safeArray[0], safeArray[1], safeArray[2])
         adviceList.add(advice)
         return adviceList
@@ -205,8 +197,6 @@ fun createAdvice(categories: List<AdviceCategory>, context: Context): List<Advic
     categories.forEach { category ->
 
         var adviceArray: Array<String>? = null
-        //val resId = context.resources.getIdentifier(category.toString(), "array", context.packageName)
-        //val adviceArray: Array<String> = context.resources.getStringArray(resId)
         when (category.toString()) {
             "COOL" -> adviceArray = context.resources.getStringArray(R.array.COOL)
             "COOLOTHER" -> adviceArray = context.resources.getStringArray(R.array.COOLOTHER)
@@ -229,7 +219,6 @@ fun createAdvice(categories: List<AdviceCategory>, context: Context): List<Advic
             "TICK" -> adviceArray = context.resources.getStringArray(R.array.TICK)
             "VIPER" -> adviceArray = context.resources.getStringArray(R.array.VIPER)
             "CAR" -> adviceArray = context.resources.getStringArray(R.array.CAR)
-
 
         }
 
