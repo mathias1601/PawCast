@@ -185,6 +185,7 @@ fun Idle(){
 fun Error(){
     Text(text = "\uD83D\uDC80")
     Text(text = "En feil skjedde")
+    Text(text = "Har du internett tilgang?") // Might be bad to ask if user has internet but something else went wrong
 }
 
 @Composable

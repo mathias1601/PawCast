@@ -29,13 +29,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -59,7 +57,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
@@ -91,6 +88,7 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.ui.LoadingScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.error.ErrorScreen
 import kotlin.math.absoluteValue
 
 
@@ -113,7 +111,7 @@ fun HomeScreenManager(
     val isRefreshing by remember {
         mutableStateOf(false)
     }
-    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast(locationUiState)})
+    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast()})
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
@@ -132,7 +130,10 @@ fun HomeScreenManager(
                     }
 
                     is AdviceUiState.Error -> {
-                        NoConnectionScreen()
+                        ErrorScreen (
+                            reason = adviceUiState.errorReason,
+                            onReload = { viewModel.loadWeatherForecast() }
+                        )
                     }
                 }
 
@@ -142,19 +143,6 @@ fun HomeScreenManager(
                         .align(Alignment.TopCenter)
                 )
         }
-    }
-}
-
-
-
-@Composable
-fun NoConnectionScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        ExtendedFloatingActionButton(
-            text = { Text("Ingen internett-tilgang") },
-            icon = { Icon(Icons.Filled.Warning, contentDescription = "Advarsel") },
-            onClick = { /* TODO change later if we want to update */ }
-        )
     }
 }
 

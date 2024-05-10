@@ -47,7 +47,7 @@ import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
 import no.uio.ifi.in2000.team19.prosjekt.ui.LoadingScreen
-import no.uio.ifi.in2000.team19.prosjekt.ui.home.NoConnectionScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.error.ErrorScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,11 +61,12 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
 
 
 
-
-
     when (val weatherUiState = weatherScreenViewModel.weatherUiState.collectAsState().value) {
         is WeatherUiState.Loading -> LoadingScreen()
-        is WeatherUiState.Error -> NoConnectionScreen()
+        is WeatherUiState.Error -> ErrorScreen (
+            onReload = { weatherScreenViewModel.loadWeather() },
+            reason = weatherUiState.errorReason
+        )
         is WeatherUiState.Success -> {
 
 
