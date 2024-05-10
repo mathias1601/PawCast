@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 data class AdviceForecast(
     val temperature: Double,
     val thunderprobability: Double,
-    val percipitation: Double,
+    val precipitation: Double,
     val UVindex: Double,
     val date: LocalDateTime,
     val time: String

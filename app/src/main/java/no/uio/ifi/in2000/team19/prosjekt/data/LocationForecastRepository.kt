@@ -2,14 +2,12 @@ package no.uio.ifi.in2000.team19.prosjekt.data
 
 import android.content.Context
 import android.util.Log
-import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
-import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -52,7 +50,7 @@ class LocationForecastRepository @Inject constructor(
 
         val categories = getCategory(adviceForecast, typeOfDog)
 
-        return createAdvice(categories)
+        return createAdvice(categories, context)
     }
 
 
@@ -158,13 +156,13 @@ class LocationForecastRepository @Inject constructor(
         locationForecast: LocationForecast,
         nrDays: Int,
         startingHour: Int
-    ): List<WeatherForDay> {
+    ): List<WeatherForecast> {
 
         var theHour = startingHour
 
         var middleOfDay: Int
 
-        val forecastList = mutableListOf<WeatherForDay>()
+        val forecastList = mutableListOf<WeatherForecast>()
 
         for (i in 0 until nrDays) {
 
@@ -192,7 +190,7 @@ class LocationForecastRepository @Inject constructor(
                 locationForecast.properties.timeseries[middleOfDay].data.next_6_hours.summary.symbol_code
 
             forecastList.add(
-                WeatherForDay(
+                WeatherForecast(
                     symbolCode,
                     dayOfWeekString,
                     coldestTemperature,
@@ -210,9 +208,9 @@ class LocationForecastRepository @Inject constructor(
     private fun getWeatherForecastHours(
         locationForecast: LocationForecast,
         startHour: Int
-    ): List<WeatherForDay> {
+    ): List<WeatherForecast> {
 
-        val forecastList = mutableListOf<WeatherForDay>()
+        val forecastList = mutableListOf<WeatherForecast>()
 
         var theHour = startHour
 
@@ -283,7 +281,7 @@ class LocationForecastRepository @Inject constructor(
                 nextDay.dayOfWeek.getDisplayName(TextStyle.FULL, Locale("no", "NO"))
 
             forecastList.add(
-                WeatherForDay(
+                WeatherForecast(
                     symbolCode,
                     dayOfWeekString,
                     null,
@@ -304,216 +302,11 @@ class LocationForecastRepository @Inject constructor(
     }
 
 
+
     //this function collects all necessary categories based on forecast and dog type
     //it uses AdviceForecast because it contains the necessary data
 
 
-    private fun getCategory(
-        adviceForecast: AdviceForecast,
-        typeOfDog: UserInfo
-    ): List<AdviceCategory> {
-
-        val categoryList = mutableListOf<AdviceCategory>()
-
-        fun isTemperatureInRange(limits: List<Double>, temp: Double): Boolean {
-            return temp in limits[0]..limits[1]
-        }
-
-        // Map of category-specific temperatures to check against
-        val weatherLimitsMap = mapOf(
-            AdviceCategory.COOL to listOf(-5.0, 0.0),
-            AdviceCategory.COLD to listOf(-15.0, -5.0),
-            AdviceCategory.FREEZING to listOf(-70.0, -15.0),
-            AdviceCategory.SALT to listOf(-8.0, 4.0),
-            AdviceCategory.WARM to listOf(15.0, 23.0),
-            AdviceCategory.VERYWARM to listOf(23.0, 30.0),
-            AdviceCategory.HEATWAVE to listOf(30.0, 70.0),
-            AdviceCategory.CAR to listOf(18.0, 70.0)
-        )
-
-
-        weatherLimitsMap.forEach { (category, limits) ->
-            if (isTemperatureInRange(limits, adviceForecast.temperature)) {
-                categoryList.add(category)
-            }
-        }
-        //Find special categories and overwrite by removing old category/categories
-
-        if (typeOfDog.isThin ||
-            typeOfDog.isPuppy ||
-            typeOfDog.isShortHaired ||
-            typeOfDog.isSenior ||
-            typeOfDog.isThinHaired
-        ) {
-
-            if (AdviceCategory.COOL in categoryList) {
-                categoryList.add(AdviceCategory.COOLOTHER)
-                categoryList.remove(AdviceCategory.COOL)
-            }
-
-            if (AdviceCategory.COLD in categoryList) {
-                categoryList.add(AdviceCategory.COLDOTHER)
-                categoryList.remove(AdviceCategory.COLD)
-            }
-        }
-
-
-        if (typeOfDog.isFlatNosed) {
-
-            if (AdviceCategory.WARM in categoryList) {
-                categoryList.add(AdviceCategory.WARMFLAT)
-                categoryList.remove(AdviceCategory.WARM)
-                Log.i("KATEGORIER", "Legger til warmflat")
-            }
-
-            if (AdviceCategory.VERYWARM in categoryList) {
-                categoryList.add(AdviceCategory.VERYWARMFLAT)
-                categoryList.remove(AdviceCategory.VERYWARM)
-            }
-        }
-
-        if (typeOfDog.isLongHaired && AdviceCategory.COLD in categoryList) {
-            categoryList.add(AdviceCategory.COLDLONGFUR)
-            categoryList.remove(AdviceCategory.COLD)
-        }
-
-
-        if (adviceForecast.UVindex >= 3 && (
-                    typeOfDog.isThinHaired ||
-                            typeOfDog.isLightHaired ||
-                            typeOfDog.isShortHaired
-                    )
-        ) {
-            categoryList.add(AdviceCategory.SUNBURN)
-        }
-
-        if (adviceForecast.thunderprobability >= 50) {
-            categoryList.add(AdviceCategory.THUNDER)
-            Log.i("KATEGORIER", "Legger til thunder")
-        }
-
-        if (adviceForecast.percipitation >= 1) {
-            categoryList.add(AdviceCategory.RAIN)
-        }
-
-        val tickSeasonStart = LocalDateTime.of(
-            2024,
-            3,
-            15,
-            0,
-            0
-        )
-        // Year, Month, Day, Hour, Minute (defaults to 00:00)
-
-        val tickSeasonEnd = LocalDateTime.of(2024, 11, 15, 0, 0)
-
-        val viperSeasonStart = LocalDateTime.of(2024, 2, 28, 0, 0)
-        val viperSeasonEnd = LocalDateTime.of(2024, 11, 1, 0, 0)
-
-        val newYear = LocalDateTime.of(2024, 12, 31, 0, 0)
-
-        val theDate = adviceForecast.date
-
-
-        if (!theDate.isBefore(tickSeasonStart) && !theDate.isAfter(tickSeasonEnd)) {
-            categoryList.add(AdviceCategory.TICK)
-        }
-
-        if (!theDate.isBefore(viperSeasonStart) && !theDate.isAfter(viperSeasonEnd)) {
-            categoryList.add(AdviceCategory.VIPER)
-        }
-
-        if (theDate == newYear) {
-            categoryList.add(AdviceCategory.NEWYEAR)
-        }
-
-
-        if (categoryList.size == 0) {
-            categoryList.add(AdviceCategory.SAFE)
-        }
-
-        return categoryList
-    }
-
-
-    //Creates an AdviceForecast-object from a GeneralForecast-object
-    private fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
-
-        return AdviceForecast(
-            generalForecast.temperature,
-            generalForecast.thunderprobability,
-            generalForecast.percipitation,
-            generalForecast.UVindex,
-            generalForecast.date,
-            generalForecast.hour
-        )
-    }
-
-
-    //Creates Advice-objects and returns a list of them
-    private fun createAdvice(categories: List<AdviceCategory>): List<Advice> {
-
-        val adviceList = mutableListOf<Advice>()
-
-        if (categories[0] == AdviceCategory.SAFE) {
-            val safeArray = context.resources.getStringArray(R.array.SAFE)
-
-
-            val advice = Advice(safeArray[0], safeArray[1], safeArray[2])
-            adviceList.add(advice)
-            return adviceList
-        }
-
-        categories.forEach { category ->
-
-            var adviceArray: Array<String>? = null
-            //val resId = context.resources.getIdentifier(category.toString(), "array", context.packageName)
-            //val adviceArray: Array<String> = context.resources.getStringArray(resId)
-            when (category.toString()) {
-                "COOL" -> adviceArray = context.resources.getStringArray(R.array.COOL)
-                "COOLOTHER" -> adviceArray = context.resources.getStringArray(R.array.COOLOTHER)
-                "COLD" -> adviceArray = context.resources.getStringArray(R.array.COLD)
-                "COLDLONGFUR" -> adviceArray = context.resources.getStringArray(R.array.COLDLONGFUR)
-                "COLDOTHER" -> adviceArray = context.resources.getStringArray(R.array.COLDOTHER)
-                "FREEZING" -> adviceArray = context.resources.getStringArray(R.array.FREEZING)
-                "SALT" -> adviceArray = context.resources.getStringArray(R.array.SALT)
-                "WARM" -> adviceArray = context.resources.getStringArray(R.array.WARM)
-                "WARMFLAT" -> adviceArray = context.resources.getStringArray(R.array.WARMFLAT)
-                "VERYWARM" -> adviceArray = context.resources.getStringArray(R.array.VERYWARM)
-                "VERYWARMFLAT" -> adviceArray =
-                    context.resources.getStringArray(R.array.VERYWARMFLAT)
-
-                "HEATWAVE" -> adviceArray = context.resources.getStringArray(R.array.HEATWAVE)
-                "RAIN" -> adviceArray = context.resources.getStringArray(R.array.RAIN)
-                "THUNDER" -> adviceArray = context.resources.getStringArray(R.array.THUNDER)
-                "SUNBURN" -> adviceArray = context.resources.getStringArray(R.array.SUNBURN)
-                "TICK" -> adviceArray = context.resources.getStringArray(R.array.TICK)
-                "VIPER" -> adviceArray = context.resources.getStringArray(R.array.VIPER)
-                "CAR" -> adviceArray = context.resources.getStringArray(R.array.CAR)
-                "NEWYEAR" -> adviceArray = context.resources.getStringArray(R.array.NEWYEAR)
-
-
-            }
-
-            var counter = 0
-            if (adviceArray != null) {
-                while (counter < adviceArray.size) {
-
-                    val title = adviceArray[counter]
-                    val description = adviceArray[counter + 1]
-                    val shortAdvice = adviceArray[counter + 2]
-
-                    val advice = Advice(title, description, shortAdvice)
-                    adviceList.add(advice)
-
-                    counter += 3
-
-                }
-            }
-        }
-
-        return adviceList
-    }
 
 
 }

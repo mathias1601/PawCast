@@ -8,7 +8,7 @@ data class GeneralForecast(
     val symbol: String,
     val hour: String,
     val date: LocalDateTime,
-    val percipitation: Double,
+    val precipitation: Double,
     val thunderprobability: Double,
     val UVindex: Double,
 )
