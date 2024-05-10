@@ -4,6 +4,12 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsDatabase
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.coordsDao
@@ -23,7 +29,8 @@ class CoordsDatabaseTest {
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(
-            context, SettingsDatabase::class.java).build()
+            context, SettingsDatabase::class.java
+        ).build()
         dao = db.getCoordsDao()
     }
 
@@ -33,11 +40,11 @@ class CoordsDatabaseTest {
     }
 
     @Test
-    fun checkDatabaseContent() {
-        val expectedCoords = Cords(0,"navn", "navn2", "60", "10")
+    fun checkDatabaseContent() = runTest {
+        val expectedCoords = Cords(0, "navn", "navn2", "60", "10")
         dao.insertCords(expectedCoords)
 
-        val coords = dao.getCords()
+        val coords = getCoordsFromFlow()
         assertEquals(expectedCoords, coords)
 
         val fakeCoords = Cords(0, "hallo", "ok", "2", "5")
@@ -47,6 +54,9 @@ class CoordsDatabaseTest {
 
         dao.deleteCords(expectedCoords)
 
-        assertEquals(null, dao.getCords())
+        assertEquals(null, getCoordsFromFlow())
     }
+
+    private suspend fun getCoordsFromFlow(): Cords? = dao.getCords()?.firstOrNull()
+
 }
