@@ -78,4 +78,13 @@
     <string name="an_error_occured_reading_from_the_database">an icon symbolizing data</string>
     <string name="an_unkown_error_occured">A question mark</string>
     <string name="press_to_try_again">Trykk på knappen for å prøve igjen</string>
+    <string name="morning_walk_time">Morgentur: %1$s:00</string>
+    <string name="morning_walk_is_not_recommended">Anbefaler ikke morgentur idag</string>
+    <string name="midday_walk_time">Dagstur: %1$s:00</string>
+    <string name="midday_walk_not_recommended">Anbefaler ikke dagstur idag</string>
+    <string name="evening_walk_time">Kveldstur: %1$s:00</string>
+    <string name="evening_walk_not_recommened">Anbefaler ikke kveldstur i dag.</string>
+    <string name="bad_weather_alert">I dag er det bittert vær. Vurder å aktivisere hunden din på andre måter og hold turer korte.</string>
+    <string name="warning_icon_description">Varsels ikon</string>
+    <string name="klokke_ikon_description">Klokke ikon</string>
 </resources>

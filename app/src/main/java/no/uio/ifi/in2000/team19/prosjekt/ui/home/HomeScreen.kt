@@ -31,7 +31,6 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -501,52 +500,64 @@ fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
     ) {
         Column(
             modifier = Modifier
-                .padding(15.dp)
+                .padding(
+                    horizontal = Measurements.HorizontalPadding.measurement,
+                    vertical = Measurements.WithinSectionVerticalGap.measurement
+                )
                 .fillMaxSize()
         ) {
 
 
 
-            val morningText =
-                if (bestTimesForWalk.morning.isNotBlank()) "Morgentur: ${bestTimesForWalk.morning}:00"
-                else "Anbefaler ikke morgentur idag"
-            val middayText =
-                if (bestTimesForWalk.midday.isNotBlank()) "Dagstur: ${bestTimesForWalk.midday}:00"
-                else "Anbefaler ikke dagstur idag"
-            val eveningText =
-                if (bestTimesForWalk.evening.isNotBlank()) "Kveldstur: ${bestTimesForWalk.evening}:00"
-                else "Anbefaler ikke kveldstur i dag."
-
-
+            // When there is no recomened times for a walk
             if (bestTimesForWalk.morning.isBlank() && bestTimesForWalk.midday.isBlank() && bestTimesForWalk.evening.isBlank()){
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = Measurements.HorizontalPadding.measurement, vertical = Measurements.WithinSectionVerticalGap.measurement),
+                ){
+                    Icon(imageVector = Icons.Filled.Warning, contentDescription = stringResource(R.string.warning_icon_description))
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    Text(text = stringResource(R.string.bad_weather_alert), modifier = Modifier.fillMaxWidth())
+                }
 
-                Row()
-                Text(text = "I dag er det bittert vær. Vurder å aktivisere hunden din på andre måter og hold turer korte.")
-                Icon(imageVector = Icons.Filled.Warning, contentDescription = "Varsels ikon", modifier = Modifier.align(Alignment.End))
-
+                // Show recomened times
             } else {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxSize()
+
+                val morningText =
+                    if (bestTimesForWalk.morning.isNotBlank()) stringResource( R.string.morning_walk_time, bestTimesForWalk.morning)
+                    else stringResource(R.string.morning_walk_is_not_recommended)
+                val middayText =
+                    if (bestTimesForWalk.midday.isNotBlank()) stringResource(R.string.midday_walk_time, bestTimesForWalk.midday)
+                    else stringResource(R.string.midday_walk_not_recommended)
+                val eveningText =
+                    if (bestTimesForWalk.evening.isNotBlank()) stringResource(R.string.evening_walk_time, bestTimesForWalk.evening)
+                    else stringResource(R.string.evening_walk_not_recommened)
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            horizontal = Measurements.HorizontalPadding.measurement,
+                            vertical = Measurements.WithinSectionVerticalGap.measurement
+                        ),
                 ) {
+                    Icon(imageVector = Icons.Filled.AccessTime, contentDescription = stringResource(
+                        R.string.klokke_ikon_description
+                        )
+                    )
+                    Spacer(modifier = Modifier.padding(5.dp))
 
                     Column {
                         Text(text = morningText)
                         Text(text = middayText)
                         Text(text = eveningText)
                     }
-                    Icon(imageVector = Icons.Filled.AccessTime, contentDescription = "Varsels ikon")
+
                 }
-
-
-
-
             }
         }
     }
@@ -584,10 +595,6 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
             }
 
         ) {
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer
-
-                ) {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -623,7 +630,6 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
                             )
                         }
                     }
-            }
     }
 }
 
@@ -665,9 +671,6 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
         modifier = Modifier
             .fillMaxWidth()
             .height(Measurements.GraphHeight.measurement),
-        colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
     ){
         Column (
             modifier = Modifier.padding(
