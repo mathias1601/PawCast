@@ -9,6 +9,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
@@ -154,13 +155,16 @@ fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<Advic
 
     //TODO lage en when for dato for flått, hoggorm og nyttår
 
-    val tickSeasonStart = LocalDate.of(2024, 3, 15)
-    val tickSeasonEnd = LocalDate.of(2024, 11, 15)
+    val tickSeasonStart = LocalDateTime.of(2024, 3, 15, 0, 0
+    )
+    // Year, Month, Day, Hour, Minute (defaults to 00:00)
 
-    val viperSeasonStart = LocalDate.of(2024, 2, 28)
-    val viperSeasonEnd = LocalDate.of(2024, 11, 1)
+    val tickSeasonEnd = LocalDateTime.of(2024, 11, 15, 0, 0)
 
-    val newYear = LocalDate.of(2024, 12, 31)
+    val viperSeasonStart = LocalDateTime.of(2024, 2, 28, 0, 0)
+    val viperSeasonEnd = LocalDateTime.of(2024, 11, 1, 0, 0)
+
+    val newYear = LocalDateTime.of(2024, 12, 31, 0, 0)
 
     val theDate = adviceForecast.date
 

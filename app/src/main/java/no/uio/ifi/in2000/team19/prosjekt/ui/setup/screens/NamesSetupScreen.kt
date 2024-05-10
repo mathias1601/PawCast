@@ -131,11 +131,13 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: 
 
                         keyboardController?.hide()
 
-                        if (userName != ""){
+                        /*if (userName != ""){
                             viewModel.updateUserName(userName)
                             viewModel.updateDogName(dogName)
                             navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
                         }
+
+                         */
                     }
                 ),
 
