@@ -76,7 +76,6 @@ import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.component.shape.shader.TopBottomShader
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
@@ -193,7 +192,6 @@ fun HomeScreen(
 
 
             // TOP CONTENT
-
             val context = LocalContext.current
 
             Column(
@@ -226,19 +224,30 @@ fun HomeScreen(
                     val drawableName = weather.symbol
                     val drawableId = context.resources.getIdentifier(drawableName, "drawable", context.packageName) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
 
+                    
+
+                    
                     Image(
                         painter = painterResource(id = drawableId),
                         contentDescription = "Værsymbol"
                     )
 
                     Text(
+                        text = stringResource(R.string.welcome_message, userInfo.userName, userInfo.dogName),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Color.White, // Always white since background is always blue
+                    )
+
+                    Text(
                         text = weather.temperature.toString() + "°C",
                         style = MaterialTheme.typography.displayMedium  ,
-                        color = Color.White,
+                        color = Color.White, // Always white since background is always blue
 
                         )
-                    Text(text = "Akkurat nå")
 
+                    Text(
+                        text = stringResource(R.string.right_now), // Always white since background is always blue
+                    )
                 }
 
                 // Location Button / Text and Dog avatar
@@ -249,7 +258,8 @@ fun HomeScreen(
                     ) {
 
                     ElevatedButton(onClick = { navController.navigate("settings") }) {
-                        Icon(imageVector = Icons.Filled.LocationOn, contentDescription = "Location")
+                        Icon(imageVector = Icons.Filled.LocationOn, contentDescription = stringResource(R.string.location)
+                        )
                         Text(
                             text = location.shortName,
                             style = MaterialTheme.typography.labelMedium,
@@ -261,7 +271,7 @@ fun HomeScreen(
 
                     Image(
                         painter = painterResource(id = dogId),
-                        contentDescription = "dog avatar",
+                        contentDescription = dogImage, // is formatted like dog_normal, dog_normal_white_sticker, dog_rain_white_sticker ... etc.
                         modifier = Modifier
                             .height(175.dp)
                             .offset(
@@ -411,16 +421,16 @@ fun HomeScreen(
 
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                             Text(
-                                text = "Beste tidspunkter for tur",
+                                text = stringResource(R.string.graph_title),
                                 style = MaterialTheme.typography.titleLarge,
                             )
                             TextButton(onClick = { showGraphInfoSheet = true }) {
-                                Icon(imageVector = Icons.Filled.Info, contentDescription = "Info about graph")
+                                Icon(imageVector = Icons.Filled.Info, contentDescription = stringResource(R.string.info_about_graph))
                             }
                         }
-                        Text("Vi anbefaler morgentur klokken ${bestTime[0]}")
-                        Text("Vi anbefaler dagstur klokken ${bestTime[1]}")
-                        Text("Vi anbefaler kveldstur klokken ${bestTime[2]}")
+                        Text(stringResource(R.string.morning_recomendation, bestTime[0]))
+                        Text(stringResource(R.string.midday_recomendation, bestTime[1]))
+                        Text(stringResource(R.string.evening_recomendation, bestTime[2]))
                         ForecastGraph(graphUiState, firstYValueUiState)
                     }
                 }
@@ -511,19 +521,11 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
 @Composable
 fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState: Int) {
 
-    // Setting start state to current time
-    // val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour
-    //val scrollState = rememberVicoScrollState(
-    //    initialScroll = Scroll.Absolute.Companion.x(x = time.toFloat(), bias = 0f)
-    // )
-
-    //val hoursOfDay = listOf("00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13","14", "15", "16", "17", "18", "19", "20", "21", "22", "23")
     val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour
-
     val bottomAxisValueFormatter =
         AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _, _->
 
-            var label = time  + x.toInt() // Label = tid nå + x indeks... x = 0 = tiden nå, x = 1 = om en time... formatert som Int 0 <= 36
+            var label = time  + x.toInt() // Label = time now + x index... x = 0 = now, x = 1 = in hour hour... formatted as Int 0 <= 36
 
             if (label > 23){ // Trekk fra 24 timer dersom
                 label -= 24
@@ -566,15 +568,12 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
             verticalArrangement = Arrangement.Center
         ){
             CartesianChartHost(
-                // getXStep = { 1f }, // Show every X step on X axis.
                 chart =
                     rememberCartesianChart(
                         rememberLineCartesianLayer(
                             listOf(
                                 rememberLineSpec(
-                                    shader = TopBottomShader(
-                                        DynamicShaders.color(scoreColor!!),
-                                        DynamicShaders.color(scoreColor),
+                                    shader = DynamicShaders.color(scoreColor!!
                                     ),
                                 )
                             ),
@@ -593,7 +592,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                                     textAlignment = Layout.Alignment.ALIGN_CENTER
                                 ),
 
-                            title = "Score"
+                            title = stringResource(R.string.y_axis_title)
                         ),
                         bottomAxis = rememberBottomAxis(
                             itemPlacer = AxisItemPlacer.Horizontal.default(
@@ -613,7 +612,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                                 padding = MutableDimensions(8f, 1f),
                                 textAlignment = Layout.Alignment.ALIGN_CENTER
                             ),
-                            title = "Klokkkeslett",
+                            title = stringResource(R.string.x_axis_title),
                             guideline = null
                         ),
                 ),

@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">PawCast</string>
     <string name="recomendations_title">Anbefalinger</string>
+    <string name="GoBackText"> Tilbake</string>
+    <string name="welcome_message">Heisann %1$s og %2$s!</string>
+    <string name="right_now">Akkurat nå</string>
+    <string name="location">Lokasjon</string>
+    <string name="graph_title">Beste tidspunkter for tur</string>
+    <string name="morning_recomendation">Vi anbefaler morgentur klokken %1$s</string>
+    <string name="midday_recomendation">Vi anbefaler dagstur klokken %1$s</string>
+    <string name="evening_recomendation">Vi anbefaler kveldstur klokken %1$s</string>
+    <string name="info_about_graph">Info om grafen\n</string>
+    <string name="x_axis_title">Klokkkeslett</string>
+    <string name="y_axis_title">Score</string>
 </resources>
