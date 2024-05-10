@@ -186,7 +186,7 @@ fun WeatherNow(weather: GeneralForecast) {
         Image(painter = painterResource(id = drawableId), contentDescription = drawableName)
 
         Text(
-            text = "${weather.temperature}" + stringResource(id = R.string.celciues),
+            text = "${weather.temperature}" + stringResource(id = R.string.celcius),
             style = MaterialTheme.typography.displayMedium
         )
 
@@ -374,7 +374,7 @@ fun SingleHourForecastCard(generalForecast: GeneralForecast) {
             )
 
             Text(
-                text = "${generalForecast.temperature} ${stringResource(id = R.string.celciues)}",
+                text = "${generalForecast.temperature} ${stringResource(id = R.string.celcius)}",
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -432,14 +432,14 @@ fun WholeDayAverageWeatherCard(weatherForDay: WeatherForDay) {
 
             Column {
                 Text(
-                    text = stringResource(R.string.low_degrees, weatherForDay.lowestTemperature!!) + stringResource(id = R.string.celciues),
+                    text = stringResource(R.string.low_degrees, weatherForDay.lowestTemperature!!) + stringResource(id = R.string.celcius),
                     style = MaterialTheme.typography.titleSmall
                 )
 
 
 
                 Text(
-                    text = stringResource(R.string.high_degrees, weatherForDay.highestTemperature!!)  + stringResource(id = R.string.celciues),
+                    text = stringResource(R.string.high_degrees, weatherForDay.highestTemperature!!)  + stringResource(id = R.string.celcius),
                     style = MaterialTheme.typography.titleSmall
                 )
             }
@@ -487,7 +487,7 @@ fun SixHourMeanForecastCard(weatherForDay: WeatherForDay) {
             )
 
             Text(
-                text = "${weatherForDay.meanTemperature}" + stringResource(id = R.string.celciues),
+                text = "${weatherForDay.meanTemperature}" + stringResource(id = R.string.celcius),
                 style = MaterialTheme.typography.bodyMedium,
             )
 

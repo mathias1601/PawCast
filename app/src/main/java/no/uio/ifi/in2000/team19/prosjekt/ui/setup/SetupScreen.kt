@@ -71,7 +71,7 @@ fun SetupManager(
                         ) {
                             Icon( //Er ikke Material Design 3
                                 imageVector = Icons.Filled.ArrowBackIosNew,
-                                contentDescription = stringResource(id = R.string.GoBackText)
+                                contentDescription = stringResource(id = R.string.GoBack_icon_description)
                             )
                         }
                     }

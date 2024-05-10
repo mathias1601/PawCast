@@ -253,7 +253,7 @@ fun HomeScreen(
                         contentDescription = "Værsymbol"
                     )
                     Text(
-                        text = weather.temperature.toString() + stringResource(R.string.celciues),
+                        text = weather.temperature.toString() + stringResource(R.string.celcius),
                         style = MaterialTheme.typography.displayMedium,
                         color = Color.White, // Always white since background is always blue
 
