@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationTextField
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
 
@@ -40,27 +42,24 @@ fun SettingsScreen(
             ,
         ) {
             Row ( verticalAlignment = Alignment.CenterVertically) {
-                Icon(imageVector = Icons.Filled.Settings, contentDescription = "Settings")
+                Icon(imageVector = Icons.Filled.Settings, contentDescription = stringResource(R.string.settings))
                 Spacer(modifier = Modifier.padding(5.dp))
-                Text(text = "Instillinger", style = MaterialTheme.typography.titleLarge)
+                Text(text = stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge)
             }
 
 
 
-            CategoryDivider(text = "Lokasjon")
+            CategoryDivider(text = stringResource(id = R.string.location))
             Column (
                 modifier = Modifier.padding(top = 10.dp)
             ){
                 SearchLocationTextField(viewModel = searchLocationViewModel)
                 Spacer(modifier = Modifier.padding(5.dp))
-                Text(text = "Lokasjon blir lagret på enheten din og brukes kun til å hente værdata fra metrologisk institutt.", style = MaterialTheme.typography.labelMedium)
+                Text(text = stringResource(R.string.location_disclaimer), style = MaterialTheme.typography.labelMedium)
             }
             
-
-
-
-
-            CategoryDivider(text = "Hunden din")
+            
+            CategoryDivider(text = stringResource(R.string.your_dog_title))
             Button(onClick = { viewModel.clearDataStore() }) {
                 Text(text = "Endre hunde profilen din")
             }

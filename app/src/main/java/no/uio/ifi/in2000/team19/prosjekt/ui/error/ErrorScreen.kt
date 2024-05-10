@@ -17,7 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.model.ErrorReasons
 
 @Composable
@@ -27,25 +29,25 @@ fun ErrorScreen(onReload: () -> Unit, reason:ErrorReasons) {
         ExtendedFloatingActionButton(
             text = { Text(
                 when (reason) {
-                    ErrorReasons.INTERNET -> "Ingen internett tilgang"
-                    ErrorReasons.INTERRUPTION -> "Noe gikk galt under henting av vær"
-                    ErrorReasons.DATABASE -> "Henting lokal-lagret gikk galt"
-                    ErrorReasons.UNKNOWN -> "En ukjent feil oppstod."
+                    ErrorReasons.INTERNET -> stringResource(R.string.no_internet_text)
+                    ErrorReasons.INTERRUPTION -> stringResource(R.string.interruption_text)
+                    ErrorReasons.DATABASE -> stringResource(R.string.database_text)
+                    ErrorReasons.UNKNOWN -> stringResource(R.string.unknown_error_text)
                 }
             )
            },
             icon = {
                 when (reason){
-                    ErrorReasons.INTERNET -> Icon(imageVector = Icons.Filled.WifiOff, contentDescription = "No wifi")
-                    ErrorReasons.INTERRUPTION -> Icon(imageVector = Icons.Filled.Close, contentDescription = "An interruption occured")
-                    ErrorReasons.DATABASE -> Icon(imageVector = Icons.Filled.DataObject, contentDescription = "An error occured reading from the database")
-                    ErrorReasons.UNKNOWN -> Icon(imageVector = Icons.Filled.QuestionMark, contentDescription = "An unkown error occured")
+                    ErrorReasons.INTERNET -> Icon(imageVector = Icons.Filled.WifiOff, contentDescription = stringResource(R.string.no_wifi_icon_description))
+                    ErrorReasons.INTERRUPTION -> Icon(imageVector = Icons.Filled.Close, contentDescription = stringResource(R.string.close_icon_description))
+                    ErrorReasons.DATABASE -> Icon(imageVector = Icons.Filled.DataObject, contentDescription = stringResource(R.string.an_error_occured_reading_from_the_database))
+                    ErrorReasons.UNKNOWN -> Icon(imageVector = Icons.Filled.QuestionMark, contentDescription = stringResource(R.string.an_unkown_error_occured))
                 }
             },
 
             onClick = onReload
         )
         Spacer(modifier = Modifier.padding(10.dp))
-        Text(text = "Trykk på knappen for å prøve igjen", style = MaterialTheme.typography.labelLarge)
+        Text(text = stringResource(R.string.press_to_try_again), style = MaterialTheme.typography.labelLarge)
     }
 }

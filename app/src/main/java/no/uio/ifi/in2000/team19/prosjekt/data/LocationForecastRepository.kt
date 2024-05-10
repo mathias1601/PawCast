@@ -95,7 +95,7 @@ class LocationForecastRepository @Inject constructor(
             val hourFormatter = DateTimeFormatter.ofPattern("HH")
             val hourAsInt = zonedDateTime.format(hourFormatter).toString()
 
-            val date = zonedDateTime.toLocalDate()
+            val date = LocalDateTime.now()
 
             val precipitation =
                 locationForecast.properties.timeseries[i].data.next_1_hours.details.precipitation_amount
@@ -280,7 +280,6 @@ class LocationForecastRepository @Inject constructor(
     }
 
     //Returnerer en liste av Advice-objekter
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getAdvice(generalForecast: ForecastTypes, typeOfDog: UserInfo): List<Advice> {
 
         val adviceForecast = getAdviceForecastData(generalForecast.general[0])
@@ -292,7 +291,6 @@ class LocationForecastRepository @Inject constructor(
 
 
     //Gjør om fra GeneralForecast til AdviceForecast (fjerner unødvendig dsta)
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
 
         return AdviceForecast(
@@ -460,13 +458,20 @@ class LocationForecastRepository @Inject constructor(
 
         //TODO lage en when for dato for flått, hoggorm og nyttår
 
-        val tickSeasonStart = LocalDate.of(2024, 3, 15)
-        val tickSeasonEnd = LocalDate.of(2024, 11, 15)
+        val tickSeasonStart = LocalDateTime.of(
+            2024,
+            3,
+            15,
+            0,
+            0
+        ) // Year, Month, Day, Hour, Minute (defaults to 00:00)
 
-        val viperSeasonStart = LocalDate.of(2024, 2, 28)
-        val viperSeasonEnd = LocalDate.of(2024, 11, 1)
+        val tickSeasonEnd = LocalDateTime.of(2024, 11, 15, 0, 0)
 
-        val newYear = LocalDate.of(2024, 12, 31)
+        val viperSeasonStart = LocalDateTime.of(2024, 2, 28, 0, 0)
+        val viperSeasonEnd = LocalDateTime.of(2024, 11, 1, 0, 0)
+
+        val newYear = LocalDateTime.of(2024, 12, 31, 0, 0)
 
         val theDate = adviceForecast.date
 

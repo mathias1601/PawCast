@@ -41,10 +41,11 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mapbox.search.autocomplete.PlaceAutocompleteSuggestion
+import no.uio.ifi.in2000.team19.prosjekt.R
 
 
 @Composable 
@@ -96,19 +97,16 @@ fun SearchLocationTextField(
                 viewModel.searchLocation(query)
 
             },
-            label = {Text("Søk etter lokasjon")},
+            label = {Text(stringResource(R.string.search_box_label))},
             leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = "Location Search-field") }
         )
         
         if (showSavedConfirmation){
-            Text(text = "✅ Endringer lagret")
+            Text(text = stringResource(R.string.changes_saved_label))
         }
 
 
         val searchState: SearchState = viewModel.searchState.collectAsState().value
-
-
-
 
 
         AnimatedVisibility(
@@ -143,19 +141,19 @@ fun SearchLocationTextField(
                     is SearchState.Error -> TextScreenBox { Error() }
                     is SearchState.Suggestions -> SearchSuggestions(searchState.suggestions, viewModel, focusManager)
                     is SearchState.Idle -> TextScreenBox { Idle() }
-                    else ->  { /* Do nothing. Should never get here. */}
-
+                    is SearchState.Hidden -> { /* Do nothing */}
                 }
-}
+            }
         }
     }
 }
 
-@Preview(showBackground = true)
+
+
 @Composable
 fun Loading(){
     CircularProgressIndicator()
-    Text(text = "Laster inn resultater")
+    Text(text = stringResource(R.string.search_loading_results))
 }
 
 @Composable
@@ -176,16 +174,17 @@ fun TextScreenBox(composable: @Composable () -> Unit){
 
 @Composable
 fun Idle(){
-    Text(text = "\uD83D\uDD0D")
-    Text(text = "Begynn å skrive for å se resultater", textAlign = TextAlign.Center)
+    Text(
+        text = stringResource(R.string.search_start_writing),
+        textAlign = TextAlign.Center)
 }
 
 
 @Composable
 fun Error(){
-    Text(text = "\uD83D\uDC80")
-    Text(text = "En feil skjedde")
-    Text(text = "Har du internett tilgang?") // Might be bad to ask if user has internet but something else went wrong
+    Text(
+        text = stringResource(R.string.search_error_msg),
+        textAlign = TextAlign.Center) // Might be bad to ask if user has internet but something else went wrong. Compromise made due to time.
 }
 
 @Composable
@@ -268,47 +267,3 @@ fun SearchSuggestion(
         }
     }
 }
-
-// When user clicks should get users location and set it. But is unfinnished.
-/*
-@Composable
-fun UseUserLocation(
-    viewModel: SearchLocationViewModel,
-    focusManager: FocusManager,
-) {
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(75.dp)
-        ,
-
-        onClick = {
-
-            keyboardController?.hide()
-            focusManager.clearFocus()
-            // viewModel.selectSearchLocation(suggestion)
-
-        }
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-            ,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Row {
-
-                Icon(imageVector = Icons.Filled.MyLocation, contentDescription = "icon of Place")
-                Text(text = "Bruk din lokasjon")
-            }
-        }
-    }
-}
-
- */

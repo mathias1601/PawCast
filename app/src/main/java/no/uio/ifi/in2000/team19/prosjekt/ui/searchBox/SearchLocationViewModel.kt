@@ -133,9 +133,14 @@ class SearchLocationViewModel @Inject constructor(
                     shortName = response.value!!.name,
                     detailedName = response.value!!.address!!.formattedAddress ?: response.value!!.name, // some adresses dont have a detailedName.
                 )
+
+                updateSearchBoxToRepresentStoredLocation()
+                _isDone.value = true
+
+            } else {
+                _searchState.value = SearchState.Error
             }
-            updateSearchBoxToRepresentStoredLocation()
-            _isDone.value = true
+
         }
 
     }
@@ -148,8 +153,6 @@ class SearchLocationViewModel @Inject constructor(
                  _searchFieldValue.value = it.shortName
             }
         }
-
-
     }
 
     fun setSearchStateToIdle(){
@@ -161,17 +164,6 @@ class SearchLocationViewModel @Inject constructor(
         _searchState.value = SearchState.Hidden
     }
 
-    /*
-    @SuppressLint("MissingPermission") // Supress MissingPermission since permisission gets checked in Composable
-    fun setLocationToUserLocation(){
-
-        val location = fusedLocationClient.lastLocation
-        Log.d("TAG", location.result.latitude.toString())
-        Log.d("TAG", location.result.longitude.toString())
-    }
-     */
-
-    // Method is ran if user just presses done on their keyboard. Then we selected the top result from the earlier search
     fun pickTopResult() {
 
         if (topSuggestion.value != null){

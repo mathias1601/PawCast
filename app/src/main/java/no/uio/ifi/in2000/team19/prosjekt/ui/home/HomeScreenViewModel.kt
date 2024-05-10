@@ -21,7 +21,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.ErrorReasons
 import java.io.IOException
 import java.nio.channels.UnresolvedAddressException
-import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 
@@ -62,7 +62,7 @@ class HomeScreenViewModel @Inject constructor(
     val userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
     // Used to show current temperature.
-    private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", LocalDate.now(), 0.0, 0.0, 0.0, ""))
+    private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", LocalDateTime.now(), 0.0, 0.0, 0.0, ""))
     val temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
 
     // Is used to determine which to dog show.
