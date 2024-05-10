@@ -452,7 +452,7 @@ fun WholeDayAverageWeatherCard(weatherForecast: WeatherForecast) {
                     text = stringResource(
                         R.string.low_degrees,
                         weatherForecast.lowestTemperature!!
-                    ) + stringResource(id = R.string.celciues),
+                    ) + stringResource(id = R.string.celcius),
 
                     style = MaterialTheme.typography.titleSmall
                 )
@@ -461,7 +461,7 @@ fun WholeDayAverageWeatherCard(weatherForecast: WeatherForecast) {
 
                 Text(
 
-                    text = stringResource(R.string.high_degrees, weatherForDay.highestTemperature!!)  + stringResource(id = R.string.celcius),
+                    text = stringResource(R.string.high_degrees, weatherForecast.highestTemperature!!)  + stringResource(id = R.string.celcius),
 
                     style = MaterialTheme.typography.titleSmall
                 )
@@ -510,7 +510,7 @@ fun SixHourMeanForecastCard(weatherForecast: WeatherForecast) {
             )
 
             Text(
-                text = "${weatherForDay.meanTemperature}" + stringResource(id = R.string.celcius),
+                text = "${weatherForecast.meanTemperature}" + stringResource(id = R.string.celcius),
                 style = MaterialTheme.typography.bodyMedium,
             )
 
