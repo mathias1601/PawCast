@@ -46,7 +46,7 @@ import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForecast
 import no.uio.ifi.in2000.team19.prosjekt.ui.LoadingScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.error.ErrorScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.BottomInfo
@@ -114,8 +114,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController:
 
 
                     item {
-                        Column(
-                        ) {
+                        Column {
 
 
 
@@ -147,8 +146,8 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController:
                             verticalArrangement = Arrangement.spacedBy(20.dp),
                         ) {
                             TodayForecastCard(allHours = allHours)
-                            NextDaysForecastCard(weatherForDay = weatherDays[0], meanHours = meanHoursForTomorrow)
-                            NextDaysForecastCard(weatherForDay = weatherDays[1], meanHours = meanHoursForDayAfterTomorrow)
+                            NextDaysForecastCard(weatherForecast = weatherDays[0], meanHours = meanHoursForTomorrow)
+                            NextDaysForecastCard(weatherForecast = weatherDays[1], meanHours = meanHoursForDayAfterTomorrow)
                         }
                     }
                     
@@ -269,7 +268,7 @@ fun TodayForecastCard(allHours: List<GeneralForecast>) {
 
 // ============= TOMORROW & DAY AFTER TOMOROW ========================
 @Composable
-fun NextDaysForecastCard(weatherForDay: WeatherForDay, meanHours:List<WeatherForDay>){
+fun NextDaysForecastCard(weatherForecast: WeatherForecast, meanHours:List<WeatherForecast>){
 
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -296,7 +295,7 @@ fun NextDaysForecastCard(weatherForDay: WeatherForDay, meanHours:List<WeatherFor
                     .fillMaxWidth()
 
             ) {
-                val dayWithCapitalizedFirst = weatherForDay.day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+                val dayWithCapitalizedFirst = weatherForecast.day.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
                 Text(
                     text = dayWithCapitalizedFirst,
                     style = MaterialTheme.typography.titleLarge
@@ -304,7 +303,7 @@ fun NextDaysForecastCard(weatherForDay: WeatherForDay, meanHours:List<WeatherFor
                 )
             }
 
-            WholeDayAverageWeatherCard(weatherForDay = weatherForDay)
+            WholeDayAverageWeatherCard(weatherForecast = weatherForecast)
 
             AnimatedVisibility(
                 visible = isExpanded,
@@ -317,7 +316,7 @@ fun NextDaysForecastCard(weatherForDay: WeatherForDay, meanHours:List<WeatherFor
                     verticalArrangement = Arrangement.spacedBy(Measurements.WithinSectionVerticalGap.measurement)
                 ){
                     meanHours.map { weather ->
-                        SixHourMeanForecastCard(weatherForDay = weather)
+                        SixHourMeanForecastCard(weatherForecast = weather)
                     }
                 }
             }
@@ -384,7 +383,7 @@ fun SingleHourForecastCard(generalForecast: GeneralForecast) {
             )
 
             Text(
-                text = stringResource(R.string.precipitation, generalForecast.percipitation),
+                text = stringResource(R.string.precipitation, generalForecast.precipitation),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -396,12 +395,12 @@ fun SingleHourForecastCard(generalForecast: GeneralForecast) {
 
 @SuppressLint("DiscouragedApi")
 @Composable
-fun WholeDayAverageWeatherCard(weatherForDay: WeatherForDay) {
+fun WholeDayAverageWeatherCard(weatherForecast: WeatherForecast) {
 
 
     //TODO find better way to showcase picture because of Discouraged API
     val context = LocalContext.current
-    val drawableName = weatherForDay.symbol
+    val drawableName = weatherForecast.symbol
     val drawableId =
         context.resources.getIdentifier(drawableName, "drawable", context.packageName)
 
@@ -431,14 +430,14 @@ fun WholeDayAverageWeatherCard(weatherForDay: WeatherForDay) {
 
             Column {
                 Text(
-                    text = stringResource(R.string.low_degrees, weatherForDay.lowestTemperature!!) + stringResource(id = R.string.celciues),
+                    text = stringResource(R.string.low_degrees, weatherForecast.lowestTemperature!!) + stringResource(id = R.string.celciues),
                     style = MaterialTheme.typography.titleSmall
                 )
 
 
 
                 Text(
-                    text = stringResource(R.string.high_degrees, weatherForDay.highestTemperature!!)  + stringResource(id = R.string.celciues),
+                    text = stringResource(R.string.high_degrees, weatherForecast.highestTemperature!!)  + stringResource(id = R.string.celciues),
                     style = MaterialTheme.typography.titleSmall
                 )
             }
@@ -449,10 +448,10 @@ fun WholeDayAverageWeatherCard(weatherForDay: WeatherForDay) {
 
 @SuppressLint("DiscouragedApi")
 @Composable
-fun SixHourMeanForecastCard(weatherForDay: WeatherForDay) {
+fun SixHourMeanForecastCard(weatherForecast: WeatherForecast) {
 
     val context = LocalContext.current
-    val drawableName = weatherForDay.symbol
+    val drawableName = weatherForecast.symbol
     val drawableId =
         context.resources.getIdentifier(drawableName, "drawable", context.packageName)
 
@@ -473,8 +472,8 @@ fun SixHourMeanForecastCard(weatherForDay: WeatherForDay) {
             Text(
                 text = stringResource(
                     R.string.timespan_between_hours,
-                    weatherForDay.startingTime!!,
-                    weatherForDay.endingTime!!
+                    weatherForecast.startingTime!!,
+                    weatherForecast.endingTime!!
                 ),
                 style = MaterialTheme.typography.bodyMedium,
             )
@@ -486,18 +485,18 @@ fun SixHourMeanForecastCard(weatherForDay: WeatherForDay) {
             )
 
             Text(
-                text = "${weatherForDay.meanTemperature}" + stringResource(id = R.string.celciues),
+                text = "${weatherForecast.meanTemperature}" + stringResource(id = R.string.celciues),
                 style = MaterialTheme.typography.bodyMedium,
             )
 
 
             Text(
-                text = stringResource(id = R.string.wind_speed, weatherForDay.wind!!),
+                text = stringResource(id = R.string.wind_speed, weatherForecast.wind!!),
                 style = MaterialTheme.typography.bodyMedium,
             )
 
             Text(
-                text = stringResource(id = R.string.precipitation, weatherForDay.precipitation!!),
+                text = stringResource(id = R.string.precipitation, weatherForecast.precipitation!!),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }

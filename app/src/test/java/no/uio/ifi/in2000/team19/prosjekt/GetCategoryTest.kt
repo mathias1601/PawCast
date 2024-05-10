@@ -19,7 +19,7 @@ class GetCategoryTest {
             AdviceForecast(
                 temperature = 29.1,
                 thunderprobability = 54.2,
-                percipitation = 0.2,
+                precipitation = 0.2,
                 UVindex = 4.1,
                 date = LocalDate.of(2024, 7, 4),
                 time = "14")
@@ -64,7 +64,7 @@ class GetCategoryTest {
             AdviceForecast(
                 temperature = 18.9,
                 thunderprobability = 0.0,
-                percipitation = 0.1,
+                precipitation = 0.1,
                 UVindex = 3.5,
                 date = LocalDate.of(2024, 11, 19),
                 time = "18")
@@ -106,7 +106,7 @@ class GetCategoryTest {
             AdviceForecast(
                 temperature = 14.5,
                 thunderprobability = 0.0,
-                percipitation = 0.0,
+                precipitation = 0.0,
                 UVindex = 5.1,
                 date = LocalDate.of(2024, 7, 4),
                 time = "15")
@@ -148,7 +148,7 @@ class GetCategoryTest {
             AdviceForecast(
                 temperature = 14.5,
                 thunderprobability = 0.0,
-                percipitation = 0.0,
+                precipitation = 0.0,
                 UVindex = 5.1,
                 date = LocalDate.of(2024, 7, 4),
                 time = "15")
@@ -190,7 +190,7 @@ class GetCategoryTest {
             AdviceForecast(
                 temperature = -7.9,
                 thunderprobability = 0.0,
-                percipitation = 0.0,
+                precipitation = 0.0,
                 UVindex = 0.0,
                 date = LocalDate.of(2024, 12, 9),
                 time = "20")
@@ -231,7 +231,7 @@ class GetCategoryTest {
             AdviceForecast(
                 temperature = 7.3,
                 thunderprobability = 0.0,
-                percipitation = 0.0,
+                precipitation = 0.0,
                 UVindex = 0.0,
                 date = LocalDate.of(2024, 12, 31),
                 time = "12")

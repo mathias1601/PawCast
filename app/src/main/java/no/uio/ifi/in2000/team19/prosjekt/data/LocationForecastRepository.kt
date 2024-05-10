@@ -2,14 +2,12 @@ package no.uio.ifi.in2000.team19.prosjekt.data
 
 import android.content.Context
 import android.util.Log
-import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
-import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -128,13 +126,13 @@ class LocationForecastRepository @Inject constructor(
         locationForecast: LocationForecast,
         nrDays: Int,
         startingHour: Int
-    ): List<WeatherForDay> {
+    ): List<WeatherForecast> {
 
         var theHour = startingHour
 
         var middleOfDay: Int
 
-        val forecastList = mutableListOf<WeatherForDay>()
+        val forecastList = mutableListOf<WeatherForecast>()
 
         for (i in 0 until nrDays) {
 
@@ -162,7 +160,7 @@ class LocationForecastRepository @Inject constructor(
                 locationForecast.properties.timeseries[middleOfDay].data.next_6_hours.summary.symbol_code
 
             forecastList.add(
-                WeatherForDay(
+                WeatherForecast(
                     symbolCode,
                     dayOfWeekString,
                     coldestTemperature,
@@ -180,9 +178,9 @@ class LocationForecastRepository @Inject constructor(
     private fun getWeatherForecastHours(
         locationForecast: LocationForecast,
         startHour: Int
-    ): List<WeatherForDay> {
+    ): List<WeatherForecast> {
 
-        val forecastList = mutableListOf<WeatherForDay>()
+        val forecastList = mutableListOf<WeatherForecast>()
 
         var theHour = startHour
 
@@ -253,7 +251,7 @@ class LocationForecastRepository @Inject constructor(
                 nextDay.dayOfWeek.getDisplayName(TextStyle.FULL, Locale("no", "NO"))
 
             forecastList.add(
-                WeatherForDay(
+                WeatherForecast(
                     symbolCode,
                     dayOfWeekString,
                     null,
