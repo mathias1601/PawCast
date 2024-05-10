@@ -18,9 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationTextField
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
 
@@ -49,11 +51,11 @@ fun LocationSetupScreen(
 
             Icon(
                 imageVector = Icons.Filled.LocationOn,
-                contentDescription = "Lokasjon")
+                contentDescription = stringResource(id = R.string.location))
 
 
             Text(
-                text = "Hvor ønsker du værmeldinger for?",
+                text = stringResource(R.string.change_location_setup_screen_title),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -76,7 +78,7 @@ fun LocationSetupScreen(
         ) {
 
             Text(
-                text="Lokasjon blir lagret lokalt på enheten.",
+                text= stringResource(id = R.string.location_disclaimer),
                 style = MaterialTheme.typography.labelMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -93,8 +95,8 @@ fun LocationSetupScreen(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.primary
                 )) {
-                Text(text = "Neste")
-                Icon(Icons.Filled.ChevronRight, contentDescription = "Next")
+                Text(text = stringResource(id = R.string.next))
+                Icon(Icons.Filled.ChevronRight, contentDescription = stringResource(R.string.next_icon_description))
             }
             
             Spacer(modifier = Modifier.padding(24.dp)) // match button heigth due to Skip button on last screen.

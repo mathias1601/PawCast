@@ -14,9 +14,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens.AgeSetupScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens.BodySetupScreen
@@ -40,8 +41,13 @@ fun SetupManager(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
+                    val amountOfSetupPages = "6"
                     Text(
-                        text = "${id.toInt()+1} / 6",
+                        text = stringResource(
+                            R.string.setup_stage_count,
+                            id.toInt() + 1,
+                            amountOfSetupPages
+                        ),
                         style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Right,
                         modifier = Modifier.fillMaxWidth()
@@ -55,12 +61,11 @@ fun SetupManager(
                             if (id != "0"){ // <--- keep this.
                                 navController.popBackStack()
                             }
-
                         }
                         ) {
                             Icon( //Er ikke Material Design 3
                                 imageVector = Icons.Filled.ArrowBackIosNew,
-                                contentDescription = "Tilbake"
+                                contentDescription = stringResource(id = R.string.GoBackText)
                             )
                         }
                     }
@@ -71,7 +76,6 @@ fun SetupManager(
         Column (
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(16.dp)
         ) {
 
             // Should refactor to use "generic" setup screen class as we do alot of copy pasting for now.

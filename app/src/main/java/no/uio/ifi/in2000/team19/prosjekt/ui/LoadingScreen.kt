@@ -8,7 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import no.uio.ifi.in2000.team19.prosjekt.R
 
 
 @Composable
@@ -20,6 +22,6 @@ fun LoadingScreen(){
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         CircularProgressIndicator()
-        Text(text = "Laster...")
+        Text(text = stringResource(R.string.loading_text))
     }
 }

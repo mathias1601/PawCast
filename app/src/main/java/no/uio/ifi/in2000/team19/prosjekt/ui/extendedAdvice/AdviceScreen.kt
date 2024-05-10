@@ -57,12 +57,10 @@ fun AdviceScreen(adviceId: Int, navController: NavController, viewModel: HomeScr
                 bottom = innerPadding.calculateBottomPadding(),
                 start = 20.dp,
                 end = 20.dp
-
             )
         ) {
             MarkdownText(markdown = advice.description)
         }
-
     }
 }
 

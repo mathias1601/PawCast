@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.home
 
 
-import android.annotation.SuppressLint
 import android.icu.util.Calendar
 import android.text.Layout
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -79,8 +77,6 @@ import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.component.shape.shader.TopBottomShader
-import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
@@ -93,6 +89,9 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.ui.LoadingScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.error.ErrorScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.absoluteValue
 
 
@@ -172,7 +171,8 @@ fun HomeScreen(
     // Graident colors from 0% to 50% of height
     val colorStops = arrayOf(
         0.0f to Color(0xFF0080FF),
-        0.5f to Color(0xFFFFB1C1)
+        0.5f to Color(0xFFFFB1C1),
+        0.6f to MaterialTheme.colorScheme.surface // blend at bottom into same color as surface
     )
 
 
@@ -190,35 +190,46 @@ fun HomeScreen(
         ){
         Column(
             modifier = Modifier
+                .padding(top = innerPadding.calculateTopPadding())
                 .fillMaxSize()
-                .padding(innerPadding)
                 .verticalScroll(scrollState)
         ) {
 
 
             // TOP CONTENT
-
             val context = LocalContext.current
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
+                    .padding(
+                        top = 20.dp, // more top padding to avoid camera on new phones
+                        start = 10.dp,
+                        end = 10.dp
+                    ),
+
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                /*
 
 
-                val welcomeMsg = if (userInfo.userName == "" && userInfo.dogName == "") "Heisann!" else "Heisann ${userInfo.userName} og ${userInfo.dogName}!"
+
+                val welcomeMsg =
+                    if (userInfo.userName == "" || userInfo.dogName == "") stringResource(R.string.welcome_message_unnamed)
+                    else stringResource(R.string.welcome_message_named, userInfo.userName, userInfo.dogName)
+
                 Text(
                     text = welcomeMsg,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White
                 )
-                */
 
+                Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
+
+
+
+                // Weather Items
                 Column(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -230,19 +241,23 @@ fun HomeScreen(
                     val drawableName = weather.symbol
                     val drawableId = context.resources.getIdentifier(drawableName, "drawable", context.packageName) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
 
+                    
+
+                    
                     Image(
                         painter = painterResource(id = drawableId),
                         contentDescription = "Værsymbol"
                     )
-
                     Text(
-                        text = weather.temperature.toString() + "°C",
+                        text = weather.temperature.toString() + stringResource(R.string.celciues),
                         style = MaterialTheme.typography.displayMedium  ,
-                        color = Color.White,
+                        color = Color.White, // Always white since background is always blue
 
                         )
-                    Text(text = "Akkurat nå")
 
+                    Text(
+                        text = stringResource(R.string.right_now), // Always white since background is always blue
+                    )
                 }
 
                 // Location Button / Text and Dog avatar
@@ -253,7 +268,8 @@ fun HomeScreen(
                     ) {
 
                     ElevatedButton(onClick = { navController.navigate("settings") }) {
-                        Icon(imageVector = Icons.Filled.LocationOn, contentDescription = "Location")
+                        Icon(imageVector = Icons.Filled.LocationOn, contentDescription = stringResource(R.string.location)
+                        )
                         Text(
                             text = location.shortName,
                             style = MaterialTheme.typography.labelMedium,
@@ -265,17 +281,17 @@ fun HomeScreen(
 
                     Image(
                         painter = painterResource(id = dogId),
-                        contentDescription = "dog avatar",
+                        contentDescription = dogImage, // is formatted like dog_normal, dog_normal_white_sticker, dog_rain_white_sticker ... etc.
                         modifier = Modifier
                             .height(175.dp)
                             .offset(
                                 x = (0).dp,
-                                y = (30).dp
+                                y = (50).dp
                             )
                         )
                     }
 
-                Spacer(modifier = Modifier.padding(10.dp))
+                Spacer(modifier = Modifier.padding(Measurements.WithinSectionVerticalGap.measurement))
             }
 
 
@@ -295,7 +311,7 @@ fun HomeScreen(
                     onDismissRequest = { showAdviceInfoSheet = false }
                 ) {
                     Column(
-                        modifier = Modifier.padding(20.dp)
+                        modifier = Modifier.padding(horizontal = Measurements.HorizontalPadding.measurement)
                     ) {
                         Text(
                             text = "Anbefalinger",
@@ -337,21 +353,23 @@ fun HomeScreen(
 
             // This is the Surface containing Advice + Graph cards.
             Surface(
-                color = MaterialTheme.colorScheme.surface,
                 shape = MaterialTheme.shapes.extraLarge
 
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(20.dp),
-                    verticalArrangement = Arrangement.SpaceBetween
+                        .padding(
+                            horizontal = Measurements.HorizontalPadding.measurement,
+                            vertical = Measurements.BetweenSectionVerticalGap.measurement
+                        ),
                 ) {
 
 
-                /*
-                ============= ADVICE CARDS =====================================
-                Wrapped in column so advice content is grouped together
-                */
+                    /*
+                    ============= ADVICE CARDS =====================================
+                    Wrapped in column so advice content is grouped together
+                    */
+
                     Column(
                     ) {
                         Row (
@@ -362,7 +380,7 @@ fun HomeScreen(
                         ) {
 
                             Text(
-                                text = "Anbefalinger",
+                                text = stringResource(R.string.recomendations_title),
                                 style = MaterialTheme.typography.titleLarge,
                             )
 
@@ -374,7 +392,7 @@ fun HomeScreen(
 
 
                         // ADVICE CARDS / Horizontal Pager / Carousell + Indicator for card index
-                        // Inspired by offical documentaion: https://developer.android.com/develop/ui/compose/layouts/pager
+                            // Inspired by offical documentaion: https://developer.android.com/develop/ui/compose/layouts/pager
                         Column {
                             val pagerState = rememberPagerState(pageCount = {
                                 advice.allAdvice.size
@@ -383,7 +401,7 @@ fun HomeScreen(
                             // Advice cards / Horizontal Pager
                             HorizontalPager(
                                 state = pagerState,
-                                pageSpacing = 20.dp
+                                pageSpacing = Measurements.HorizontalPadding.measurement
                             ) { id ->
                                 AdviceCard(
                                     advice = advice.allAdvice[id],
@@ -406,20 +424,21 @@ fun HomeScreen(
                         }
                     }
 
+                    Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
+
+
 
                     // =============== GRAPH ==========================
                     Column(
-                        modifier = Modifier.padding(bottom =  100.dp)
                     ){
-                        Spacer(modifier = Modifier.padding(10.dp))
 
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                             Text(
-                                text = "Beste tidspunkter for tur",
+                                text = stringResource(R.string.graph_title),
                                 style = MaterialTheme.typography.titleLarge,
                             )
                             TextButton(onClick = { showGraphInfoSheet = true }) {
-                                Icon(imageVector = Icons.Filled.Info, contentDescription = "Info about graph")
+                                Icon(imageVector = Icons.Filled.Info, contentDescription = stringResource(R.string.info_about_graph))
                             }
                         }
 
@@ -438,13 +457,35 @@ fun HomeScreen(
                         }
 
                         Spacer(modifier = Modifier.padding(10.dp))
-
                         ForecastGraph(graphUiState, firstYValueUiState)
                     }
+
+
+                    Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
+
+                    BottomInfo(lastUpdated = weather.date)
+                    Spacer(modifier = Modifier.padding(Measurements.WithinSectionVerticalGap.measurement)) // spacing to not lock items to top of app bar
                 }
+
+
             }
         }
     }
+}
+
+@Composable
+fun BottomInfo(lastUpdated: LocalDateTime){
+
+    Text(
+        text = stringResource(R.string.made_with_data_from_met),
+        style = MaterialTheme.typography.bodySmall
+    )
+
+    val format = DateTimeFormatter.ofPattern("HH:mm")
+    Text(text = stringResource(R.string.last_updated, lastUpdated.format(format)),
+        style = MaterialTheme.typography.bodySmall
+    )
+
 }
 
 
@@ -498,7 +539,7 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.3f)
+            .defaultMinSize(minHeight = Measurements.AdviceCardHeight.measurement)
 
 
             // Scroll "animation" changing the cards opacity while scrolling.
@@ -525,7 +566,7 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(20.dp)
+                            .padding(Measurements.HorizontalPadding.measurement)
                         ,
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -550,39 +591,25 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
                                 navigateToMoreInfoScreen()
                             },
                             modifier = Modifier.align(Alignment.End),
-                            contentPadding = PaddingValues(horizontal = 22.dp, vertical = 8.dp),
 
                         ) {
                             Text(
-                                text = "Les mer"
+                                text = stringResource(R.string.read_more)
                             )
                         }
                     }
-
-                }
-
+            }
     }
 }
 
-@SuppressLint("RestrictedApi")
 @Composable
 fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState: Int) {
 
-    // Setting start state to current time
-    // val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour
-    //val scrollState = rememberVicoScrollState(
-    //    initialScroll = Scroll.Absolute.Companion.x(x = time.toFloat(), bias = 0f)
-    // )
-
-    //val hoursOfDay = listOf("00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13","14", "15", "16", "17", "18", "19", "20", "21", "22", "23")
     val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour
-
     val bottomAxisValueFormatter =
         AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _, _->
-
-            var label = time  + x.toInt() // Label = tid nå + x indeks... x = 0 = tiden nå, x = 1 = om en time... formatert som Int 0 <= 36
-
-            if (label > 23){ // Trekk fra 24 timer dersom
+            var label = time  + x.toInt() // Label = time now + x index... x = 0 = now, x = 1 = in hour hour... formatted as Int 0 <= 36
+            if (label > 23){ // Loop around to 00:00
                 label -= 24
             }
 
@@ -611,28 +638,29 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
 
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .height(Measurements.GraphHeight.measurement),
         colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
         )
     ){
         Column (
-            modifier = Modifier
-                .padding(15.dp),
+            modifier = Modifier.padding(
+                horizontal = Measurements.WithinSectionHorizontalGap.measurement,
+                vertical = Measurements.WithinSectionVerticalGap.measurement
+            ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ){
-            Text("Høyere score er bedre")
             CartesianChartHost(
-                // getXStep = { 1f }, // Show every X step on X axis.
+                modifier = Modifier        // Workaround to enable alpha compositing
+                    .fillMaxSize(),
                 chart =
                     rememberCartesianChart(
                         rememberLineCartesianLayer(
                             listOf(
                                 rememberLineSpec(
-                                    shader = TopBottomShader(
-                                        DynamicShaders.color(scoreColor!!),
-                                        DynamicShaders.color(scoreColor),
+                                    shader = DynamicShaders.color(scoreColor!!
                                     ),
                                 )
                             ),
@@ -641,7 +669,6 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                         startAxis = rememberStartAxis(
                             titleComponent = rememberTextComponent(
                                 color = MaterialTheme.colorScheme.onSecondaryContainer,
-
                                 background = ShapeComponent(
                                     shape = Shapes.pillShape,
                                     color = MaterialTheme.colorScheme.secondaryContainer.hashCode()
@@ -652,7 +679,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                                 textSize = MaterialTheme.typography.bodyMedium.fontSize
                                 ),
 
-                            title = "Score"
+                            title = stringResource(R.string.y_axis_title)
                         ),
                         bottomAxis = rememberBottomAxis(
                             itemPlacer = AxisItemPlacer.Horizontal.default(
@@ -668,18 +695,16 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                                     shape = Shapes.pillShape,
                                     color = MaterialTheme.colorScheme.secondaryContainer.hashCode()
                                 ),
-
                                 padding = MutableDimensions(8f, 1f),
                                 textAlignment = Layout.Alignment.ALIGN_CENTER,
                                 textSize = MaterialTheme.typography.bodyMedium.fontSize
                             ),
-                            title = "Klokkkeslett",
+                            title = stringResource(R.string.x_axis_title),
                             guideline = null
                         ),
                 ),
                 modelProducer = graphUiState,
                 zoomState = rememberVicoZoomState(zoomEnabled = false),
-                modifier = Modifier.fillMaxSize(),
                 marker = rememberMarker(),
                 horizontalLayout = HorizontalLayout.fullWidth(),
             )

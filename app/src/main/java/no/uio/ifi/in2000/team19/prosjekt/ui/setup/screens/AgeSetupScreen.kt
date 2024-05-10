@@ -50,7 +50,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
         ) {
             Image(
                 painter = painterResource(id = R.drawable.dog_normal),
-                contentDescription = "Avatar",
+                contentDescription = stringResource(id = R.string.dog_normal_description),
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier.height(125.dp)
             )
@@ -61,7 +61,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
 
         ) {
             Text(
-                text="Hvor gammel er hunden din?",
+                text= stringResource(R.string.age_screen_title),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -98,7 +98,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ){
-                        Text(text = "Valp")
+                        Text(text = stringResource(R.string.puppy))
                     }
                 }
 
@@ -125,7 +125,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ){
-                        Text(text = "Voksen")
+                        Text(text = stringResource(R.string.adult))
                     }
                 }
 
@@ -151,7 +151,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ){
-                        Text(text = "Senior")
+                        Text(text = stringResource(R.string.senior))
                     }
                 }
             }
