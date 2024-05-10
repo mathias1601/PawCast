@@ -31,6 +31,12 @@ sealed interface AdviceUiState{
     data class Error(val errorReason : ErrorReasons) : AdviceUiState
 }
 
+data class BestTimesForWalk (
+    var morning : String,
+    var midday : String,
+    var evening : String
+)
+
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
@@ -46,8 +52,9 @@ class HomeScreenViewModel @Inject constructor(
     private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
     val graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
 
-    private val _bestTimeUiState = MutableStateFlow(mutableListOf("", "", ""))
-    val bestTimeUiState: StateFlow<List<String>> = _bestTimeUiState.asStateFlow()
+    // Contains the best time for a trip for morning, midday and evening based on score.
+    private val _bestTimeUiState = MutableStateFlow(BestTimesForWalk("", "", ""))
+    val bestTimeUiState: StateFlow<BestTimesForWalk> = _bestTimeUiState.asStateFlow()
 
     // Contains the value of graphs score on index 0. Used to set graph color to different color based on this value.
     private val _firstYValueUiState = MutableStateFlow(0)
@@ -80,7 +87,6 @@ class HomeScreenViewModel @Inject constructor(
                     _locationUiState.value = cords
                     loadWeatherForecast()
                 }
-
             } catch (e: IOException) {
                 _adviceUiState.value = AdviceUiState.Error(ErrorReasons.DATABASE)
             }
@@ -174,6 +180,12 @@ class HomeScreenViewModel @Inject constructor(
         var bestRatingMidday = 0
         var bestRatingEvening = 0
 
+        val bestTimesForWalk = BestTimesForWalk(
+            morning = "",
+            midday = "",
+            evening = ""
+        )
+
         forecasts.forEach { forecast ->
 
             val hourOfDay = forecast.time
@@ -192,52 +204,42 @@ class HomeScreenViewModel @Inject constructor(
                     overallRating = it
                 }
             }
-            //finner beste tiden å gå tur og legger til i ui state: morgen, midt på dagen og kveld
+
+
+            // Find highest score at morning, midday and evening.
+            val hour = hourOfDay.toInt()
 
             // Morning
-            if (hourOfDay.toInt() in 5..10) {
-                if (overallRating >= bestRatingMorning) {
+            if (hour in 5..10) {
+                if (overallRating >= bestRatingMorning && overallRating > 4) {
                     bestRatingMorning = overallRating
-                    _bestTimeUiState.value[0] = hourOfDay
+                    bestTimesForWalk.morning = hourOfDay
                 }
             }
 
             // Midday
-            if (hourOfDay.toInt() in 10..18) {
-                if (overallRating >= bestRatingMidday) {
+            else if (hour in 10..18) {
+                if (overallRating >= bestRatingMidday && overallRating > 4) {
                     bestRatingMidday = overallRating
-                    _bestTimeUiState.value[1] = hourOfDay
+                    bestTimesForWalk.midday = hourOfDay
                 }
             }
 
             // Evening
-            if (hourOfDay.toInt() in 18..22) {
-                if (overallRating >= bestRatingEvening) {
+            else if (hour in 18..22) {
+                if (overallRating >= bestRatingEvening && overallRating > 4) {
                     bestRatingEvening = overallRating
-                    _bestTimeUiState.value[2] = hourOfDay
+                    bestTimesForWalk.evening = hourOfDay
                 }
             }
 
             overallRatingList.add(overallRating)
         }
 
-        if (bestRatingMorning < 4) {
-            _bestTimeUiState.value[0] = "none"
-        }
-        if (bestRatingMidday < 4) {
-            _bestTimeUiState.value[1] = "none"
-        }
-        if (bestRatingEvening < 4) {
-            _bestTimeUiState.value[2] = "none"
-        }
-
-
-
-        Log.i("RATINGS", "${overallRatingList.size}")
-        Log.i("rating list", overallRatingList.toString())
+        _bestTimeUiState.value = bestTimesForWalk
 
         // x axis is defined in UI layer based on current time + index of y points.
-        return overallRatingList
+        return overallRatingList // y axis data
     }
 
     //these maps are used to determine rating

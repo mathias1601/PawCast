@@ -25,8 +25,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -53,9 +55,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.navigation.NavController
@@ -77,6 +76,7 @@ import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
@@ -156,7 +156,7 @@ fun HomeScreen(
     location: Cords,
     advice: AdviceUiState.Success,
     graphUiState: CartesianChartModelProducer,
-    bestTime: List<String>,
+    bestTime: BestTimesForWalk,
     weather: GeneralForecast,
     firstYValueUiState: Int,
     navController: NavController,
@@ -187,7 +187,7 @@ fun HomeScreen(
                     colorStops = colorStops,
                 )
             )
-        ){
+    ) {
         Column(
             modifier = Modifier
                 .padding(top = innerPadding.calculateTopPadding())
@@ -213,11 +213,13 @@ fun HomeScreen(
             ) {
 
 
-
-
                 val welcomeMsg =
                     if (userInfo.userName == "" || userInfo.dogName == "") stringResource(R.string.welcome_message_unnamed)
-                    else stringResource(R.string.welcome_message_named, userInfo.userName, userInfo.dogName)
+                    else stringResource(
+                        R.string.welcome_message_named,
+                        userInfo.userName,
+                        userInfo.dogName
+                    )
 
                 Text(
                     text = welcomeMsg,
@@ -226,7 +228,6 @@ fun HomeScreen(
                 )
 
                 Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
-
 
 
                 // Weather Items
@@ -239,21 +240,25 @@ fun HomeScreen(
 
 
                     val drawableName = weather.symbol
-                    val drawableId = context.resources.getIdentifier(drawableName, "drawable", context.packageName) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
+                    val drawableId = context.resources.getIdentifier(
+                        drawableName,
+                        "drawable",
+                        context.packageName
+                    ) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
 
-                    
 
-                    
+
+
                     Image(
                         painter = painterResource(id = drawableId),
                         contentDescription = "Værsymbol"
                     )
                     Text(
                         text = weather.temperature.toString() + stringResource(R.string.celciues),
-                        style = MaterialTheme.typography.displayMedium  ,
+                        style = MaterialTheme.typography.displayMedium,
                         color = Color.White, // Always white since background is always blue
 
-                        )
+                    )
 
                     Text(
                         text = stringResource(R.string.right_now), // Always white since background is always blue
@@ -265,10 +270,12 @@ fun HomeScreen(
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
-                    ) {
+                ) {
 
                     ElevatedButton(onClick = { navController.navigate("settings") }) {
-                        Icon(imageVector = Icons.Filled.LocationOn, contentDescription = stringResource(R.string.location)
+                        Icon(
+                            imageVector = Icons.Filled.LocationOn,
+                            contentDescription = stringResource(R.string.location)
                         )
                         Text(
                             text = location.shortName,
@@ -276,7 +283,11 @@ fun HomeScreen(
                         )
                     }
 
-                    val dogId = context.resources.getIdentifier(dogImage, "drawable", context.packageName) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
+                    val dogId = context.resources.getIdentifier(
+                        dogImage,
+                        "drawable",
+                        context.packageName
+                    ) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
 
 
                     Image(
@@ -288,8 +299,8 @@ fun HomeScreen(
                                 x = (0).dp,
                                 y = (50).dp
                             )
-                        )
-                    }
+                    )
+                }
 
                 Spacer(modifier = Modifier.padding(Measurements.WithinSectionVerticalGap.measurement))
             }
@@ -298,10 +309,9 @@ fun HomeScreen(
             // ================================ MAIN CONTENT =====================.
 
 
-
             // ======INFO OPEN / CLOSE BOXES =============
             var showGraphInfoSheet by remember { mutableStateOf(false) }
-            var showAdviceInfoSheet by remember { mutableStateOf(false)}
+            var showAdviceInfoSheet by remember { mutableStateOf(false) }
 
             // Advice Info Sheet.
             if (showAdviceInfoSheet) {
@@ -372,7 +382,7 @@ fun HomeScreen(
 
                     Column(
                     ) {
-                        Row (
+                        Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier
@@ -390,9 +400,8 @@ fun HomeScreen(
                         }
 
 
-
                         // ADVICE CARDS / Horizontal Pager / Carousell + Indicator for card index
-                            // Inspired by offical documentaion: https://developer.android.com/develop/ui/compose/layouts/pager
+                        // Inspired by offical documentaion: https://developer.android.com/develop/ui/compose/layouts/pager
                         Column {
                             val pagerState = rememberPagerState(pageCount = {
                                 advice.allAdvice.size
@@ -414,12 +423,14 @@ fun HomeScreen(
                             Spacer(modifier = Modifier.padding(2.dp))
                             Row(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                ,
+                                    .fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 // used to have gray circle showing current card, but this lagged quite alot even though it taken from documentation, so we landed on numbers which lags alot less.
-                                Text(text = "${pagerState.currentPage+1}/${advice.allAdvice.size}", style = MaterialTheme.typography.labelLarge)
+                                Text(
+                                    text = "${pagerState.currentPage + 1}/${advice.allAdvice.size}",
+                                    style = MaterialTheme.typography.labelLarge
+                                )
                             }
                         }
                     }
@@ -427,51 +438,45 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
 
 
-
                     // =============== GRAPH ==========================
                     Column(
-                    ){
+                    ) {
 
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
                             Text(
                                 text = stringResource(R.string.graph_title),
                                 style = MaterialTheme.typography.titleLarge,
                             )
                             TextButton(onClick = { showGraphInfoSheet = true }) {
-                                Icon(imageVector = Icons.Filled.Info, contentDescription = stringResource(R.string.info_about_graph))
+                                Icon(
+                                    imageVector = Icons.Filled.Info,
+                                    contentDescription = stringResource(R.string.info_about_graph)
+                                )
                             }
                         }
-
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
-                            )){
-                            Column(
-                                modifier = Modifier.padding(15.dp)
-                            ) {
-                                GetWalkTimes(bestTime)
-                            }
-
-                        }
+                        
+                        RecomendedTimesForWalk(bestTimesForWalk = bestTime)
 
                         Spacer(modifier = Modifier.padding(10.dp))
+                        
                         ForecastGraph(graphUiState, firstYValueUiState)
+                        
+                        Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
+
+                        BottomInfo(lastUpdated = weather.date)
+                        
+                        Spacer(modifier = Modifier.padding(Measurements.WithinSectionVerticalGap.measurement)) // spacing to not lock items to top of app bar
                     }
-
-
-                    Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
-
-                    BottomInfo(lastUpdated = weather.date)
-                    Spacer(modifier = Modifier.padding(Measurements.WithinSectionVerticalGap.measurement)) // spacing to not lock items to top of app bar
                 }
-
-
             }
         }
     }
 }
+
 
 @Composable
 fun BottomInfo(lastUpdated: LocalDateTime){
@@ -490,42 +495,62 @@ fun BottomInfo(lastUpdated: LocalDateTime){
 
 
 @Composable
-fun GetWalkTimes(bestTime: List<String>) {
+fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
 
-    var morgentur: Boolean = true
-    var dagstur: Boolean = true
-    var kveldstur: Boolean = true
 
-    if (bestTime[0] == "none" && bestTime[1] == "none" && bestTime[2] == "none") {
-        Text("Du bør begrense tur i dag", modifier = Modifier.padding(horizontal = 15.dp),
-            style = MaterialTheme.typography.headlineSmall)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(15.dp)
+                .fillMaxSize()
+        ) {
+
+
+
+            val morningText =
+                if (bestTimesForWalk.morning.isNotBlank()) "Morgentur: ${bestTimesForWalk.morning}:00"
+                else "Anbefaler ikke morgentur idag"
+            val middayText =
+                if (bestTimesForWalk.midday.isNotBlank()) "Dagstur: ${bestTimesForWalk.midday}:00"
+                else "Anbefaler ikke dagstur idag"
+            val eveningText =
+                if (bestTimesForWalk.evening.isNotBlank()) "Kveldstur: ${bestTimesForWalk.evening}:00"
+                else "Anbefaler ikke kveldstur i dag."
+
+
+            if (bestTimesForWalk.morning.isBlank() && bestTimesForWalk.midday.isBlank() && bestTimesForWalk.evening.isBlank()){
+
+                Row()
+                Text(text = "I dag er det bittert vær. Vurder å aktivisere hunden din på andre måter og hold turer korte.")
+                Icon(imageVector = Icons.Filled.Warning, contentDescription = "Varsels ikon", modifier = Modifier.align(Alignment.End))
+
+            } else {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+
+                    Column {
+                        Text(text = morningText)
+                        Text(text = middayText)
+                        Text(text = eveningText)
+                    }
+                    Icon(imageVector = Icons.Filled.AccessTime, contentDescription = "Varsels ikon")
+                }
+
+
+
+
+            }
+        }
     }
-    else {
-        if (bestTime[0] == "none") {
-            Text("Du bør begrense morgentur i dag.\n", modifier = Modifier.padding(horizontal = 15.dp))
-            morgentur = false
-        }
-        if (bestTime[1] == "none") {
-            Text("Du bør begrense dagstur i dag.\n", modifier = Modifier.padding(horizontal = 15.dp))
-
-            dagstur = false
-        }
-        if (bestTime[2] == "none") {
-            Text("Du bør begrense kveldstur i dag.\n", modifier = Modifier.padding(horizontal = 15.dp))
-            kveldstur = false
-        }
-        Text("Anbefalte tidspunkter:", modifier = Modifier.padding(horizontal = 15.dp))
-        if (morgentur) {
-            Text("Morgentur: kl. ${bestTime[0]}", modifier = Modifier.padding(horizontal = 15.dp))
-        }
-        if (dagstur) {
-            Text("Dagstur: kl. ${bestTime[1]}", modifier = Modifier.padding(horizontal = 15.dp))
-        }
-        if (kveldstur) {
-            Text("Kveldstur: kl. ${bestTime[2]}", modifier = Modifier.padding(horizontal = 15.dp))
-        }
-        }
-    }
+}
 
 
 
