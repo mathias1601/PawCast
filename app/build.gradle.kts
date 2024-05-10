@@ -22,7 +22,14 @@ android {
         }
     }
 
+    buildFeatures {
+        android.buildFeatures.buildConfig = true // added by us
+        compose = true
+    }
+
+
     buildTypes {
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -38,9 +45,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildFeatures {
-        compose = true
-    }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
@@ -122,6 +127,9 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.0.0-alpha06")
 
+
+    // MARKDOWN LIBRARY for advice screens
+    implementation("com.github.jeziellago:compose-markdown:0.5.0")
 
 
 

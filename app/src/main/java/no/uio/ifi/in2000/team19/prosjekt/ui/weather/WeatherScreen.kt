@@ -8,8 +8,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,20 +38,38 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
+import eu.bambooapps.material3.pullrefresh.pullRefresh
+import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
+import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForDay
 import no.uio.ifi.in2000.team19.prosjekt.ui.LoadingScreen
-import no.uio.ifi.in2000.team19.prosjekt.ui.home.NoConnectionScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.error.ErrorScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.home.BottomInfo
+import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:PaddingValues, navController: NavController) {
+fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController: NavController) {
+
+
+    val isRefreshing by remember {
+        mutableStateOf(false)
+    }
+    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { weatherScreenViewModel.loadWeather()})
+
 
 
     when (val weatherUiState = weatherScreenViewModel.weatherUiState.collectAsState().value) {
         is WeatherUiState.Loading -> LoadingScreen()
-        is WeatherUiState.Error -> NoConnectionScreen()
+        is WeatherUiState.Error -> ErrorScreen (
+            onReload = { weatherScreenViewModel.loadWeather() },
+            reason = weatherUiState.errorReason
+        )
         is WeatherUiState.Success -> {
 
 
@@ -68,19 +87,41 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
             val meanHoursForDayAfterTomorrow = weatherMean.filter { it.day == differentDays[1] }
 
 
+
+                // Use lazy column here as content is generated from loops, and may vary.
+                // In HomeScreen, we use a Column with .verticalScroll modifier, as the content there is "constant" height.
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 10.dp)
-                        .padding(bottom = innerPadding.calculateBottomPadding())
-                        .padding(top = innerPadding.calculateTopPadding())
+                        .pullRefresh(state)
+                        .padding(horizontal = Measurements.HorizontalPadding.measurement)
+
                 ) {
+
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            PullRefreshIndicator(
+                                refreshing = isRefreshing, state = state,
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
+                            )
+                        }
+
+                    }
+
+
+
                     item {
                         Column(
-                            modifier = Modifier
                         ) {
 
+
+
                             WeatherNow(weatherHours[0])
+                            
+                            Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
 
                             Row {
                                 ElevatedButton(onClick = { navController.navigate("settings") }) {
@@ -94,7 +135,9 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
                                     )
                                 }
                             }
-                            Spacer(modifier = Modifier.padding(5.dp))
+
+                            Spacer(modifier = Modifier.padding(Measurements.WithinSectionVerticalGap.measurement))
+
                         }
                     }
 
@@ -107,12 +150,13 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, innerPadding:P
                             NextDaysForecastCard(weatherForDay = weatherDays[0], meanHours = meanHoursForTomorrow)
                             NextDaysForecastCard(weatherForDay = weatherDays[1], meanHours = meanHoursForDayAfterTomorrow)
                         }
-
-                        Spacer(modifier = Modifier.padding(10.dp)) // "bottom padding so items arent locked at top of navbar
                     }
-
-
-
+                    
+                    item {
+                        Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
+                        BottomInfo(lastUpdated = (weatherUiState.weather.general[0].date))
+                        Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement)) // spacing to not lock items to top of app bar
+                }
             }
         }
     }
@@ -141,13 +185,11 @@ fun WeatherNow(weather: GeneralForecast) {
         Image(painter = painterResource(id = drawableId), contentDescription = drawableName)
 
         Text(
-            text = "${weather.temperature}°C",
+            text = "${weather.temperature}" + stringResource(id = R.string.celciues),
             style = MaterialTheme.typography.displayMedium
         )
 
-        Text(text = "Akkurat nå")
-
-
+        Text(text = stringResource(id = R.string.right_now))
     }
 
 }
@@ -170,7 +212,10 @@ fun TodayForecastCard(allHours: List<GeneralForecast>) {
 
         Column(
             modifier = Modifier
-                .padding(20.dp)
+                .padding(
+                    vertical = Measurements.WithinSectionVerticalGap.measurement,
+                    horizontal = Measurements.HorizontalPadding.measurement
+                )
                 .animateContentSize()
         ) {
             Row(
@@ -180,7 +225,11 @@ fun TodayForecastCard(allHours: List<GeneralForecast>) {
                     .padding(vertical = 8.dp)
 
             ) {
-                val nextHoursTitle = if (isExpanded) "Neste $amountShownExpanded timer" else "Neste $amountShownHidden timer"
+
+                val nextHoursTitle =
+                    if (isExpanded) stringResource(R.string.next_hours_button, amountShownExpanded)
+                    else stringResource(R.string.next_hours_button, amountShownHidden)
+
                 Text(
                     text = nextHoursTitle,
                     style = MaterialTheme.typography.titleLarge,
@@ -191,7 +240,7 @@ fun TodayForecastCard(allHours: List<GeneralForecast>) {
 
             Column(
                 modifier = Modifier.animateContentSize(),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                        verticalArrangement = Arrangement.spacedBy(Measurements.WithinSectionVerticalGap.measurement)
             ) {
                 allHours.take(amountOfHoursShown).map { weather ->
                     SingleHourForecastCard(weather)
@@ -205,7 +254,7 @@ fun TodayForecastCard(allHours: List<GeneralForecast>) {
             ) {
 
                 val icon = if (isExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
-                val text = if (isExpanded) "Skjul" else "Se flere timer"
+                val text = if (isExpanded) stringResource(R.string.hide) else stringResource(R.string.see_more_hours)
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -218,7 +267,7 @@ fun TodayForecastCard(allHours: List<GeneralForecast>) {
     }
 }
 
-
+// ============= TOMORROW & DAY AFTER TOMOROW ========================
 @Composable
 fun NextDaysForecastCard(weatherForDay: WeatherForDay, meanHours:List<WeatherForDay>){
 
@@ -235,7 +284,10 @@ fun NextDaysForecastCard(weatherForDay: WeatherForDay, meanHours:List<WeatherFor
 
         Column(
             modifier = Modifier
-                .padding(20.dp)
+                .padding(
+                    vertical = Measurements.WithinSectionVerticalGap.measurement,
+                    horizontal = Measurements.HorizontalPadding.measurement
+                )
                 .animateContentSize()
         ) {
             Row(
@@ -261,6 +313,8 @@ fun NextDaysForecastCard(weatherForDay: WeatherForDay, meanHours:List<WeatherFor
 
             ) {
                 Column (
+                    modifier = Modifier.animateContentSize(),
+                    verticalArrangement = Arrangement.spacedBy(Measurements.WithinSectionVerticalGap.measurement)
                 ){
                     meanHours.map { weather ->
                         SixHourMeanForecastCard(weatherForDay = weather)
@@ -274,7 +328,7 @@ fun NextDaysForecastCard(weatherForDay: WeatherForDay, meanHours:List<WeatherFor
             ) {
 
                 val icon = if (isExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown
-                val text = if (isExpanded) "Skjul" else "Se timevis"
+                val text = if (isExpanded) stringResource(R.string.hide) else stringResource(R.string.see_hourly)
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -315,22 +369,22 @@ fun SingleHourForecastCard(generalForecast: GeneralForecast) {
             )
             Image(
                 painter = painterResource(id = drawableId),
-                contentDescription = "Værsymbol"
+                contentDescription = drawableName
             )
 
             Text(
-                text = "${generalForecast.temperature}°C",
+                text = "${generalForecast.temperature} ${stringResource(id = R.string.celciues)}",
                 style = MaterialTheme.typography.bodyMedium
             )
 
 
             Text(
-                text = "${generalForecast.wind} m/s",
+                text = stringResource(R.string.wind_speed, generalForecast.wind!!), //
                 style = MaterialTheme.typography.bodyMedium
             )
 
             Text(
-                text = "${generalForecast.percipitation} mm",
+                text = stringResource(R.string.percipitation, generalForecast.percipitation),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -368,7 +422,7 @@ fun WholeDayAverageWeatherCard(weatherForDay: WeatherForDay) {
 
             Image(
                 painter = painterResource(id = drawableId),
-                contentDescription = "Værsymbol",
+                contentDescription = drawableName,
                 modifier = Modifier.size(85.dp)
             )
 
@@ -377,19 +431,18 @@ fun WholeDayAverageWeatherCard(weatherForDay: WeatherForDay) {
 
             Column {
                 Text(
-                    text = "L: ${weatherForDay.lowestTemperature}°",
-                    style = MaterialTheme.typography.titleMedium
+                    text = stringResource(R.string.low_degrees, weatherForDay.lowestTemperature!!) + stringResource(id = R.string.celciues),
+                    style = MaterialTheme.typography.titleSmall
                 )
 
 
 
                 Text(
-                    text = "H: ${weatherForDay.highestTemperature}°",
-                    style = MaterialTheme.typography.bodyMedium
+                    text = stringResource(R.string.high_degrees, weatherForDay.highestTemperature!!)  + stringResource(id = R.string.celciues),
+                    style = MaterialTheme.typography.titleSmall
                 )
             }
         }
-
     }
 }
 
@@ -398,7 +451,6 @@ fun WholeDayAverageWeatherCard(weatherForDay: WeatherForDay) {
 @Composable
 fun SixHourMeanForecastCard(weatherForDay: WeatherForDay) {
 
-
     val context = LocalContext.current
     val drawableName = weatherForDay.symbol
     val drawableId =
@@ -406,7 +458,8 @@ fun SixHourMeanForecastCard(weatherForDay: WeatherForDay) {
 
     Column(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(horizontal = Measurements.HorizontalPadding.measurement, vertical = 5.dp),
     ) {
 
         Row(
@@ -418,29 +471,33 @@ fun SixHourMeanForecastCard(weatherForDay: WeatherForDay) {
 
 
             Text(
-                text = "${weatherForDay.startingTime} - ${weatherForDay.endingTime}",
+                text = stringResource(
+                    R.string.timespan_between_hours,
+                    weatherForDay.startingTime!!,
+                    weatherForDay.endingTime!!
+                ),
                 style = MaterialTheme.typography.bodyMedium,
             )
 
 
             Image(
                 painter = painterResource(id = drawableId),
-                contentDescription = "Værsymbol"
+                contentDescription = drawableName
             )
 
             Text(
-                text = "${weatherForDay.meanTemperature}°C",
+                text = "${weatherForDay.meanTemperature}" + stringResource(id = R.string.celciues),
                 style = MaterialTheme.typography.bodyMedium,
             )
 
 
             Text(
-                text = "${weatherForDay.wind} m/s",
+                text = stringResource(id = R.string.wind_speed, weatherForDay.wind!!),
                 style = MaterialTheme.typography.bodyMedium,
             )
 
             Text(
-                text = "${weatherForDay.precipitation} mm",
+                text = stringResource(id = R.string.percipitation, weatherForDay.precipitation!!),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }

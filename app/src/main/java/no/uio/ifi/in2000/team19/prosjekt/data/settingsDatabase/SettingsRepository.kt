@@ -24,8 +24,8 @@ class SettingsRepository @Inject constructor(
                     id = 0,
                     longitude = "60",
                     latitude = "10",
-                    shortName = "Default Location",
-                    detailedName = "Default Location"
+                    shortName = "",
+                    detailedName = ""
                 )
             coordsDao.insertCords(defaultCoords)
         }

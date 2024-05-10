@@ -27,7 +27,7 @@ class SetupScreenViewModel @Inject constructor(
     private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"loading", "loading", false,false,false, false, false, false, false, false, false, false))
     var userInfo: StateFlow<UserInfo> = _userInfo.asStateFlow()
 
-    fun initialize(){
+    init{
         viewModelScope.launch (Dispatchers.IO){
             _userInfo.value = settingsRepository.getUserInfo()
         }

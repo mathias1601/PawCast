@@ -1,10 +1,14 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.setup
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -13,10 +17,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens.AgeSetupScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens.BodySetupScreen
@@ -24,6 +30,7 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens.FurSetupScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens.LocationSetupScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens.NamesSetupScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens.NoseSetupScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,14 +42,18 @@ fun SetupManager(
     navController: NavHostController
 ) {
 
-    viewModel.initialize()
 
     Scaffold (
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
+                    val amountOfSetupPages = "6"
                     Text(
-                        text = "${id.toInt()+1} / 6",
+                        text = stringResource(
+                            R.string.setup_stage_count,
+                            id.toInt() + 1,
+                            amountOfSetupPages
+                        ),
                         style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Right,
                         modifier = Modifier.fillMaxWidth()
@@ -56,14 +67,12 @@ fun SetupManager(
                             if (id != "0"){ // <--- keep this.
                                 navController.popBackStack()
                             }
-
                         }
                         ) {
                             Icon( //Er ikke Material Design 3
                                 imageVector = Icons.Filled.ArrowBackIosNew,
-                                contentDescription = "Tilbake"
+                                contentDescription = stringResource(id = R.string.GoBackText)
                             )
-
                         }
                     }
                 }
@@ -72,8 +81,13 @@ fun SetupManager(
     ){innerPadding ->
         Column (
             modifier = Modifier
-                .padding(innerPadding)
-                .padding(16.dp)
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    bottom = innerPadding.calculateBottomPadding(),
+                    start = Measurements.HorizontalPadding.measurement,
+                    end = Measurements.HorizontalPadding.measurement,
+
+                )
         ) {
 
             // Should refactor to use "generic" setup screen class as we do alot of copy pasting for now.
@@ -90,6 +104,28 @@ fun SetupManager(
         }
     }
 
+}
+
+@Composable
+fun TipBox(tipText:String){
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+
+    ){
+
+        Row(
+            modifier = Modifier
+                .padding(Measurements.HorizontalPadding.measurement)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(imageVector = Icons.Outlined.Lightbulb, contentDescription = stringResource(R.string.lightbulb_icon_description))
+            Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
+            Text(text = tipText, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
 }
 
 

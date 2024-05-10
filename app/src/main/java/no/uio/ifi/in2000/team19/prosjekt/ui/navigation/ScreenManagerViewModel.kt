@@ -27,7 +27,6 @@ class ScreenManagerViewModel @Inject constructor(
     val startDestination : StateFlow<String> = _startDestination.asStateFlow()
 
     private val _isLoading:MutableStateFlow<Boolean> = MutableStateFlow(true)
-    val isLoading : StateFlow<Boolean> = _isLoading.asStateFlow()
 
     init {
         viewModelScope.launch {

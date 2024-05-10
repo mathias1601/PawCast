@@ -18,6 +18,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import javax.inject.Inject
+import javax.inject.Named
 
 
 sealed class SearchState {
@@ -36,6 +37,7 @@ sealed class SearchState {
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
+    @Named("mapboxAccessToken") private val mapboxAccessToken: String
 ) : ViewModel(){
 
 
@@ -46,7 +48,6 @@ class SearchLocationViewModel @Inject constructor(
 
 
     // TODO: Access token should be handled better. Ask veileder
-    private val mapboxAccessToken = "pk.eyJ1IjoibWFya3VzZXYiLCJhIjoiY2x0ZWFydGZnMGQyeTJpcnQ2ZXd6ZWdjciJ9.09_6aHo-sftYJs6mTXhOyA"
     private val placeAutocomplete = PlaceAutocomplete.create(mapboxAccessToken)
 
     private val _searchFieldValue: MutableStateFlow<String> = MutableStateFlow("initial")
@@ -132,9 +133,14 @@ class SearchLocationViewModel @Inject constructor(
                     shortName = response.value!!.name,
                     detailedName = response.value!!.address!!.formattedAddress ?: response.value!!.name, // some adresses dont have a detailedName.
                 )
+
+                updateSearchBoxToRepresentStoredLocation()
+                _isDone.value = true
+
+            } else {
+                _searchState.value = SearchState.Error
             }
-            updateSearchBoxToRepresentStoredLocation()
-            _isDone.value = true
+
         }
 
     }
@@ -147,8 +153,6 @@ class SearchLocationViewModel @Inject constructor(
                  _searchFieldValue.value = it.shortName
             }
         }
-
-
     }
 
     fun setSearchStateToIdle(){
@@ -160,17 +164,6 @@ class SearchLocationViewModel @Inject constructor(
         _searchState.value = SearchState.Hidden
     }
 
-    /*
-    @SuppressLint("MissingPermission") // Supress MissingPermission since permisission gets checked in Composable
-    fun setLocationToUserLocation(){
-
-        val location = fusedLocationClient.lastLocation
-        Log.d("TAG", location.result.latitude.toString())
-        Log.d("TAG", location.result.longitude.toString())
-    }
-     */
-
-    // Method is ran if user just presses done on their keyboard. Then we selected the top result from the earlier search
     fun pickTopResult() {
 
         if (topSuggestion.value != null){

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -50,25 +49,24 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
         ) {
             Image(
                 painter = painterResource(id = R.drawable.dog_normal),
-                contentDescription = "Avatar",
+                contentDescription = stringResource(id = R.string.dog_normal_description),
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier.height(125.dp)
             )
         }
 
         Column(
-            modifier = Modifier.weight(2f)
+            modifier = Modifier.weight(2f),
 
         ) {
             Text(
-                text="Hvor gammel er hunden din?",
+                text= stringResource(R.string.age_screen_title),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.padding(10.dp))
-
 
             FlowRow (
                 modifier = Modifier
@@ -79,7 +77,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
                 Card(
                     modifier = Modifier
                         .height(125.dp)
-                        .width(125.dp)
+                        .weight(1f)
                         .padding(4.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = if (ageIndex == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
@@ -98,7 +96,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ){
-                        Text(text = "Valp")
+                        Text(text = stringResource(R.string.puppy))
                     }
                 }
 
@@ -106,7 +104,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
                 Card(
                     modifier = Modifier
                         .height(125.dp)
-                        .width(125.dp)
+                        .weight(1f)
                         .padding(4.dp),
 
                     colors = CardDefaults.cardColors(
@@ -125,14 +123,14 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ){
-                        Text(text = "Voksen")
+                        Text(text = stringResource(R.string.adult))
                     }
                 }
 
                 Card(
                     modifier = Modifier
                         .height(125.dp)
-                        .width(125.dp)
+                        .weight(1f)
                         .padding(4.dp),
 
                     colors = CardDefaults.cardColors(
@@ -151,7 +149,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ){
-                        Text(text = "Senior")
+                        Text(text = stringResource(R.string.senior))
                     }
                 }
             }

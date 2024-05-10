@@ -1,9 +1,7 @@
 package no.uio.ifi.in2000.team19.prosjekt.data
 
 import android.content.Context
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
@@ -50,7 +48,6 @@ class LocationForecastRepository @Inject constructor(
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getGeneralForecast(
         latitude: String,
         longitude: String,
@@ -95,7 +92,7 @@ class LocationForecastRepository @Inject constructor(
             val hourFormatter = DateTimeFormatter.ofPattern("HH")
             val hourAsInt = zonedDateTime.format(hourFormatter).toString()
 
-            val date = zonedDateTime.toLocalDate()
+            val date = LocalDateTime.now()
 
             val precipitation =
                 locationForecast.properties.timeseries[i].data.next_1_hours.details.precipitation_amount
@@ -127,7 +124,6 @@ class LocationForecastRepository @Inject constructor(
     }
 
     //Also possible to do this in the same function. An If-check to see if you want to get for days or hours.
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun getWeatherForecastForDays(
         locationForecast: LocationForecast,
         nrDays: Int,
@@ -181,7 +177,6 @@ class LocationForecastRepository @Inject constructor(
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun getWeatherForecastHours(
         locationForecast: LocationForecast,
         startHour: Int
@@ -279,7 +274,6 @@ class LocationForecastRepository @Inject constructor(
     }
 
     //Returnerer en liste av Advice-objekter
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getAdvice(generalForecast: ForecastTypes, typeOfDog: UserInfo): List<Advice> {
 
         val adviceForecast = getAdviceForecastData(generalForecast.general[0])
@@ -288,13 +282,6 @@ class LocationForecastRepository @Inject constructor(
 
         return createAdvice(categories, context)
     }
-
-
-    //Gjør om fra GeneralForecast til AdviceForecast (fjerner unødvendig dsta)
-
-
-    //Lager AdviceCards, og retunerer en liste av de
-
 
 }
 

@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
+import no.uio.ifi.in2000.team19.prosjekt.ui.setup.TipBox
 
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -59,7 +60,7 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, navController: NavHostContro
         ) {
             Image(
                 painter = painterResource(id = R.drawable.dog_normal),
-                contentDescription = "Avatar",
+                contentDescription = stringResource(id = R.string.dog_normal_description),
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier.height(125.dp)
             )
@@ -70,7 +71,7 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, navController: NavHostContro
                 .weight(2f),
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text="Hva slags pels har hunden din?",
+            Text(text= stringResource(R.string.fur_setup_screen_title),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -89,25 +90,29 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, navController: NavHostContro
                         .padding(
                             top = 10.dp,
                             bottom = 10.dp,
-
-
-                        )
-                    ,
+                        ),
                     maxItemsInEachRow = 3,
                     horizontalArrangement = Arrangement.Center
                 ) {
 
-                    FilterChip(text = "Tynn", categoryName = "tynnPels", viewModel, userInfo.isThinHaired)
-                    FilterChip(text = "Tykk", categoryName = "tykkPels", viewModel, userInfo.isThickHaired)
-                    FilterChip(text = "Lang", categoryName = "langPels", viewModel, userInfo.isLongHaired)
-                    FilterChip(text = "Kort", categoryName = "kortPels", viewModel, userInfo.isShortHaired)
-                    FilterChip(text = "Lys", categoryName = "lysPels", viewModel, userInfo.isLightHaired)
-                    FilterChip(text = "Mørk", categoryName = "moerkPels", viewModel, userInfo.isDarkHaired)
+                    FilterChip(text = stringResource(R.string.thinFur), categoryName = "tynnPels", viewModel, userInfo.isThinHaired)
+                    FilterChip(text = stringResource(R.string.thickFur), categoryName = "tykkPels", viewModel, userInfo.isThickHaired)
+                    FilterChip(text = stringResource(R.string.longFur), categoryName = "langPels", viewModel, userInfo.isLongHaired)
+                    FilterChip(text = stringResource(R.string.shortFur), categoryName = "kortPels", viewModel, userInfo.isShortHaired)
+                    FilterChip(text = stringResource(R.string.lightFur), categoryName = "lysPels", viewModel, userInfo.isLightHaired)
+                    FilterChip(text = stringResource(R.string.darkFur), categoryName = "moerkPels", viewModel, userInfo.isDarkHaired)
 
                 }
+                
+
             }
 
             Spacer(modifier = Modifier.padding(10.dp))
+
+            TipBox(tipText = "Du kan velge flere her! Blant annet vet vi at hunder med tynnere pels kan bli raskere solbrent.")
+
+            Spacer(modifier = Modifier.padding(10.dp))
+
 
             Text(
                 text= stringResource(R.string.chooseDogCategoryBottomScreenTip),
@@ -132,10 +137,9 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, navController: NavHostContro
                     viewModel.saveSetupState(isCompleted = true) // store info that setup is completed so next app launch doesnt ask for setup.
                     // navController.popBackStack() // removes history from backstack. Stops user from being able to click back, navigating the user back to setup 👎
                     navController.navigate("home")
-
                 }
             ) {
-                Text (text="Fullfør")
+                Text (text= stringResource(R.string.done))
             }
         }
     }
@@ -172,7 +176,7 @@ fun FilterChip(
             {
                 Icon(
                     imageVector = Icons.Filled.Done,
-                    contentDescription = "Done icon",
+                    contentDescription = stringResource(R.string.done_icon_descirption),
                     modifier = Modifier.size(FilterChipDefaults.IconSize)
                 )
             }
