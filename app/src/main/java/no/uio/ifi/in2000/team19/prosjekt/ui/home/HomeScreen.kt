@@ -77,6 +77,7 @@ import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
