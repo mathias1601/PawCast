@@ -128,6 +128,9 @@ dependencies {
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.0.0-alpha06")
 
 
+    // MARKDOWN LIBRARY for advice screens
+    implementation("com.github.jeziellago:compose-markdown:0.5.0")
+
 
 
 }
