@@ -622,7 +622,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ){
-            Text("Høyere er bedre")
+            Text("Høyere score er bedre")
             CartesianChartHost(
                 // getXStep = { 1f }, // Show every X step on X axis.
                 chart =
@@ -640,15 +640,16 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                         ),
                         startAxis = rememberStartAxis(
                             titleComponent = rememberTextComponent(
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
 
-                                    background = ShapeComponent(
-                                        shape = Shapes.pillShape,
-                                        color = MaterialTheme.colorScheme.secondaryContainer.hashCode()
-                                    ),
+                                background = ShapeComponent(
+                                    shape = Shapes.pillShape,
+                                    color = MaterialTheme.colorScheme.secondaryContainer.hashCode()
+                                ),
 
-                                    padding = MutableDimensions(8f, 1f),
-                                    textAlignment = Layout.Alignment.ALIGN_CENTER
+                                padding = MutableDimensions(8f, 1f),
+                                textAlignment = Layout.Alignment.ALIGN_CENTER,
+                                textSize = MaterialTheme.typography.bodyMedium.fontSize
                                 ),
 
                             title = "Score"
@@ -669,7 +670,8 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                                 ),
 
                                 padding = MutableDimensions(8f, 1f),
-                                textAlignment = Layout.Alignment.ALIGN_CENTER
+                                textAlignment = Layout.Alignment.ALIGN_CENTER,
+                                textSize = MaterialTheme.typography.bodyMedium.fontSize
                             ),
                             title = "Klokkkeslett",
                             guideline = null
