@@ -87,4 +87,6 @@
     <string name="bad_weather_alert">I dag er det bittert vær. Vurder å aktivisere hunden din på andre måter og hold turer korte.</string>
     <string name="warning_icon_description">Varsels ikon</string>
     <string name="klokke_ikon_description">Klokke ikon</string>
+    <string name="lightbulb_icon_description">Ikon av lysepære</string>
+    <string name="body_setup_screen_tip">Tynnere hunder kan fryse raskere og tykkere hunder kan tåle mer kulde. Dersom du er usikker trykk på Middels.</string>
 </resources>

@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
+import no.uio.ifi.in2000.team19.prosjekt.ui.setup.TipBox
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -161,6 +162,10 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                     }
                 }
             }
+            Spacer(modifier = Modifier.padding(10.dp))
+
+            TipBox(tipText = stringResource(R.string.body_setup_screen_tip))
+
             Spacer(modifier = Modifier.padding(10.dp))
 
             Text(

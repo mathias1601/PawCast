@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
+import no.uio.ifi.in2000.team19.prosjekt.ui.setup.TipBox
 
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -102,9 +103,16 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, navController: NavHostContro
                     FilterChip(text = stringResource(R.string.darkFur), categoryName = "moerkPels", viewModel, userInfo.isDarkHaired)
 
                 }
+                
+
             }
 
             Spacer(modifier = Modifier.padding(10.dp))
+
+            TipBox(tipText = "Du kan velge flere her! Blant annet vet vi at hunder med tynnere pels kan bli raskere solbrent.")
+
+            Spacer(modifier = Modifier.padding(10.dp))
+
 
             Text(
                 text= stringResource(R.string.chooseDogCategoryBottomScreenTip),
