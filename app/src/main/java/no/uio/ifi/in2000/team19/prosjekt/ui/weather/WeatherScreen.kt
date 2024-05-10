@@ -52,6 +52,8 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.error.ErrorScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.BottomInfo
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController: NavController) {
@@ -110,7 +112,6 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController:
                         }
 
                     }
-
 
 
                     item {

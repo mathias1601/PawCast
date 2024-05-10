@@ -17,7 +17,14 @@ import java.io.IOException
 import java.nio.channels.UnresolvedAddressException
 import javax.inject.Inject
 
+//this viewmodel is responsible for handling the weather ui state, and updating the coordinates
+//of which the weather is collected from
 
+//the weather ui state is used by both weatherscreen and homescreen in order to display
+//the weatherforecast in real-time
+
+//this ui-state interface holds the weather variable containing a ForecastType-object
+//this object contains three forecast objects that have different uses
 sealed interface WeatherUiState {
     data class Success(val weather: ForecastTypes): WeatherUiState
     data object Loading: WeatherUiState
@@ -30,8 +37,6 @@ class WeatherScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
-
-    //private var weatherUiState: WeatherUiState by mutableStateOf(WeatherUiState.Loading)
 
     private val _weatherUiState: MutableStateFlow<WeatherUiState> =
         MutableStateFlow(WeatherUiState.Loading)
@@ -52,6 +57,7 @@ class WeatherScreenViewModel @Inject constructor(
         }
     }
 
+    //this function is public in order to reload the weather and location when needed
     fun loadWeather() {
 
         val cords = _locationUiState.value
