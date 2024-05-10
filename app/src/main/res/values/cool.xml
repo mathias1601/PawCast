@@ -4,16 +4,16 @@
         <item> Det er kjølig </item>
 
         <item>
-            ~Veterinærer anbefaler\n
+            ### Veterinærer anbefaler\n
 
             Dersom hunden er ute over lengre tid, burde den ha et
             skjermet område uten trekk fra snø eller regn.\n
             Vær oppmerksom på om hunden viser tegn til å fryse.\n
             Da kan du vurdere å bruke potesokker eller dekken.\n
 
-            ~Tegn å se etter\n
-            • Skjelving
-            • Løfter på potene eller halter
+            ### Tegn å se etter\n
+            - Skjelving\n
+            - Løfter på potene eller halter\n
 
         </item>
 

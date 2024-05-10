@@ -75,6 +75,7 @@ import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import dev.jeziellago.compose.markdowntext.MarkdownText
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
@@ -523,8 +524,7 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
 
                             Spacer(modifier = Modifier.size(10.dp))
 
-                            Text(
-                                text = advice.shortAdvice,
+                            MarkdownText(markdown = advice.shortAdvice,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
@@ -564,7 +564,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
             }
 
         }
-    //flytte til vm
+    //TODO: flytte til VM
     val colorMap: Map<Int, Color> = mapOf(
         1 to Color.Red,
         2 to Color.Red,
