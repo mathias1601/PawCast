@@ -358,7 +358,7 @@ fun HomeScreen(
                         ) {
 
                             Text(
-                                text = "Anbefalinger",
+                                text = stringResource(R.string.recomendations_title),
                                 style = MaterialTheme.typography.titleLarge,
                             )
 
@@ -370,7 +370,7 @@ fun HomeScreen(
 
 
                         // ADVICE CARDS / Horizontal Pager / Carousell + Indicator for card index
-                        // Inspired by offical documentaion: https://developer.android.com/develop/ui/compose/layouts/pager
+                            // Inspired by offical documentaion: https://developer.android.com/develop/ui/compose/layouts/pager
                         Column {
                             val pagerState = rememberPagerState(pageCount = {
                                 advice.allAdvice.size
@@ -565,7 +565,6 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ){
-            Text("Høyere er bedre")
             CartesianChartHost(
                 // getXStep = { 1f }, // Show every X step on X axis.
                 chart =

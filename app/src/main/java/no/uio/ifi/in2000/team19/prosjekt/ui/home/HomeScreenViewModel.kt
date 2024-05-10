@@ -135,7 +135,7 @@ class HomeScreenViewModel @Inject constructor(
                     }
                 }
 
-                // This is how we handle connectivity. Instead of using connectivity manager (which is the correct way).
+                // This is how we handle connectivity. Instead of using connectivity manager (which seems like the correct way).
                 // Essentially we catch our errors, and use the error message to decode if we lost internet, and update
                 // our screen to reflect this. This solution is a LOT simpler, although not as flexible. Landed on this
                 // mostly due to time constraints.
@@ -194,6 +194,7 @@ class HomeScreenViewModel @Inject constructor(
             }
             //finner beste tiden å gå tur og legger til i ui state: morgen, midt på dagen og kveld
 
+            // Morning
             if (hourOfDay.toInt() in 5..10) {
                 if (overallRating >= bestRatingMorning) {
                     bestRatingMorning = overallRating
@@ -201,14 +202,16 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
 
-            if (hourOfDay.toInt() in 10..15) {
+            // Midday
+            if (hourOfDay.toInt() in 10..18) {
                 if (overallRating >= bestRatingMidday) {
                     bestRatingMidday = overallRating
                     _bestTimeUiState.value[1] = hourOfDay
                 }
             }
 
-            if (hourOfDay.toInt() in 15..22) {
+            // Evening
+            if (hourOfDay.toInt() in 18..22) {
                 if (overallRating >= bestRatingEvening) {
                     bestRatingEvening = overallRating
                     _bestTimeUiState.value[2] = hourOfDay
