@@ -32,7 +32,7 @@ class SettingsRepository @Inject constructor(
         return coordsDao.getCords()!!
     }
 
-    suspend fun updateCoords(latitude:String, longitude:String, shortName:String, detailedName:String) {
+    fun updateCoords(latitude:String, longitude:String, shortName:String, detailedName:String) {
         val cords = Cords(
             id = 0,
             longitude = longitude,
@@ -43,23 +43,23 @@ class SettingsRepository @Inject constructor(
         coordsDao.insertCords(cords)
     }
 
-    suspend fun deleteCoords(cords: Cords) {
+    fun deleteCoords(cords: Cords) {
         coordsDao.deleteCords(cords)
     }
 
 
     // USER INFO
-    suspend fun getUserInfo(): UserInfo {
+    fun getUserInfo(): UserInfo {
         if(userInfoDao.getUserInfo() == null) {
             updateUserInfo(createTemporaryUserinfo()) } // just to avoid null errors, but we guarantee using dataStores that the user must complete setup if this is null earilier at runtime
         return userInfoDao.getUserInfo()!!
     }
 
-    suspend fun updateUserInfo(userInfo: UserInfo) {
-        userInfoDao.insertUserInfo(userInfo)
+    fun updateUserInfo(userInfo: UserInfo) {
+        userInfoDao.upsertUserInfo(userInfo)
     }
 
-    suspend fun deleteUserInfo(userInfo: UserInfo) {
+    fun deleteUserInfo(userInfo: UserInfo) {
         userInfoDao.deleteUserInfo(userInfo)
     }
 }

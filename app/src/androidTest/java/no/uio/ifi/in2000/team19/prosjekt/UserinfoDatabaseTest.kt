@@ -34,7 +34,7 @@ class UserinfoDatabaseTest {
     @Test
     fun checkDatabaseContent() {
         val expectedUserInfo = UserInfo(0,"Coco", "Isabel", true, true, true, true, false, false, false, true, true, false, false, false, false, false)
-        dao.insertUserInfo(expectedUserInfo)
+        dao.upsertUserInfo(expectedUserInfo)
 
         val userInfo = dao.getUserInfo()
         Assert.assertEquals(expectedUserInfo, userInfo)
