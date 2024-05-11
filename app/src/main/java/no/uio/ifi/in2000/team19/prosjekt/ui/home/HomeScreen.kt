@@ -511,6 +511,7 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
 }
 
 @Composable
+/** Displays a card that displays the best time for taking a walk at morning, midday and evening */
 fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
 
 
@@ -583,7 +584,8 @@ fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
 }
 
 @Composable
-fun ForecastGraph(graphUiState: CartesianChartModelProducer, ScoreRightNowInGraph: Int) {
+/** Displays a fullwidth card, containing a Graph representing hours in a day with a Score per hour */
+fun ForecastGraph(graphUiState: CartesianChartModelProducer, scoreAtIndexZeroInGraph: Int) {
 
     val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour
     val bottomAxisValueFormatter =
@@ -601,7 +603,8 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, ScoreRightNowInGrap
 
         }
 
-    val scoreColor: Color = getColorForScore(ScoreRightNowInGraph)
+    /** Color for entire graph line*/
+    val scoreColor: Color = getColorForScore(scoreAtIndexZeroInGraph)
 
     Card(
         modifier = Modifier
