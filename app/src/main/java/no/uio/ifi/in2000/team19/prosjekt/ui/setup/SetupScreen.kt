@@ -47,7 +47,7 @@ fun SetupManager(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    if (!id.contains("only")){
+                    if (!id.contains("only")){ // hide progress indicator if user has navigated to Setup from settings (using "only_id")
                         val amountOfSetupPages = "6"
                         Text(
                             text = stringResource(
@@ -128,7 +128,6 @@ fun SetupManager(
             }
         }
     }
-
 }
 
 @Composable

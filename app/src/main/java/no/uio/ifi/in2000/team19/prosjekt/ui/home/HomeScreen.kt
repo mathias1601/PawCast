@@ -309,58 +309,28 @@ fun HomeScreen(
 
 
             // ======INFO OPEN / CLOSE BOXES =============
-            var showGraphInfoSheet by remember { mutableStateOf(false) }
-            var showAdviceInfoSheet by remember { mutableStateOf(false) }
+
 
             // Advice Info Sheet.
+            var showAdviceInfoSheet by remember { mutableStateOf(false) }
             if (showAdviceInfoSheet) {
-                ModalBottomSheet(
-                    modifier = Modifier
-                        .defaultMinSize(minHeight = 200.dp),
-                    onDismissRequest = { showAdviceInfoSheet = false }
-                ) {
-                    Column(
-                        modifier = Modifier.padding(horizontal = Measurements.HorizontalPadding.measurement)
-                    ) {
-                        Text(
-                            text = "Anbefalinger",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-
-                        Spacer(modifier = Modifier.padding(10.dp))
-
-                        Text(
-                            text = stringResource(id = (R.string.adviceinfo)),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
+                BottomInfoModalPopUp(
+                    title = "Anbefalinger",
+                    bodyText = stringResource(id = R.string.adviceinfo),
+                    onDismiss = { showAdviceInfoSheet = false})
             }
 
             // Graph Info Sheet
+            var showGraphInfoSheet by remember { mutableStateOf(false) }
             if (showGraphInfoSheet) {
-                ModalBottomSheet(
-                    modifier = Modifier
-                        .defaultMinSize(minHeight = 200.dp),
-                    onDismissRequest = { showGraphInfoSheet = false }
-                ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp)
-                    ) {
-                        Text(
-                            text = "Graf-forklaring",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = stringResource(R.string.graphinfo),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
+                BottomInfoModalPopUp(
+                    title = "Forklaring på Graf",
+                    bodyText = stringResource(id = R.string.graphinfo),
+                    onDismiss = {showGraphInfoSheet = false})
             }
 
 
-            // This is the Surface containing Advice + Graph cards.
+            // This is the Surface containing most of the main content overlaying the gradient background.
             Surface(
                 shape = MaterialTheme.shapes.extraLarge
 
@@ -467,8 +437,6 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
 
                         BottomInfo(lastUpdated = weather.date)
-                        
-                        Spacer(modifier = Modifier.padding(Measurements.WithinSectionVerticalGap.measurement)) // spacing to not lock items to top of app bar
                     }
                 }
             }
@@ -517,7 +485,10 @@ fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = Measurements.HorizontalPadding.measurement, vertical = Measurements.WithinSectionVerticalGap.measurement),
+                        .padding(
+                            horizontal = Measurements.HorizontalPadding.measurement,
+                            vertical = Measurements.WithinSectionVerticalGap.measurement
+                        ),
                 ){
                     Icon(imageVector = Icons.Filled.Warning, contentDescription = stringResource(R.string.warning_icon_description))
                     Spacer(modifier = Modifier.padding(5.dp))
@@ -696,10 +667,10 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                         ),
                         startAxis = rememberStartAxis(
                             titleComponent = rememberTextComponent(
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 background = ShapeComponent(
                                     shape = Shapes.pillShape,
-                                    color = MaterialTheme.colorScheme.secondaryContainer.hashCode()
+                                    color = MaterialTheme.colorScheme.primaryContainer.hashCode()
                                 ),
 
                                 padding = MutableDimensions(8f, 1f),
@@ -717,11 +688,11 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                             valueFormatter = bottomAxisValueFormatter,
                             titleComponent = rememberTextComponent(
 
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
 
                                 background = ShapeComponent(
                                     shape = Shapes.pillShape,
-                                    color = MaterialTheme.colorScheme.secondaryContainer.hashCode()
+                                    color = MaterialTheme.colorScheme.primaryContainer.hashCode()
                                 ),
                                 padding = MutableDimensions(8f, 1f),
                                 textAlignment = Layout.Alignment.ALIGN_CENTER,
@@ -737,6 +708,30 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                 horizontalLayout = HorizontalLayout.fullWidth(),
             )
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomInfoModalPopUp(title: String, bodyText: String, onDismiss : () -> Unit ){
+    ModalBottomSheet(
+        modifier = Modifier
+            .defaultMinSize(minHeight = 200.dp),
+        onDismissRequest = onDismiss
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = bodyText,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+        Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
     }
 }
 
