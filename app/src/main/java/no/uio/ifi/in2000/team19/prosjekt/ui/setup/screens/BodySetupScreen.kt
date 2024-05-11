@@ -23,14 +23,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.TipBox
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: NavHostController) {
+fun BodySetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
     val thinIndex = viewModel.selectedThinIndex.collectAsState().value
 
@@ -91,7 +90,7 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                     onClick = {
                         viewModel.updateThinIndex(0)
                         viewModel.updateIsThin(true) // Doesnt need to update puppy in database
-                        navController.navigate("setup/${id.toInt() + 1}") // Navigate to next screen
+                        onDone()
                     },
 
                     ) {
@@ -121,7 +120,7 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                     onClick = {
                         viewModel.updateThinIndex(1)
                         viewModel.updateIsThin(false) // Doesnt need to update adult in database
-                        navController.navigate("setup/${id.toInt() + 1}") // Navigate to next screen
+                        onDone()
                     }) {
                     Column(
                         modifier = Modifier
@@ -149,7 +148,7 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                     onClick = {
                         viewModel.updateThinIndex(2)
                         viewModel.updateIsThin(false) // Doesnt need to update adult in database
-                        navController.navigate("setup/${id.toInt() + 1}") // Navigate to next screen
+                        onDone()
                     }) {
                     Column(
                         modifier = Modifier

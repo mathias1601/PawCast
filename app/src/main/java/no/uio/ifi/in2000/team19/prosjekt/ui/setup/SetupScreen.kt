@@ -47,17 +47,20 @@ fun SetupManager(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    val amountOfSetupPages = "6"
-                    Text(
-                        text = stringResource(
-                            R.string.setup_stage_count,
-                            id.toInt() + 1,
-                            amountOfSetupPages
-                        ),
-                        style = MaterialTheme.typography.titleMedium,
-                        textAlign = TextAlign.Right,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    if (!id.contains("only")){
+                        val amountOfSetupPages = "6"
+                        Text(
+                            text = stringResource(
+                                R.string.setup_stage_count,
+                                id.toInt() + 1,
+                                amountOfSetupPages
+                            ),
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Right,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
                 },
                 navigationIcon = {
                     if (id != "0"){
@@ -90,16 +93,38 @@ fun SetupManager(
                 )
         ) {
 
-            // Should refactor to use "generic" setup screen class as we do alot of copy pasting for now.
             when (id) {
+                // For going to next step after finnishing.
+                "0" -> NamesSetupScreen(viewModel) { navController.navigate("setup/1") }
+                "1" -> LocationSetupScreen(searchLocationViewModel) { navController.navigate("setup/2") }
+                "2" -> AgeSetupScreen(viewModel) { navController.navigate("setup/3") }
+                "3" -> NoseSetupScreen(viewModel) { navController.navigate("setup/4") }
+                "4" -> BodySetupScreen(viewModel) { navController.navigate("setup/5") }
+                "5" -> FurSetupScreen(viewModel) {
+                    viewModel.saveUserInfo()
+                    viewModel.saveSetupState(isCompleted = true)
+                    navController.navigate("home")
+                }
 
-                "0" -> NamesSetupScreen(viewModel,id,navController)
-                "1" -> LocationSetupScreen(searchLocationViewModel, id, navController)
-                "2" -> AgeSetupScreen(viewModel,id,navController)
-                "3" -> NoseSetupScreen(viewModel,id,navController)
-                "4" -> BodySetupScreen(viewModel,id,navController)
-                "5" -> FurSetupScreen(viewModel,navController)
-
+                // When editing from settings screen.
+                "only_0" -> NamesSetupScreen(viewModel) {
+                    viewModel.saveUserInfo()
+                    navController.navigate("settings") }
+                "only_1" -> LocationSetupScreen(searchLocationViewModel) {
+                    viewModel.saveUserInfo()
+                    navController.navigate("settings") }
+                "only_2" -> AgeSetupScreen(viewModel) {
+                    viewModel.saveUserInfo()
+                    navController.navigate("settings") }
+                "only_3" -> NoseSetupScreen(viewModel) {
+                    viewModel.saveUserInfo()
+                    navController.navigate("settings") }
+                "only_4" -> BodySetupScreen(viewModel) {
+                    viewModel.saveUserInfo()
+                    navController.navigate("settings") }
+                "only_5" -> FurSetupScreen(viewModel) {
+                    viewModel.saveUserInfo()
+                    navController.navigate("settings") }
             }
         }
     }

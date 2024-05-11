@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -19,6 +20,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationTextField
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
@@ -28,7 +30,8 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
 @Composable
 fun SettingsScreen(
     viewModel: SettingsScreenViewModel,
-    searchLocationViewModel: SearchLocationViewModel
+    searchLocationViewModel: SearchLocationViewModel,
+    navController:NavController
 ){
 
 
@@ -60,8 +63,28 @@ fun SettingsScreen(
             
             
             CategoryDivider(text = stringResource(R.string.your_dog_title))
-            Button(onClick = { viewModel.clearDataStore() }) {
-                Text(text = "Endre hunde profilen din")
+
+
+            val buttonModifiers = Modifier.fillMaxWidth()
+
+            Button(onClick = { navController.navigate("setup/only_0") }, modifier = buttonModifiers) {
+                Text(text = "Endre navn og alder på hunden din")
+            }
+
+            Button(onClick = { navController.navigate("setup/only_2") }, modifier = buttonModifiers) {
+                Text(text = "Endre alder på hunden din")
+            }
+
+            Button(onClick = { navController.navigate("setup/only_3") }, modifier = buttonModifiers) {
+                Text(text = "Endre nese form")
+            }
+
+            Button(onClick = { navController.navigate("setup/only_4") }, modifier = buttonModifiers) {
+                Text(text = "Endre kroppsform")
+            }
+
+            Button(onClick = { navController.navigate("setup/only_5") }, modifier = buttonModifiers) {
+                Text(text = "Endre pels typers")
             }
         }
     }

@@ -23,14 +23,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun NoseSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: NavHostController) {
+fun NoseSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
     val noseIndex = viewModel.selectedNoseIndex.collectAsState().value
 
@@ -90,7 +89,7 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                     onClick = {
                         viewModel.updateNoseIndex(0)
                         viewModel.updateIsFlatNosed(false) // Doesnt need to update puppy in database
-                        navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+                        onDone()
                     },
 
                     ) {
@@ -120,7 +119,7 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: 
                     onClick = {
                         viewModel.updateNoseIndex(1)
                         viewModel.updateIsFlatNosed(true) // Doesnt need to update adult in database
-                        navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+                        onDone()
                     }) {
                     Column(
                         modifier = Modifier

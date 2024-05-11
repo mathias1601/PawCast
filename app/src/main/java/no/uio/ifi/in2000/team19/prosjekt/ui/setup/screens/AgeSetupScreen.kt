@@ -23,13 +23,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: NavHostController) {
+fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
     val ageIndex = viewModel.selectedAgeIndex.collectAsState().value
 
@@ -84,8 +83,9 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
                     ),
                     onClick = {
                         viewModel.updateAgeIndex(0)
+                        viewModel.updateIsPuppy(true)
                         viewModel.updateIsSenior(false) // Doesnt need to update puppy in database
-                        navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+                        onDone()
                     },
 
                     ) {
@@ -113,8 +113,9 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
 
                     onClick = {
                         viewModel.updateAgeIndex(1)
+                        viewModel.updateIsPuppy(false)
                         viewModel.updateIsSenior(false) // Doesnt need to update adult in database
-                        navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+                        onDone()
                     }) {
                     Column(
                         modifier = Modifier
@@ -139,8 +140,9 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, id: String, navController: N
 
                     onClick = {
                         viewModel.updateAgeIndex(2)
+                        viewModel.updateIsPuppy(false)
                         viewModel.updateIsSenior(true) // Update senior in database
-                        navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+                        onDone()
                     }) {
                     Column(
                         modifier = Modifier

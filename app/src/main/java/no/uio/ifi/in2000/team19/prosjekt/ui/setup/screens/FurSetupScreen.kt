@@ -33,7 +33,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.TipBox
@@ -41,7 +40,7 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.setup.TipBox
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun FurSetupScreen(viewModel: SetupScreenViewModel, navController: NavHostController) {
+fun FurSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
     val userInfo = viewModel.userInfo.collectAsState().value
     Column(
@@ -114,12 +113,7 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, navController: NavHostContro
             Spacer(modifier = Modifier.padding(10.dp))
 
 
-            Text(
-                text= stringResource(R.string.chooseDogCategoryBottomScreenTip),
-                style = MaterialTheme.typography.labelMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
+
 
         }
         Column (
@@ -133,10 +127,8 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, navController: NavHostContro
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = {
-                    viewModel.saveUserInfo() // save user info to DB
-                    viewModel.saveSetupState(isCompleted = true) // store info that setup is completed so next app launch doesnt ask for setup.
                     // navController.popBackStack() // removes history from backstack. Stops user from being able to click back, navigating the user back to setup 👎
-                    navController.navigate("home")
+                    onDone()
                 }
             ) {
                 Text (text= stringResource(R.string.done))
