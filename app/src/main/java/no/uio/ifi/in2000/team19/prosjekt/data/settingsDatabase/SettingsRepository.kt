@@ -43,11 +43,6 @@ class SettingsRepository @Inject constructor(
         coordsDao.insertCords(cords)
     }
 
-    fun deleteCoords(cords: Cords) {
-        coordsDao.deleteCords(cords)
-    }
-
-
     // USER INFO
     fun getUserInfo(): UserInfo {
         if(userInfoDao.getUserInfo() == null) {
@@ -57,10 +52,6 @@ class SettingsRepository @Inject constructor(
 
     fun updateUserInfo(userInfo: UserInfo) {
         userInfoDao.upsertUserInfo(userInfo)
-    }
-
-    fun deleteUserInfo(userInfo: UserInfo) {
-        userInfoDao.deleteUserInfo(userInfo)
     }
 }
 
