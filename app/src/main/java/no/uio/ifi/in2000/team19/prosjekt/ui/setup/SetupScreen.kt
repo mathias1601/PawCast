@@ -30,6 +30,7 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens.FurSetupScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens.LocationSetupScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens.NamesSetupScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens.NoseSetupScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.setup.screens.WelcomeScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
 
 
@@ -47,8 +48,8 @@ fun SetupManager(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    if (!id.contains("only")){
-                        val amountOfSetupPages = "6"
+                    if (!id.contains("only") && id != "0"){ // hide progress indicator if user has navigated to Setup from settings (using "only_id")
+                        val amountOfSetupPages = "7"
                         Text(
                             text = stringResource(
                                 R.string.setup_stage_count,
@@ -95,40 +96,47 @@ fun SetupManager(
 
             when (id) {
                 // For going to next step after finnishing.
-                "0" -> NamesSetupScreen(viewModel) { navController.navigate("setup/1") }
-                "1" -> LocationSetupScreen(searchLocationViewModel) { navController.navigate("setup/2") }
-                "2" -> AgeSetupScreen(viewModel) { navController.navigate("setup/3") }
-                "3" -> NoseSetupScreen(viewModel) { navController.navigate("setup/4") }
-                "4" -> BodySetupScreen(viewModel) { navController.navigate("setup/5") }
-                "5" -> FurSetupScreen(viewModel) {
+                "0" -> WelcomeScreen(
+                    onDone = { navController.navigate("setup/1") }
+                ) {
+                    viewModel.handleUserSkip()
+                    navController.navigate("only_2")
+
+                }
+
+                "1" -> NamesSetupScreen(viewModel) { navController.navigate("setup/2") }
+                "2" -> LocationSetupScreen(searchLocationViewModel) { navController.navigate("setup/3") }
+                "3" -> AgeSetupScreen(viewModel) { navController.navigate("setup/4") }
+                "4" -> NoseSetupScreen(viewModel) { navController.navigate("setup/5") }
+                "5" -> BodySetupScreen(viewModel) { navController.navigate("setup/6") }
+                "6" -> FurSetupScreen(viewModel) {
                     viewModel.saveUserInfo()
                     viewModel.saveSetupState(isCompleted = true)
                     navController.navigate("home")
                 }
 
                 // When editing from settings screen.
-                "only_0" -> NamesSetupScreen(viewModel) {
+                "only_1" -> NamesSetupScreen(viewModel) {
                     viewModel.saveUserInfo()
                     navController.navigate("settings") }
-                "only_1" -> LocationSetupScreen(searchLocationViewModel) {
+                "only_2" -> LocationSetupScreen(searchLocationViewModel) {
                     viewModel.saveUserInfo()
                     navController.navigate("settings") }
-                "only_2" -> AgeSetupScreen(viewModel) {
+                "only_3" -> AgeSetupScreen(viewModel) {
                     viewModel.saveUserInfo()
                     navController.navigate("settings") }
-                "only_3" -> NoseSetupScreen(viewModel) {
+                "only_4" -> NoseSetupScreen(viewModel) {
                     viewModel.saveUserInfo()
                     navController.navigate("settings") }
-                "only_4" -> BodySetupScreen(viewModel) {
+                "only_5" -> BodySetupScreen(viewModel) {
                     viewModel.saveUserInfo()
                     navController.navigate("settings") }
-                "only_5" -> FurSetupScreen(viewModel) {
+                "only_6" -> FurSetupScreen(viewModel) {
                     viewModel.saveUserInfo()
                     navController.navigate("settings") }
             }
         }
     }
-
 }
 
 @Composable
@@ -137,7 +145,6 @@ fun TipBox(tipText:String){
     Card(
         modifier = Modifier
             .fillMaxWidth()
-
     ){
 
         Row(

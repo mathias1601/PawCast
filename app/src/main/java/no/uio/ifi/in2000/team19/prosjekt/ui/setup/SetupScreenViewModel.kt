@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.dataStore.DataStoreRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.createTemporaryUserinfo
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import java.io.IOException
 import javax.inject.Inject
@@ -24,7 +25,7 @@ class SetupScreenViewModel @Inject constructor(
 
 
 
-    private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0,"loading", "loading", false,false,false, false, false, false, false, false, false, false))
+    private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(createTemporaryUserinfo())
     var userInfo: StateFlow<UserInfo> = _userInfo.asStateFlow()
 
     init{
@@ -49,7 +50,6 @@ class SetupScreenViewModel @Inject constructor(
 
 
     // SCREEN TWO
-
     private var _selectedAgeIndex: MutableStateFlow<Int?> = MutableStateFlow(null) // Null when none are chosen.
     var selectedAgeIndex: StateFlow<Int?> = _selectedAgeIndex.asStateFlow()
 
@@ -59,6 +59,10 @@ class SetupScreenViewModel @Inject constructor(
 
     fun updateIsPuppy(newValue: Boolean) {
         _userInfo.value.isPuppy = newValue
+    }
+
+    fun updateIsAdult(newValue: Boolean){
+        _userInfo.value.isAdult = newValue
     }
 
     fun updateIsSenior(newValue: Boolean) {
@@ -79,6 +83,10 @@ class SetupScreenViewModel @Inject constructor(
         Log.d("SETUP_DEBUG", _userInfo.value.isFlatNosed.toString())
     }
 
+    fun updateIsNormalNosed(newBoolean: Boolean){
+        _userInfo.value.isNormalNosed = newBoolean
+    }
+
     fun updateNoseIndex(newIndex:Int){
         _selectedNoseIndex.value = newIndex
     }
@@ -88,16 +96,24 @@ class SetupScreenViewModel @Inject constructor(
 
     // SCREEN FOUR
 
-    private var _selectedThinIndex: MutableStateFlow<Int?> = MutableStateFlow(null)
-    var selectedThinIndex:StateFlow<Int?> = _selectedThinIndex.asStateFlow()
+    private var _selectedBodyIndex: MutableStateFlow<Int?> = MutableStateFlow(null)
+    var selectedThinIndex:StateFlow<Int?> = _selectedBodyIndex.asStateFlow()
 
     fun updateIsThin(newValue: Boolean) {
         _userInfo.value.isThin = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isThin.toString())
     }
 
-    fun updateThinIndex(newIndex: Int){
-        _selectedThinIndex.value = newIndex
+    fun updateIsMedium(newValue: Boolean){
+        _userInfo.value.isMediumBody = newValue
+    }
+
+    fun updateIsThick(newValue: Boolean){
+        _userInfo.value.isThickBody = newValue
+    }
+
+    fun updateBodyIndex(newIndex: Int){
+        _selectedBodyIndex.value = newIndex
     }
 
 
@@ -130,6 +146,31 @@ class SetupScreenViewModel @Inject constructor(
                 Log.d("SETUP_DEBUG", e.toString())
             }
         }
+    }
+
+    fun handleUserSkip(){
+        val defaultUserInfo = UserInfo(
+            id = 0,
+            userName = "",
+            dogName = "",
+            isSenior = true,
+            isAdult = false,
+            isPuppy = false,
+            isFlatNosed = true,
+            isNormalNosed = false,
+            isThin = true,
+            isMediumBody = false,
+            isThickBody = false,
+            isLongHaired = true,
+            isShortHaired = true,
+            isThinHaired = true,
+            isThickHaired = true,
+            isLightHaired = true,
+            isDarkHaired = true,
+        )
+        _userInfo.value = defaultUserInfo
+        saveUserInfo()
+        saveSetupState(true)
     }
 
     fun saveSetupState(isCompleted:Boolean){

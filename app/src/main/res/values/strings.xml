@@ -65,7 +65,7 @@
     <string name="see_more_hours">Se flere timer</string>
     <string name="see_hourly">Se timesvis</string>
     <string name="next">Neste</string>
-    <string name="skip_this_step">Hopp over dette steget</string>
+    <string name="skip_this_step">Ikke bruk navn</string>
     <string name="done">Fullfør</string>
 
 
@@ -123,5 +123,8 @@
     <string name="database_error_button_text">En feil oppstod i lesing av databasen</string>
 
     <string name="loading_text">Laster…</string>
+    <string name="advice_info_title">Anbefalinger</string>
+    <string name="graph_info_title">Forklaring på Graf</string>
+    <string name="not_defined">Not defined</string>
 
 </resources>

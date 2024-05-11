@@ -36,6 +36,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -203,8 +204,8 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .padding(
                         top = 20.dp, // more top padding to avoid camera on new phones
-                        start = 10.dp,
-                        end = 10.dp
+                        start = Measurements.HorizontalPadding.measurement,
+                        end = Measurements.HorizontalPadding.measurement
                     ),
 
                 verticalArrangement = Arrangement.Center,
@@ -309,58 +310,28 @@ fun HomeScreen(
 
 
             // ======INFO OPEN / CLOSE BOXES =============
-            var showGraphInfoSheet by remember { mutableStateOf(false) }
-            var showAdviceInfoSheet by remember { mutableStateOf(false) }
+
 
             // Advice Info Sheet.
+            var showAdviceInfoSheet by remember { mutableStateOf(false) }
             if (showAdviceInfoSheet) {
-                ModalBottomSheet(
-                    modifier = Modifier
-                        .defaultMinSize(minHeight = 200.dp),
-                    onDismissRequest = { showAdviceInfoSheet = false }
-                ) {
-                    Column(
-                        modifier = Modifier.padding(horizontal = Measurements.HorizontalPadding.measurement)
-                    ) {
-                        Text(
-                            text = "Anbefalinger",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-
-                        Spacer(modifier = Modifier.padding(10.dp))
-
-                        Text(
-                            text = stringResource(id = (R.string.adviceinfo)),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    }
-                }
+                BottomInfoModalPopUp(
+                    title = stringResource(R.string.advice_info_title),
+                    bodyText = stringResource(id = R.string.adviceinfo),
+                    onDismiss = { showAdviceInfoSheet = false})
             }
 
             // Graph Info Sheet
+            var showGraphInfoSheet by remember { mutableStateOf(false) }
             if (showGraphInfoSheet) {
-                ModalBottomSheet(
-                    modifier = Modifier
-                        .defaultMinSize(minHeight = 200.dp),
-                    onDismissRequest = { showGraphInfoSheet = false }
-                ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp)
-                    ) {
-                        Text(
-                            text = "Graf-forklaring",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            text = stringResource(R.string.graphinfo),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
+                BottomInfoModalPopUp(
+                    title = stringResource(R.string.graph_info_title),
+                    bodyText = stringResource(id = R.string.graphinfo),
+                    onDismiss = {showGraphInfoSheet = false})
             }
 
 
-            // This is the Surface containing Advice + Graph cards.
+            // This is the Surface containing most of the main content overlaying the gradient background.
             Surface(
                 shape = MaterialTheme.shapes.extraLarge
 
@@ -459,16 +430,10 @@ fun HomeScreen(
                         }
                         
                         RecomendedTimesForWalk(bestTimesForWalk = bestTime)
-
-                        Spacer(modifier = Modifier.padding(10.dp))
-                        
+                        Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
                         ForecastGraph(graphUiState, firstYValueUiState)
-                        
                         Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
-
                         BottomInfo(lastUpdated = weather.date)
-                        
-                        Spacer(modifier = Modifier.padding(Measurements.WithinSectionVerticalGap.measurement)) // spacing to not lock items to top of app bar
                     }
                 }
             }
@@ -493,75 +458,7 @@ fun BottomInfo(lastUpdated: LocalDateTime){
 }
 
 
-@Composable
-fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
 
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(
-                    horizontal = Measurements.HorizontalPadding.measurement,
-                    vertical = Measurements.WithinSectionVerticalGap.measurement
-                )
-                .fillMaxSize()
-        ) {
-
-
-
-            // When there is no recomened times for a walk
-            if (bestTimesForWalk.morning.isBlank() && bestTimesForWalk.midday.isBlank() && bestTimesForWalk.evening.isBlank()){
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = Measurements.HorizontalPadding.measurement, vertical = Measurements.WithinSectionVerticalGap.measurement),
-                ){
-                    Icon(imageVector = Icons.Filled.Warning, contentDescription = stringResource(R.string.warning_icon_description))
-                    Spacer(modifier = Modifier.padding(5.dp))
-                    Text(text = stringResource(R.string.bad_weather_alert), modifier = Modifier.fillMaxWidth())
-                }
-
-                // Show recomened times
-            } else {
-
-                val morningText =
-                    if (bestTimesForWalk.morning.isNotBlank()) stringResource( R.string.morning_walk_time, bestTimesForWalk.morning)
-                    else stringResource(R.string.morning_walk_is_not_recommended)
-                val middayText =
-                    if (bestTimesForWalk.midday.isNotBlank()) stringResource(R.string.midday_walk_time, bestTimesForWalk.midday)
-                    else stringResource(R.string.midday_walk_not_recommended)
-                val eveningText =
-                    if (bestTimesForWalk.evening.isNotBlank()) stringResource(R.string.evening_walk_time, bestTimesForWalk.evening)
-                    else stringResource(R.string.evening_walk_not_recommened)
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            horizontal = Measurements.HorizontalPadding.measurement,
-                            vertical = Measurements.WithinSectionVerticalGap.measurement
-                        ),
-                ) {
-                    Icon(imageVector = Icons.Filled.AccessTime, contentDescription = stringResource(
-                        R.string.klokke_ikon_description
-                        )
-                    )
-                    Spacer(modifier = Modifier.padding(5.dp))
-
-                    Column {
-                        Text(text = morningText)
-                        Text(text = middayText)
-                        Text(text = eveningText)
-                    }
-
-                }
-            }
-        }
-    }
-}
 
 
 
@@ -634,6 +531,78 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
 }
 
 @Composable
+fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
+
+
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(
+                    horizontal = Measurements.HorizontalPadding.measurement,
+                    vertical = Measurements.WithinSectionVerticalGap.measurement
+                )
+                .fillMaxSize()
+        ) {
+
+
+
+            // When there is no recomened times for a walk
+            if (bestTimesForWalk.morning.isBlank() && bestTimesForWalk.midday.isBlank() && bestTimesForWalk.evening.isBlank()){
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            horizontal = Measurements.HorizontalPadding.measurement,
+                            vertical = Measurements.WithinSectionVerticalGap.measurement
+                        ),
+                ){
+                    Icon(imageVector = Icons.Filled.Warning, contentDescription = stringResource(R.string.warning_icon_description))
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    Text(text = stringResource(R.string.bad_weather_alert), modifier = Modifier.fillMaxWidth())
+                }
+
+                // Show recomened times
+            } else {
+
+                val morningText =
+                    if (bestTimesForWalk.morning.isNotBlank()) stringResource( R.string.morning_walk_time, bestTimesForWalk.morning)
+                    else stringResource(R.string.morning_walk_is_not_recommended)
+                val middayText =
+                    if (bestTimesForWalk.midday.isNotBlank()) stringResource(R.string.midday_walk_time, bestTimesForWalk.midday)
+                    else stringResource(R.string.midday_walk_not_recommended)
+                val eveningText =
+                    if (bestTimesForWalk.evening.isNotBlank()) stringResource(R.string.evening_walk_time, bestTimesForWalk.evening)
+                    else stringResource(R.string.evening_walk_not_recommened)
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            horizontal = Measurements.HorizontalPadding.measurement,
+                            vertical = Measurements.WithinSectionVerticalGap.measurement
+                        ),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+
+                    Column {
+                        Text(text = morningText)
+                        Text(text = middayText)
+                        Text(text = eveningText)
+                    }
+                    Icon(imageVector = Icons.Filled.AccessTime, contentDescription = stringResource(R.string.klokke_ikon_description))
+
+
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState: Int) {
 
     val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour
@@ -696,10 +665,10 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                         ),
                         startAxis = rememberStartAxis(
                             titleComponent = rememberTextComponent(
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
                                 background = ShapeComponent(
                                     shape = Shapes.pillShape,
-                                    color = MaterialTheme.colorScheme.secondaryContainer.hashCode()
+                                    color = MaterialTheme.colorScheme.primaryContainer.hashCode()
                                 ),
 
                                 padding = MutableDimensions(8f, 1f),
@@ -717,11 +686,11 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                             valueFormatter = bottomAxisValueFormatter,
                             titleComponent = rememberTextComponent(
 
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
 
                                 background = ShapeComponent(
                                     shape = Shapes.pillShape,
-                                    color = MaterialTheme.colorScheme.secondaryContainer.hashCode()
+                                    color = MaterialTheme.colorScheme.primaryContainer.hashCode()
                                 ),
                                 padding = MutableDimensions(8f, 1f),
                                 textAlignment = Layout.Alignment.ALIGN_CENTER,
@@ -733,15 +702,32 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                 ),
                 modelProducer = graphUiState,
                 zoomState = rememberVicoZoomState(zoomEnabled = false),
-                marker = rememberMarker(),
                 horizontalLayout = HorizontalLayout.fullWidth(),
             )
         }
     }
 }
 
-
-
-
-
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BottomInfoModalPopUp(title: String, bodyText: String, onDismiss : () -> Unit ){
+    ModalBottomSheet(
+        modifier = Modifier
+            .defaultMinSize(minHeight = 200.dp),
+        onDismissRequest = onDismiss
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = bodyText,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+        Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
+    }
+}

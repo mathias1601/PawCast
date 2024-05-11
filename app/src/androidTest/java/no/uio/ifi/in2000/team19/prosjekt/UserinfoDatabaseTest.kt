@@ -5,8 +5,6 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsDatabase
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.coordsDao
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.userInfoDao
 import org.junit.After
@@ -35,13 +33,13 @@ class UserinfoDatabaseTest {
 
     @Test
     fun checkDatabaseContent() {
-        val expectedUserInfo = UserInfo(0,"Coco", "Isabel", true, true, true, true, false, false, false, true, true, false)
-        dao.insertUserInfo(expectedUserInfo)
+        val expectedUserInfo = UserInfo(0,"Coco", "Isabel", true, true, true, true, false, false, false, true, true, false, false, false, false, false)
+        dao.upsertUserInfo(expectedUserInfo)
 
         val userInfo = dao.getUserInfo()
         Assert.assertEquals(expectedUserInfo, userInfo)
 
-        val fakeInfo = UserInfo(0,"Isabel", "Coco", true, true, true, true, false, false, false, true, true, true)
+        val fakeInfo = UserInfo(0,"Isabel", "Coco", true, true, true, true, false, false, false, true, true, true, false, false, false ,false)
         dao.deleteUserInfo(fakeInfo)
 
         Assert.assertEquals(expectedUserInfo, userInfo)

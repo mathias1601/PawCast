@@ -84,6 +84,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                     onClick = {
                         viewModel.updateAgeIndex(0)
                         viewModel.updateIsPuppy(true)
+                        viewModel.updateIsMedium(false)
                         viewModel.updateIsSenior(false) // Doesnt need to update puppy in database
                         onDone()
                     },
@@ -114,6 +115,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                     onClick = {
                         viewModel.updateAgeIndex(1)
                         viewModel.updateIsPuppy(false)
+                        viewModel.updateIsAdult(true)
                         viewModel.updateIsSenior(false) // Doesnt need to update adult in database
                         onDone()
                     }) {
@@ -141,6 +143,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                     onClick = {
                         viewModel.updateAgeIndex(2)
                         viewModel.updateIsPuppy(false)
+                        viewModel.updateIsAdult(false)
                         viewModel.updateIsSenior(true) // Update senior in database
                         onDone()
                     }) {

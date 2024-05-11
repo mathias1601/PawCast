@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.createTemporaryUserinfo
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
@@ -48,35 +49,40 @@ class HomeScreenViewModel @Inject constructor(
     private var _adviceUiState: MutableStateFlow<AdviceUiState> = MutableStateFlow(AdviceUiState.Loading)
     val adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
 
-    // Contains graph data
+
     private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
+    /** Contains graph data */
     val graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
 
-    // Contains the best time for a trip for morning, midday and evening based on score.
     private val _bestTimeUiState = MutableStateFlow(BestTimesForWalk("", "", ""))
+    /** Contains the best time for a trip for morning, midday and evening based on score. */
     val bestTimeUiState: StateFlow<BestTimesForWalk> = _bestTimeUiState.asStateFlow()
 
-    // Contains the value of graphs score on index 0. Used to set graph color to different color based on this value.
     private val _firstYValueUiState = MutableStateFlow(0)
+    /** Contains the value of graphs score on index 0. Used to set graph color to different color based on this value. */
     val firstYValueUiState: StateFlow<Int> = _firstYValueUiState.asStateFlow()
 
-    // Contains the users location. Exposed to UI so show location in HomeScreen.
     private var _locationUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "not loaded", "not loaded", "0", "0"))
+    /** Contains the users location. Exposed to UI so show location in HomeScreen. */
+
     val locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
 
-    // Is exposed to UI to show username and dog name.
-    private var _userInfoUiState:MutableStateFlow<UserInfo> = MutableStateFlow(UserInfo(0, "loading", "loading", false, false, false, false, false, false, false, false, false, false))
+    private var _userInfoUiState:MutableStateFlow<UserInfo> = MutableStateFlow(createTemporaryUserinfo())
+    /** Is exposed to UI to show username and dog name. */
     val userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
-    // Used to show current temperature.
+
     private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", LocalDateTime.now(), 0.0, 0.0, 0.0))
+    /** Used to show current temperature. */
     val temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
 
-    // Is used to determine which to dog show.
+
     private var _dogImage:MutableStateFlow<String> = MutableStateFlow("dog_normal_white_sticker")
+    /** Is used to determine which to dog show in home screen. */
     val dogImage:StateFlow<String> = _dogImage.asStateFlow()
 
-    private val height: String = "0" // height doesnt matter for our use case, so is just always set to 0.
+    /** height doesnt matter for our use case, so is just always set to 0 */
+    private val height: String = "0"
 
     private lateinit var adviceList: List<Advice>
 
@@ -328,21 +334,23 @@ class HomeScreenViewModel @Inject constructor(
         val temperatureToShowSunnyDog = 17.0
         val temperatureToShowColdDog = 0.0
 
-        val useStickerVersion = true
+        val useStickerVersion = false
 
         val isNight = weather.symbol.contains("night", ignoreCase = true)
         val isThundering = weather.symbol.contains("thunder", ignoreCase = true)
+        val windSpeed = weather.wind ?: 0.0
+
 
         val dogImageString =
 
             if (isThundering) "dog_thunder"
             else if (isNight) "dog_sleepy"
-            else if (weather.wind!! > 5) "dog_wind"
+            else if (windSpeed > 5) "dog_wind"
             else if (weather.precipitation > 1 ) "dog_rain"
             else if (weather.temperature >= temperatureToShowSunnyDog) "dog_sunny"
             else if (weather.temperature <= temperatureToShowColdDog ) "dog_cold"
             else "dog_normal"
-        Log.d("debug", "${weather.temperature} grader !!")
+
         return  if (useStickerVersion) dogImageString + "_white_sticker" else dogImageString
     }
 
