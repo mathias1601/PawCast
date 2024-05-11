@@ -36,6 +36,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -315,7 +316,7 @@ fun HomeScreen(
             var showAdviceInfoSheet by remember { mutableStateOf(false) }
             if (showAdviceInfoSheet) {
                 BottomInfoModalPopUp(
-                    title = "Anbefalinger",
+                    title = stringResource(R.string.advice_info_title),
                     bodyText = stringResource(id = R.string.adviceinfo),
                     onDismiss = { showAdviceInfoSheet = false})
             }
@@ -324,7 +325,7 @@ fun HomeScreen(
             var showGraphInfoSheet by remember { mutableStateOf(false) }
             if (showGraphInfoSheet) {
                 BottomInfoModalPopUp(
-                    title = "Forklaring på Graf",
+                    title = stringResource(R.string.graph_info_title),
                     bodyText = stringResource(id = R.string.graphinfo),
                     onDismiss = {showGraphInfoSheet = false})
             }
@@ -429,13 +430,9 @@ fun HomeScreen(
                         }
                         
                         RecomendedTimesForWalk(bestTimesForWalk = bestTime)
-
-                        Spacer(modifier = Modifier.padding(10.dp))
-                        
+                        Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
                         ForecastGraph(graphUiState, firstYValueUiState)
-                        
                         Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
-
                         BottomInfo(lastUpdated = weather.date)
                     }
                 }
@@ -461,78 +458,7 @@ fun BottomInfo(lastUpdated: LocalDateTime){
 }
 
 
-@Composable
-fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
 
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(
-                    horizontal = Measurements.HorizontalPadding.measurement,
-                    vertical = Measurements.WithinSectionVerticalGap.measurement
-                )
-                .fillMaxSize()
-        ) {
-
-
-
-            // When there is no recomened times for a walk
-            if (bestTimesForWalk.morning.isBlank() && bestTimesForWalk.midday.isBlank() && bestTimesForWalk.evening.isBlank()){
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            horizontal = Measurements.HorizontalPadding.measurement,
-                            vertical = Measurements.WithinSectionVerticalGap.measurement
-                        ),
-                ){
-                    Icon(imageVector = Icons.Filled.Warning, contentDescription = stringResource(R.string.warning_icon_description))
-                    Spacer(modifier = Modifier.padding(5.dp))
-                    Text(text = stringResource(R.string.bad_weather_alert), modifier = Modifier.fillMaxWidth())
-                }
-
-                // Show recomened times
-            } else {
-
-                val morningText =
-                    if (bestTimesForWalk.morning.isNotBlank()) stringResource( R.string.morning_walk_time, bestTimesForWalk.morning)
-                    else stringResource(R.string.morning_walk_is_not_recommended)
-                val middayText =
-                    if (bestTimesForWalk.midday.isNotBlank()) stringResource(R.string.midday_walk_time, bestTimesForWalk.midday)
-                    else stringResource(R.string.midday_walk_not_recommended)
-                val eveningText =
-                    if (bestTimesForWalk.evening.isNotBlank()) stringResource(R.string.evening_walk_time, bestTimesForWalk.evening)
-                    else stringResource(R.string.evening_walk_not_recommened)
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            horizontal = Measurements.HorizontalPadding.measurement,
-                            vertical = Measurements.WithinSectionVerticalGap.measurement
-                        ),
-                ) {
-                    Icon(imageVector = Icons.Filled.AccessTime, contentDescription = stringResource(
-                        R.string.klokke_ikon_description
-                        )
-                    )
-                    Spacer(modifier = Modifier.padding(5.dp))
-
-                    Column {
-                        Text(text = morningText)
-                        Text(text = middayText)
-                        Text(text = eveningText)
-                    }
-
-                }
-            }
-        }
-    }
-}
 
 
 
@@ -605,6 +531,79 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
 }
 
 @Composable
+fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
+
+
+    OutlinedCard(
+        modifier = Modifier
+            .fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(
+                    horizontal = Measurements.HorizontalPadding.measurement,
+                    vertical = Measurements.WithinSectionVerticalGap.measurement
+                )
+                .fillMaxSize()
+        ) {
+
+
+
+            // When there is no recomened times for a walk
+            if (bestTimesForWalk.morning.isBlank() && bestTimesForWalk.midday.isBlank() && bestTimesForWalk.evening.isBlank()){
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            horizontal = Measurements.HorizontalPadding.measurement,
+                            vertical = Measurements.WithinSectionVerticalGap.measurement
+                        ),
+                ){
+                    Icon(imageVector = Icons.Filled.Warning, contentDescription = stringResource(R.string.warning_icon_description))
+                    Spacer(modifier = Modifier.padding(5.dp))
+                    Text(text = stringResource(R.string.bad_weather_alert), modifier = Modifier.fillMaxWidth())
+                }
+
+                // Show recomened times
+            } else {
+
+                val morningText =
+                    if (bestTimesForWalk.morning.isNotBlank()) stringResource( R.string.morning_walk_time, bestTimesForWalk.morning)
+                    else stringResource(R.string.morning_walk_is_not_recommended)
+                val middayText =
+                    if (bestTimesForWalk.midday.isNotBlank()) stringResource(R.string.midday_walk_time, bestTimesForWalk.midday)
+                    else stringResource(R.string.midday_walk_not_recommended)
+                val eveningText =
+                    if (bestTimesForWalk.evening.isNotBlank()) stringResource(R.string.evening_walk_time, bestTimesForWalk.evening)
+                    else stringResource(R.string.evening_walk_not_recommened)
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            horizontal = Measurements.HorizontalPadding.measurement,
+                            vertical = Measurements.WithinSectionVerticalGap.measurement
+                        ),
+                ) {
+                    Icon(imageVector = Icons.Filled.AccessTime, contentDescription = stringResource(
+                        R.string.klokke_ikon_description
+                    )
+                    )
+                    Spacer(modifier = Modifier.padding(5.dp))
+
+                    Column {
+                        Text(text = morningText)
+                        Text(text = middayText)
+                        Text(text = eveningText)
+                    }
+
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState: Int) {
 
     val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour
@@ -638,7 +637,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
 
     val scoreColor: Color? = colorMap[firstYValueUiState]
 
-    Card(
+    OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(Measurements.GraphHeight.measurement),
@@ -704,7 +703,6 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                 ),
                 modelProducer = graphUiState,
                 zoomState = rememberVicoZoomState(zoomEnabled = false),
-                marker = rememberMarker(),
                 horizontalLayout = HorizontalLayout.fullWidth(),
             )
         }

@@ -123,5 +123,7 @@
     <string name="database_error_button_text">En feil oppstod i lesing av databasen</string>
 
     <string name="loading_text">Laster…</string>
+    <string name="advice_info_title">Anbefalinger</string>
+    <string name="graph_info_title">Forklaring på Graf</string>
 
 </resources>
