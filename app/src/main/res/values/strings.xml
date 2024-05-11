@@ -14,7 +14,7 @@
     <string name="info_about_graph">Info om grafen</string>
     <string name="settings">Instillinger</string>
     <string name="setup_screen_greeting">Heisann!</string>
-    <string name="what_is_your_name_and_dog_name_title">Først, hva er navnet ditt og navnet til hunden din?</string>
+    <string name="what_is_your_name_and_dog_name_title">Hva er navnet ditt og navnet til hunden din?</string>
     <string name="your_name">Navnet ditt</string>
     <string name="your_dogs_name">Hunden din sitt navn</string>
     <string name="your_dog_title">Hunden din</string>

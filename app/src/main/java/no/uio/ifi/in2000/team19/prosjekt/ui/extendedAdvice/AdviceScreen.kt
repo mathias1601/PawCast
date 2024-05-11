@@ -3,6 +3,8 @@ package no.uio.ifi.in2000.team19.prosjekt.ui.extendedAdvice
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,12 +54,14 @@ fun AdviceScreen(adviceId: Int, navController: NavController, viewModel: HomeScr
         }
     ) { innerPadding ->
         Column(
-            Modifier.padding(
+            Modifier
+                .padding(
                 top = innerPadding.calculateTopPadding() + 20.dp,
                 bottom = innerPadding.calculateBottomPadding(),
                 start = 20.dp,
                 end = 20.dp
             )
+                .verticalScroll(rememberScrollState())
         ) {
             MarkdownText(markdown = advice.description)
         }

@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Person
@@ -57,7 +59,8 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
     Column (
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceBetween
 
         ) {
@@ -68,37 +71,28 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-
+                horizontalAlignment = Alignment.CenterHorizontally,
             ){
-
                 Image(
                     painter = painterResource(id = R.drawable.dog_normal),
                     contentDescription = stringResource(R.string.dog_normal_description),
                     contentScale = ContentScale.FillHeight,
                     modifier = Modifier.height(100.dp)
                 )
-
-                Text(
-                    text = stringResource(R.string.setup_screen_greeting),
-                    style = MaterialTheme.typography.headlineLarge,
-                    textAlign = TextAlign.Center
-                )
             }
 
-            Spacer(modifier=Modifier.padding(16.dp))
 
 
-            Spacer(modifier = Modifier.padding(30.dp))
 
             Text(
                 text = stringResource(R.string.what_is_your_name_and_dog_name_title),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.padding(10.dp))
 
-            Text(text= stringResource(R.string.your_name), style = MaterialTheme.typography.titleLarge)
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = userName,
@@ -112,7 +106,6 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                 label = { Text(text= stringResource(R.string.your_name)) }
             )
             Spacer(modifier=Modifier.padding(10.dp))
-            Text(text= stringResource(R.string.your_dogs_name), style = MaterialTheme.typography.titleLarge)
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = dogName,
