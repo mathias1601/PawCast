@@ -59,20 +59,20 @@ fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit){
         Image(painter = painterResource(id = R.drawable.dog_normal_white_sticker), contentDescription = stringResource(id = R.string.dog_normal_description))
 
         Text(
-            text = "Velkommen!",
+            text = stringResource(R.string.first_time_greeting),
             style = MaterialTheme.typography.displaySmall
         )
         Spacer(modifier = Modifier.padding(Measurements.WithinSectionVerticalGap.measurement))
 
         Text(
-            text = "Dette er en vær app for hundeeiere, som gir klima-relaterte anbefalinger basert på din hund.",
+            text = stringResource(R.string.app_description),
             style = MaterialTheme.typography.bodyLarge,
             )
 
         Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
 
         Text(
-            text = "Før vi begynner trenger vi litt info om deg og hunden din for å personalisere appen til dere",
+            text = stringResource(R.string.start_configuring_app),
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center
         )
@@ -84,8 +84,8 @@ fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit){
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(text = "Konfigurer appen")
-                Icon(imageVector = Icons.Filled.Start, contentDescription = "Hundepote")
+                Text(text = stringResource(R.string.configutr_app_button_text))
+                Icon(imageVector = Icons.Filled.Start, contentDescription = stringResource(R.string.dog_paw_icon_description))
             }
         }
 
@@ -96,8 +96,8 @@ fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit){
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(text = "Hopp over konfigurasjon")
-                Icon(imageVector = Icons.Outlined.FastForward, contentDescription = "Symbol for hopp over")
+                Text(text = stringResource(R.string.skip_config_button_text))
+                Icon(imageVector = Icons.Outlined.FastForward, contentDescription = stringResource(R.string.skip_symbol_description))
 
             }
         }
@@ -111,10 +111,10 @@ fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit){
                     modifier = Modifier.padding(Measurements.HorizontalPadding.measurement)
                 ) {
                     Text(
-                        text = "Før du hopper over!",
+                        text = stringResource(R.string.skip_modal_title),
                         style = MaterialTheme.typography.titleMedium)
                     Text(
-                        text = "Dersom du velger å ikke oppgi infomasjon om hunden din, velger vi å gi deg varsler for alle hunde typer for å gi best utbytte av appen. Likevel anbefaler vi deg sterkt til å konfigurere appen.",
+                        text = stringResource(R.string.skip_modal_body),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Spacer(modifier = Modifier.padding(Measurements.WithinSectionVerticalGap.measurement))
@@ -127,10 +127,12 @@ fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit){
                             onClick = onSkip,
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(text = "Bare konfigurer lokasjon", textAlign = TextAlign.Center)
+                            Text(text = stringResource(R.string.skip_modal_skip_button), textAlign = TextAlign.Center)
                         }
-                        Button(onClick = onDone, modifier = Modifier.weight(1f).height(IntrinsicSize.Max)) {
-                            Text(text = "Konfigurer alt", textAlign = TextAlign.Center)
+                        Button(onClick = onDone, modifier = Modifier
+                            .weight(1f)
+                            .height(IntrinsicSize.Max)) {
+                            Text(text = stringResource(R.string.configure_button_text), textAlign = TextAlign.Center)
                         }
                     }
                     Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
