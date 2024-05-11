@@ -1,23 +1,23 @@
 package no.uio.ifi.in2000.team19.prosjekt.data
 
 import android.content.Context
-import android.util.Log
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
-import java.time.LocalDate
 import java.time.LocalDateTime
 
+// functions used by LocationForecastRepository.
+// Moved outside for easier testing.
 
 fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
 
     return AdviceForecast(
         generalForecast.temperature,
         generalForecast.thunderprobability,
-        generalForecast.percipitation,
+        generalForecast.precipitation,
         generalForecast.UVindex,
         generalForecast.date,
         generalForecast.hour
@@ -149,7 +149,7 @@ fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<Advic
     }
 
     //TODO find right number
-    if (adviceForecast.percipitation >= 1) {
+    if (adviceForecast.precipitation >= 1) {
         categoryList.add(AdviceCategory.RAIN)
     }
 

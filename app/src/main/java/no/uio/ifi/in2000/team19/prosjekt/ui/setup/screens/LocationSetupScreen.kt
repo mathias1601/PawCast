@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationTextField
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
@@ -30,8 +29,7 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
 @Composable
 fun LocationSetupScreen(
     searchLocationViewModel: SearchLocationViewModel,
-    id: String,
-    navController: NavHostController
+    onDone: () -> Unit
 ) {
 
 
@@ -88,9 +86,7 @@ fun LocationSetupScreen(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = searchLocationViewModel.isDone.collectAsState().value,
 
-                onClick = {
-                    navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen.
-                },
+                onClick = onDone,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.primary

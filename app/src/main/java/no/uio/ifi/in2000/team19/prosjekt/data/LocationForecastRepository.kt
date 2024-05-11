@@ -121,12 +121,9 @@ class LocationForecastRepository @Inject constructor(
 
             val timeFetched = LocalDateTime.now() // Store when
 
-            val precipitation =
-                locationForecast.properties.timeseries[i].data.next_1_hours.details.precipitation_amount
-            val thunderProbability =
-                locationForecast.properties.timeseries[i].data.next_1_hours.details.probability_of_thunder
-            val uvIndex =
-                locationForecast.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky
+            val precipitation = data.next_1_hours.details.precipitation_amount
+            val thunderProbability = data.next_1_hours.details.probability_of_thunder
+            val uvIndex = data.instant.details.ultraviolet_index_clear_sky
 
             genForecastList.add(
                 GeneralForecast(
