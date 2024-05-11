@@ -133,7 +133,8 @@ fun ScreenManager(
 
                         SettingsScreen(
                             viewModel = settingsScreenViewModel,
-                            searchLocationViewModel = searchLocationViewModel
+                            searchLocationViewModel = searchLocationViewModel,
+                            navController = navController
                         )
                     }
 
@@ -171,7 +172,6 @@ fun ScreenManager(
                             adviceId = id.toInt(),
                             viewModel = homeScreenViewModel)
                     }
-
             }
         }
     }

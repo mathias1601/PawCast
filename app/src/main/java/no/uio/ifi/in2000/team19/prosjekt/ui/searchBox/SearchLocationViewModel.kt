@@ -59,6 +59,11 @@ class SearchLocationViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             settingsRepository.getCords().collect {
                 _searchFieldValue.value = it.detailedName
+
+                if (it.detailedName != ""){ // if database is already populated from database.
+                    _isDone.value = true
+                }
+
             }
         }
     }

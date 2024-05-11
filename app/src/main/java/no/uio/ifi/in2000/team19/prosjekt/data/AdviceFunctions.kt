@@ -9,6 +9,9 @@ import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import java.time.LocalDateTime
 
+// functions used by LocationForecastRepository.
+// Moved outside for easier testing.
+
 
 fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
 
@@ -22,6 +25,8 @@ fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
     )
 }
 
+//this function collects all necessary categories based on forecast and dog type
+//it uses AdviceForecast because it contains the necessary data
 fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<AdviceCategory> {
 
     val categoryList = mutableListOf<AdviceCategory>()
@@ -151,7 +156,6 @@ fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<Advic
         categoryList.add(AdviceCategory.RAIN)
     }
 
-    //TODO lage en when for dato for flått, hoggorm og nyttår
 
     val tickSeasonStart = LocalDateTime.of(2024, 3, 15, 0, 0
     )

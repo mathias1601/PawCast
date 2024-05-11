@@ -36,12 +36,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 
 @Composable
-fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: NavHostController) {
+fun NamesSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
 
     val userInfo = viewModel.userInfo.collectAsState().value
@@ -130,14 +129,6 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: 
                     onDone = {
 
                         keyboardController?.hide()
-
-                        /*if (userName != ""){
-                            viewModel.updateUserName(userName)
-                            viewModel.updateDogName(dogName)
-                            navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
-                        }
-
-                         */
                     }
                 ),
 
@@ -162,7 +153,7 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: 
                 onClick = {
                     viewModel.updateUserName(userName)
                     viewModel.updateDogName(dogName)
-                    navController.navigate("setup/${id.toInt()+1}") // Navigate to next screen
+                    onDone()
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -176,7 +167,9 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, id:String, navController: 
                 onClick = {
                 viewModel.updateUserName("")
                 viewModel.updateDogName("")
-                navController.navigate("setup/${id.toInt()+1}") })
+                onDone()
+                }
+            )
                 {
                 Text(text = stringResource(R.string.skip_this_step))
             }

@@ -1,15 +1,14 @@
 package no.uio.ifi.in2000.team19.prosjekt
 
-import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.getAdviceForecastData
 import no.uio.ifi.in2000.team19.prosjekt.data.getCategory
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 class AdviceTest {
@@ -23,7 +22,7 @@ class AdviceTest {
             4.5,
             "partlycloudy",
             "12",
-            LocalDate.of(2024, 3, 1),
+            LocalDateTime.of(2024, 3, 1, 0, 0),
             1.8,
             44.2,
             2.7
@@ -31,7 +30,7 @@ class AdviceTest {
 
 
         val expectedAdviceForecast =
-            AdviceForecast(14.6, 44.2, 1.8, 2.7, LocalDate.of(2024, 3, 1), "12")
+            AdviceForecast(14.6, 44.2, 1.8, 2.7, LocalDateTime.of(2024, 3, 1, 0, 0), "12")
         val result = getAdviceForecastData(generalForecast)
 
         // Assert
@@ -48,7 +47,7 @@ class AdviceTest {
                 thunderprobability = 54.2,
                 percipitation = 0.2,
                 UVindex = 4.1,
-                date = LocalDate.of(2024, 7, 4),
+                date = LocalDateTime.of(2024, 7, 4, 0, 0),
                 time = "14")
 
         val userInfo = UserInfo(

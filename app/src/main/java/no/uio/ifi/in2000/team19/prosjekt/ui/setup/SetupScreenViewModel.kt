@@ -56,6 +56,11 @@ class SetupScreenViewModel @Inject constructor(
     fun updateAgeIndex(newIndex:Int){
         _selectedAgeIndex.value = newIndex
     }
+
+    fun updateIsPuppy(newValue: Boolean) {
+        _userInfo.value.isPuppy = newValue
+    }
+
     fun updateIsSenior(newValue: Boolean) {
         _userInfo.value.isSenior = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isSenior.toString())

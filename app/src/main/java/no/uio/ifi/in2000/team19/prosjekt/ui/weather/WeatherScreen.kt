@@ -460,9 +460,7 @@ fun WholeDayAverageWeatherCard(weatherForecast: WeatherForecast) {
 
 
                 Text(
-
                     text = stringResource(R.string.high_degrees, weatherForecast.highestTemperature!!)  + stringResource(id = R.string.celcius),
-
                     style = MaterialTheme.typography.titleSmall
                 )
             }

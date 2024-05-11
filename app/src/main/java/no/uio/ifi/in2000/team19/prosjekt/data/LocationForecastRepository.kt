@@ -107,25 +107,23 @@ class LocationForecastRepository @Inject constructor(
         //necessary data is retrieved for each hour, and added to the list of general forecasts
 
         for (i in adjustedStart..lastHour) {
-            val temperature =
-                locationForecast.properties.timeseries[i].data.instant.details.air_temperature
-            val wind = locationForecast.properties.timeseries[i].data.instant.details.wind_speed
-            val symbol =
-                locationForecast.properties.timeseries[i].data.next_1_hours.summary.symbol_code
+
+            val data = locationForecast.properties.timeseries[i].data // shortcut
+
+            val temperature = data.instant.details.air_temperature
+            val wind = data.instant.details.wind_speed
+            val symbol = data.next_1_hours.summary.symbol_code
 
             val time = locationForecast.properties.timeseries[i].time
             val zonedDateTime = ZonedDateTime.parse(time)
             val hourFormatter = DateTimeFormatter.ofPattern("HH")
             val hourAsInt = zonedDateTime.format(hourFormatter).toString()
 
-            val date = LocalDateTime.now()
+            val timeFetched = LocalDateTime.now() // Store when
 
-            val precipitation =
-                locationForecast.properties.timeseries[i].data.next_1_hours.details.precipitation_amount
-            val thunderProbability =
-                locationForecast.properties.timeseries[i].data.next_1_hours.details.probability_of_thunder
-            val uvIndex =
-                locationForecast.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky
+            val precipitation = data.next_1_hours.details.precipitation_amount
+            val thunderProbability = data.next_1_hours.details.probability_of_thunder
+            val uvIndex = data.instant.details.ultraviolet_index_clear_sky
 
             genForecastList.add(
                 GeneralForecast(
@@ -133,7 +131,7 @@ class LocationForecastRepository @Inject constructor(
                     wind,
                     symbol,
                     hourAsInt,
-                    date,
+                    timeFetched,
                     precipitation,
                     thunderProbability,
                     uvIndex,
@@ -149,9 +147,6 @@ class LocationForecastRepository @Inject constructor(
 
         return ForecastTypes(genForecastList, dayForecastList, meanHours)
     }
-
-
-    //Also possible to do this in the same function. An If-check to see if you want to get for days or hours.
 
     //TODO: ISABELLE forklare litt med kommentarer
     private fun getWeatherForecastForDays(
