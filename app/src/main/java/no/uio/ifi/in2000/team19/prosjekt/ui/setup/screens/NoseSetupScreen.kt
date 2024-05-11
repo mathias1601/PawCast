@@ -88,7 +88,8 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
                     onClick = {
                         viewModel.updateNoseIndex(0)
-                        viewModel.updateIsFlatNosed(false) // Doesnt need to update puppy in database
+                        viewModel.updateIsFlatNosed(false)
+                        viewModel.updateIsNormalNosed(true)
                         onDone()
                     },
 
@@ -118,7 +119,8 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
                     onClick = {
                         viewModel.updateNoseIndex(1)
-                        viewModel.updateIsFlatNosed(true) // Doesnt need to update adult in database
+                        viewModel.updateIsFlatNosed(true)
+                        viewModel.updateIsNormalNosed(false)
                         onDone()
                     }) {
                     Column(

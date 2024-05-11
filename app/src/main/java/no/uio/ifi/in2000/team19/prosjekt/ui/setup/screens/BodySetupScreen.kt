@@ -88,8 +88,10 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                         containerColor = if (thinIndex == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
                     ),
                     onClick = {
-                        viewModel.updateThinIndex(0)
-                        viewModel.updateIsThin(true) // Doesnt need to update puppy in database
+                        viewModel.updateBodyIndex(0)
+                        viewModel.updateIsThin(true)
+                        viewModel.updateIsMedium(false)
+                        viewModel.updateIsThick(false)
                         onDone()
                     },
 
@@ -118,8 +120,10 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                     ),
 
                     onClick = {
-                        viewModel.updateThinIndex(1)
-                        viewModel.updateIsThin(false) // Doesnt need to update adult in database
+                        viewModel.updateBodyIndex(1)
+                        viewModel.updateIsThin(false)
+                        viewModel.updateIsMedium(true)
+                        viewModel.updateIsThick(false)
                         onDone()
                     }) {
                     Column(
@@ -146,8 +150,10 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                     ),
 
                     onClick = {
-                        viewModel.updateThinIndex(2)
-                        viewModel.updateIsThin(false) // Doesnt need to update adult in database
+                        viewModel.updateBodyIndex(2)
+                        viewModel.updateIsThin(false)
+                        viewModel.updateIsMedium(false)
+                        viewModel.updateIsThick(true)
                         onDone()
                     }) {
                     Column(

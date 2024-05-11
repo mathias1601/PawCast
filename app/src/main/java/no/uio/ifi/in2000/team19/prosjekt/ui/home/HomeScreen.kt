@@ -204,8 +204,8 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .padding(
                         top = 20.dp, // more top padding to avoid camera on new phones
-                        start = 10.dp,
-                        end = 10.dp
+                        start = Measurements.HorizontalPadding.measurement,
+                        end = Measurements.HorizontalPadding.measurement
                     ),
 
                 verticalArrangement = Arrangement.Center,
@@ -577,25 +577,24 @@ fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
                     if (bestTimesForWalk.evening.isNotBlank()) stringResource(R.string.evening_walk_time, bestTimesForWalk.evening)
                     else stringResource(R.string.evening_walk_not_recommened)
 
-                Column(
+                Row(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(
                             horizontal = Measurements.HorizontalPadding.measurement,
                             vertical = Measurements.WithinSectionVerticalGap.measurement
                         ),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Icon(imageVector = Icons.Filled.AccessTime, contentDescription = stringResource(
-                        R.string.klokke_ikon_description
-                    )
-                    )
-                    Spacer(modifier = Modifier.padding(5.dp))
+
 
                     Column {
                         Text(text = morningText)
                         Text(text = middayText)
                         Text(text = eveningText)
                     }
+                    Icon(imageVector = Icons.Filled.AccessTime, contentDescription = stringResource(R.string.klokke_ikon_description))
+
 
                 }
             }
@@ -637,7 +636,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
 
     val scoreColor: Color? = colorMap[firstYValueUiState]
 
-    OutlinedCard(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(Measurements.GraphHeight.measurement),
@@ -732,9 +731,3 @@ fun BottomInfoModalPopUp(title: String, bodyText: String, onDismiss : () -> Unit
         Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
     }
 }
-
-
-
-
-
-

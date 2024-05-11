@@ -77,7 +77,10 @@ fun ScreenManager(
     ) {innerPadding ->
 
         Column(
-            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
+            modifier = Modifier.
+            padding(
+                bottom = innerPadding.calculateBottomPadding(),
+            )
         ) {
                 //Sjekk kun for når man åpner appen
             NavHost(
@@ -126,15 +129,19 @@ fun ScreenManager(
 
                         viewModel.updateNavBarSelectedIndex(2)
 
+
                         val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
 
                         val settingsScreenViewModel: SettingsScreenViewModel = hiltViewModel(parentEntry)
                         val searchLocationViewModel: SearchLocationViewModel = hiltViewModel(parentEntry)
 
+                        settingsScreenViewModel.fetchUserInfo() // always keep these settings updated when user navigates to this screen.
+
                         SettingsScreen(
                             viewModel = settingsScreenViewModel,
                             searchLocationViewModel = searchLocationViewModel,
-                            navController = navController
+                            navController = navController,
+                            innerPadding = innerPadding
                         )
                     }
 

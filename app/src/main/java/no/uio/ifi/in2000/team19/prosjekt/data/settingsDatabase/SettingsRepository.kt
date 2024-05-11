@@ -51,9 +51,7 @@ class SettingsRepository @Inject constructor(
     // USER INFO
     suspend fun getUserInfo(): UserInfo {
         if(userInfoDao.getUserInfo() == null) {
-            updateUserInfo(
-                UserInfo(0, "", "", false, false, false, false, false, false, false, false, false, false))
-        }
+            updateUserInfo(createTemporaryUserinfo()) } // just to avoid null errors, but we guarantee using dataStores that the user must complete setup if this is null earilier at runtime
         return userInfoDao.getUserInfo()!!
     }
 
@@ -64,6 +62,29 @@ class SettingsRepository @Inject constructor(
     suspend fun deleteUserInfo(userInfo: UserInfo) {
         userInfoDao.deleteUserInfo(userInfo)
     }
+}
 
-
+/**
+ *  Returns a UserInfo object populated with fake data. Used for generating temporary UserInfo objects to be later updated by an init method or similar.
+ */
+fun createTemporaryUserinfo() : UserInfo{
+    return UserInfo(
+        id = 0,
+        userName = "",
+        dogName = "",
+        isSenior = false,
+        isPuppy = false,
+        isFlatNosed = false,
+        isThin = false,
+        isLongHaired = false,
+        isShortHaired = false,
+        isThinHaired = false,
+        isThickHaired = false,
+        isLightHaired = false,
+        isDarkHaired = false,
+        isAdult = false,
+        isMediumBody = false,
+        isNormalNosed = false,
+        isThickBody = false
+    )
 }
