@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.theme
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -81,19 +80,12 @@ private val LightColorPalette = lightColorScheme(
 
 )
 
-
 @Composable
 fun Team19prosjektoppgaveTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit)
 {
-
-
-    val useDynamicColors = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val colors = when {
-
-        //useDynamicColors && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
-        //useDynamicColors && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
 
         darkTheme -> DarkColorPalette
         else -> LightColorPalette
