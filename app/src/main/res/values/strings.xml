@@ -144,5 +144,6 @@
     <string name="nose_category_label">Snute</string>
     <string name="body_category_label">Kropp</string>
     <string name="fur_category_label">Pels</string>
+    <string name="dog_avatar_description">Dog drawing responding to current weather</string>
 
 </resources>

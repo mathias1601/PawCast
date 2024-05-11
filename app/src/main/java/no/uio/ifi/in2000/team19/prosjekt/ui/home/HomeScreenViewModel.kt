@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
@@ -77,9 +78,9 @@ class HomeScreenViewModel @Inject constructor(
     val temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
 
 
-    private var _dogImage:MutableStateFlow<String> = MutableStateFlow("dog_normal_white_sticker")
+    private var _dogImage:MutableStateFlow<Int> = MutableStateFlow(R.drawable.dog_normal)
     /** Is used to determine which to dog show in home screen. */
-    val dogImage:StateFlow<String> = _dogImage.asStateFlow()
+    val dogImage:StateFlow<Int> = _dogImage.asStateFlow()
 
     /** height doesnt matter for our use case, so is just always set to 0 */
     private val height: String = "0"
@@ -329,29 +330,23 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-    private fun getWhichDogTypeSymbol(weather : GeneralForecast): String {
+    private fun getWhichDogTypeSymbol(weather: GeneralForecast): Int {
 
         val temperatureToShowSunnyDog = 17.0
         val temperatureToShowColdDog = 0.0
-
-        val useStickerVersion = false
 
         val isNight = weather.symbol.contains("night", ignoreCase = true)
         val isThundering = weather.symbol.contains("thunder", ignoreCase = true)
         val windSpeed = weather.wind ?: 0.0
 
 
-        val dogImageString =
-
-            if (isThundering) "dog_thunder"
-            else if (isNight) "dog_sleepy"
-            else if (windSpeed > 5) "dog_wind"
-            else if (weather.precipitation > 1 ) "dog_rain"
-            else if (weather.temperature >= temperatureToShowSunnyDog) "dog_sunny"
-            else if (weather.temperature <= temperatureToShowColdDog ) "dog_cold"
-            else "dog_normal"
-
-        return  if (useStickerVersion) dogImageString + "_white_sticker" else dogImageString
+        return if (isThundering) R.drawable.dog_thunder
+                else if (isNight) R.drawable.dog_sleepy
+                else if (windSpeed > 5) R.drawable.dog_wind
+                else if (weather.precipitation > 1) R.drawable.dog_rain
+                else if (weather.temperature >= temperatureToShowSunnyDog) R.drawable.dog_sunny
+                else if (weather.temperature <= temperatureToShowColdDog) R.drawable.dog_cold
+                else R.drawable.dog_normal
     }
 
     fun checkIfUiStateIsError(): Boolean {

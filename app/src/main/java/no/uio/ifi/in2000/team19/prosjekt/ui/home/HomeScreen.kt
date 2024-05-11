@@ -52,7 +52,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -87,6 +86,7 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.WeatherDrawableNameToResourceId
 import no.uio.ifi.in2000.team19.prosjekt.ui.LoadingScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.error.ErrorScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
@@ -149,7 +149,7 @@ fun HomeScreenManager(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     userInfo: UserInfo,
@@ -161,14 +161,14 @@ fun HomeScreen(
     firstYValueUiState: Int,
     navController: NavController,
     innerPadding: PaddingValues,
-    dogImage: String,
+    dogImage: Int,
 ) {
 
 
     // ============================ TOP BLUE WEATHER SECTION =================================
 
 
-    // Graident colors from 0% to 50% of height
+    // Gradient colors from 0% to 50% of height
     val colorStops = arrayOf(
         0.0f to Color(0xFF0080FF),
         0.5f to Color(0xFFFFB1C1),
@@ -194,10 +194,6 @@ fun HomeScreen(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
-
-
-            // TOP CONTENT
-            val context = LocalContext.current
 
             Column(
                 modifier = Modifier
@@ -238,21 +234,14 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
+                    // Do not show weather symbol if we don't have the correct icon installed.
+                    if (weather.symbol in WeatherDrawableNameToResourceId.map){
+                        Image(
+                            painter = painterResource(id = WeatherDrawableNameToResourceId.map[weather.symbol]!!),
+                            contentDescription = "Værsymbol"
+                        )
+                    }
 
-                    val drawableName = weather.symbol
-                    val drawableId = context.resources.getIdentifier(
-                        drawableName,
-                        "drawable",
-                        context.packageName
-                    ) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
-
-
-
-
-                    Image(
-                        painter = painterResource(id = drawableId),
-                        contentDescription = "Værsymbol"
-                    )
                     Text(
                         text = weather.temperature.toString() + stringResource(R.string.celcius),
                         style = MaterialTheme.typography.displayMedium,
@@ -283,16 +272,9 @@ fun HomeScreen(
                         )
                     }
 
-                    val dogId = context.resources.getIdentifier(
-                        dogImage,
-                        "drawable",
-                        context.packageName
-                    ) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
-
-
                     Image(
-                        painter = painterResource(id = dogId),
-                        contentDescription = dogImage, // is formatted like dog_normal, dog_normal_white_sticker, dog_rain_white_sticker ... etc.
+                        painter = painterResource(id = dogImage), // !! because we always feed it correct information.
+                        contentDescription = stringResource(R.string.dog_avatar_description), // is formatted like dog_normal, dog_normal_white_sticker, dog_rain_white_sticker ... etc.
                         modifier = Modifier
                             .height(175.dp)
                             .offset(
@@ -350,8 +332,7 @@ fun HomeScreen(
                     Wrapped in column so advice content is grouped together
                     */
 
-                    Column(
-                    ) {
+                    Column {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -370,8 +351,8 @@ fun HomeScreen(
                         }
 
 
-                        // ADVICE CARDS / Horizontal Pager / Carousell + Indicator for card index
-                        // Inspired by offical documentaion: https://developer.android.com/develop/ui/compose/layouts/pager
+                        // ADVICE CARDS / Horizontal Pager / Carousel + Indicator for card index
+                        // Inspired by official documentaion: https://developer.android.com/develop/ui/compose/layouts/pager
                         Column {
                             val pagerState = rememberPagerState(pageCount = {
                                 advice.allAdvice.size
@@ -396,7 +377,7 @@ fun HomeScreen(
                                     .fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center
                             ) {
-                                // used to have gray circle showing current card, but this lagged quite alot even though it taken from documentation, so we landed on numbers which lags alot less.
+                                // used to have gray circle showing current card, but this lagged quite a lot even though it taken from documentation, so we landed on numbers which lags alot less.
                                 Text(
                                     text = "${pagerState.currentPage + 1}/${advice.allAdvice.size}",
                                     style = MaterialTheme.typography.labelLarge
@@ -409,8 +390,7 @@ fun HomeScreen(
 
 
                     // =============== GRAPH ==========================
-                    Column(
-                    ) {
+                    Column {
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -467,7 +447,7 @@ fun BottomInfo(lastUpdated: LocalDateTime){
 @Composable
 fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState:PagerState) {
 
-    val navigateToMoreInfoScreen = { navController.navigate("advice/${id.toString()}") }
+    val navigateToMoreInfoScreen = { navController.navigate("advice/$id") }
 
     Card(
         modifier = Modifier
@@ -476,7 +456,7 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
 
 
             // Scroll "animation" changing the cards opacity while scrolling.
-            // Gotten from android offical documentation: https://developer.android.com/develop/ui/compose/layouts/pager
+            // Gotten from android official documentation: https://developer.android.com/develop/ui/compose/layouts/pager
             .graphicsLayer {
                 val pageOffset = (
                         (pagerState.currentPage - id) + pagerState
@@ -549,7 +529,7 @@ fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
 
 
 
-            // When there is no recomened times for a walk
+            // When there is no recommend times for a walk
             if (bestTimesForWalk.morning.isBlank() && bestTimesForWalk.midday.isBlank() && bestTimesForWalk.evening.isBlank()){
                 Column(
                     modifier = Modifier
@@ -564,7 +544,7 @@ fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
                     Text(text = stringResource(R.string.bad_weather_alert), modifier = Modifier.fillMaxWidth())
                 }
 
-                // Show recomened times
+                // Show recommended times
             } else {
 
                 val morningText =
@@ -603,7 +583,7 @@ fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
 }
 
 @Composable
-fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState: Int) {
+fun ForecastGraph(graphUiState: CartesianChartModelProducer, ScoreRightNowInGraph: Int) {
 
     val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour
     val bottomAxisValueFormatter =
@@ -620,21 +600,8 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
             }
 
         }
-    //TODO: flytte til VM
-    val colorMap: Map<Int, Color> = mapOf(
-        1 to Color.Red,
-        2 to Color.Red,
-        3 to Color(242, 140, 40),
-        4 to Color(242, 140, 40),
-        5 to Color(242, 140, 40),
-        6 to Color.Yellow,
-        7 to Color.Yellow,
-        8 to Color(76, 187, 23),
-        9 to Color(76, 187, 23),
-        10 to Color(76, 187, 23)
-    )
 
-    val scoreColor: Color? = colorMap[firstYValueUiState]
+    val scoreColor: Color = getColorForScore(ScoreRightNowInGraph)
 
     Card(
         modifier = Modifier
@@ -657,8 +624,7 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
                         rememberLineCartesianLayer(
                             listOf(
                                 rememberLineSpec(
-                                    shader = DynamicShaders.color(scoreColor!!
-                                    ),
+                                    shader = DynamicShaders.color(scoreColor),
                                 )
                             ),
                             axisValueOverrider = AxisValueOverrider.fixed(minY = 0f, maxY = 10f)
@@ -708,6 +674,17 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, firstYValueUiState:
     }
 }
 
+/** Helper method for getting a score color from a score. */
+fun getColorForScore(number: Int): Color {
+    return when (number) {
+        in 1..2 -> Color.Red
+        in 3..5 -> Color(242, 140, 40)
+        in 6..7 -> Color.Yellow
+        in 8..10 -> Color(76, 187, 23)
+        else -> throw IllegalArgumentException("Score is not between 0 and 10")
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomInfoModalPopUp(title: String, bodyText: String, onDismiss : () -> Unit ){
@@ -731,3 +708,5 @@ fun BottomInfoModalPopUp(title: String, bodyText: String, onDismiss : () -> Unit
         Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
     }
 }
+
+
