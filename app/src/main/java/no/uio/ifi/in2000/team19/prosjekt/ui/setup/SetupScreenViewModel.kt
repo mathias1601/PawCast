@@ -178,4 +178,13 @@ class SetupScreenViewModel @Inject constructor(
             dataStoreRepository.saveSetupState(isCompleted)
         }
     }
+
+    fun updateSelectedIndexesBasedOnUserData(){
+        val ui = userInfo.value
+
+        if (ui.isSenior) updateAgeIndex(2) else if (ui.isAdult) updateAgeIndex(1) else if (ui.isPuppy) updateAgeIndex(0)
+        if (ui.isNormalNosed) updateNoseIndex(0) else if (ui.isFlatNosed) updateAgeIndex(1)
+        if (ui.isThin) updateBodyIndex(0) else if (ui.isMediumBody) updateBodyIndex(1) else if (ui.isThickBody) updateBodyIndex(2)
+
+    }
 }

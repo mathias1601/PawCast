@@ -94,6 +94,8 @@ fun SetupManager(
                 )
         ) {
 
+            viewModel.updateSelectedIndexesBasedOnUserData()
+
             when (id) {
                 // For going to next step after finnishing.
                 "0" -> WelcomeScreen(

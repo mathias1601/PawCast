@@ -11,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -69,11 +68,6 @@ fun SettingsScreen(
             
             
             CategoryDivider(text = stringResource(R.string.your_dog_title))
-            
-            Button(onClick = { navController.navigate("setup/0") }) {
-                Text(text = "See welcome screen")
-            }
-
 
             val buttonModifiers = Modifier.weight(1f)
             val labelModifier = Modifier.weight(1f)
@@ -82,20 +76,18 @@ fun SettingsScreen(
             val rowAlignment = Alignment.CenterVertically
             val userInfo = viewModel.userInfo.collectAsState().value
 
-            Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
-            TipBox(tipText = "For at anbefalingene vi gir deg skal være best mulig, burde du holde disse kategoriene oppdatert")
-            Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
+
 
             Row(verticalAlignment = rowAlignment) {
 
-                Text(text = "Navn", modifier = labelModifier, style = labelStyle)
+                Text(text = stringResource(R.string.name_category_label), modifier = labelModifier, style = labelStyle)
 
                 FilledTonalButton(onClick = { navController.navigate("setup/only_1") }, modifier = buttonModifiers) {
                     val nameButtonText =
                         if (userInfo.userName.isNotBlank() && userInfo.dogName.isNotBlank()) "${userInfo.userName} og ${userInfo.dogName}"
                         else if (userInfo.userName.isNotBlank()) userInfo.userName
                     else if (userInfo.dogName.isNotBlank() ) userInfo.dogName
-                    else "Ingen navn definert"
+                    else stringResource(R.string.no_name_defined)
 
                     Text(text = nameButtonText)
                 }
@@ -103,8 +95,8 @@ fun SettingsScreen(
 
 
             Row(verticalAlignment = rowAlignment) {
-                Text(text = "Alder", modifier = labelModifier, style = labelStyle)
-                FilledTonalButton(onClick = { navController.navigate("setup/only_2") }, modifier = buttonModifiers) {
+                Text(text = stringResource(R.string.age_category_label), modifier = labelModifier, style = labelStyle)
+                FilledTonalButton(onClick = { navController.navigate("setup/only_3") }, modifier = buttonModifiers) {
                     val ageButtonText =
                         if (userInfo.isPuppy) stringResource(id = R.string.puppy)
                         else if (userInfo.isSenior) stringResource(id = R.string.senior)
@@ -115,8 +107,8 @@ fun SettingsScreen(
             }
 
             Row(verticalAlignment = rowAlignment) {
-                Text(text = "Snute", modifier = labelModifier, style = labelStyle)
-                FilledTonalButton(onClick = { navController.navigate("setup/only_3") }, modifier = buttonModifiers) {
+                Text(text = stringResource(R.string.nose_category_label), modifier = labelModifier, style = labelStyle)
+                FilledTonalButton(onClick = { navController.navigate("setup/only_4") }, modifier = buttonModifiers) {
                     val noseButtonText =
                         if (userInfo.isFlatNosed) stringResource(id = R.string.flat_nose)
                         else if (userInfo.isNormalNosed) stringResource(id = R.string.normal_nose)
@@ -127,8 +119,8 @@ fun SettingsScreen(
             }
 
             Row(verticalAlignment = rowAlignment) {
-                Text(text = "Kropp", modifier = labelModifier, style = labelStyle)
-                FilledTonalButton(onClick = { navController.navigate("setup/only_4") }, modifier = buttonModifiers) {
+                Text(text = stringResource(R.string.body_category_label), modifier = labelModifier, style = labelStyle)
+                FilledTonalButton(onClick = { navController.navigate("setup/only_5") }, modifier = buttonModifiers) {
                     val bodyButtonText =
                         if (userInfo.isThin) stringResource(id = R.string.skinnyBody)
                         else if (userInfo.isMediumBody) stringResource(id = R.string.mediumBody)
@@ -140,8 +132,8 @@ fun SettingsScreen(
 
             
             Row(verticalAlignment = rowAlignment) {
-                Text(text = "Pels", modifier = labelModifier, style = labelStyle)
-                FilledTonalButton(onClick = { navController.navigate("setup/only_5") }, modifier = buttonModifiers) {
+                Text(text = stringResource(R.string.fur_category_label), modifier = labelModifier, style = labelStyle)
+                FilledTonalButton(onClick = { navController.navigate("setup/only_6") }, modifier = buttonModifiers) {
 
                     var amountOfFurChoices = 0
                     if (userInfo.isThinHaired) amountOfFurChoices  += 1
@@ -151,9 +143,13 @@ fun SettingsScreen(
                     if (userInfo.isLongHaired) amountOfFurChoices  += 1
                     if (userInfo.isShortHaired) amountOfFurChoices += 1
 
-                    Text(text = "$amountOfFurChoices valgt")
+                    Text(text = stringResource(R.string.amount_of_fur_chosen, amountOfFurChoices))
                 }
             }
+
+            Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
+            TipBox(tipText = "For at anbefalingene vi gir deg skal være best mulig, burde du holde disse kategoriene oppdatert")
+            Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
         }
     }
 

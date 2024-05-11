@@ -125,7 +125,7 @@
     <string name="loading_text">Laster…</string>
     <string name="advice_info_title">Anbefalinger</string>
     <string name="graph_info_title">Forklaring på Graf</string>
-    <string name="not_defined">Not defined</string>
+    <string name="not_defined">Ikke definert</string>
     <string name="first_time_greeting">Velkommen!</string>
     <string name="app_description">Dette er en vær app for hundeeiere, som gir klima-relaterte anbefalinger basert på din hund.</string>
     <string name="start_configuring_app">Før vi begynner trenger vi litt info om deg og hunden din for å personalisere appen til dere</string>
@@ -137,5 +137,12 @@
     <string name="skip_modal_body">Dersom du velger å ikke oppgi infomasjon om hunden din, velger vi å gi deg varsler for alle hunde typer for å gi best utbytte av appen. Likevel anbefaler vi deg sterkt til å konfigurere appen.</string>
     <string name="skip_modal_skip_button">Bare konfigurer lokasjon</string>
     <string name="configure_button_text">Konfigurer alt</string>
+    <string name="amount_of_fur_chosen">%1$s valgt</string>
+    <string name="no_name_defined">Ingen navn definert</string>
+    <string name="name_category_label">Navn</string>
+    <string name="age_category_label">Alder</string>
+    <string name="nose_category_label">Snute</string>
+    <string name="body_category_label">Kropp</string>
+    <string name="fur_category_label">Pels</string>
 
 </resources>
