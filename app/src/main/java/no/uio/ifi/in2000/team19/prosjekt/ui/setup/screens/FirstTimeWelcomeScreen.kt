@@ -56,7 +56,7 @@ fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit){
     ) {
 
 
-        Image(painter = painterResource(id = R.drawable.dog_normal_white_sticker), contentDescription = stringResource(id = R.string.dog_normal_description))
+        Image(painter = painterResource(id = R.drawable.dog_normal), contentDescription = stringResource(id = R.string.dog_normal_description))
 
         Text(
             text = stringResource(R.string.first_time_greeting),
