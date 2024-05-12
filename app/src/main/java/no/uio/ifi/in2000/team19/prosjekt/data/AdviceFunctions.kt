@@ -207,8 +207,7 @@ fun createAdvice(categories: List<AdviceCategory>, context: Context): List<Advic
     categories.forEach { category ->
 
         var adviceArray: Array<String>? = null
-        //val resId = context.resources.getIdentifier(category.toString(), "array", context.packageName)
-        //val adviceArray: Array<String> = context.resources.getStringArray(resId)
+
         when (category.toString()) {
             "COOL" -> adviceArray = context.resources.getStringArray(R.array.COOL)
             "COOLOTHER" -> adviceArray = context.resources.getStringArray(R.array.COOLOTHER)

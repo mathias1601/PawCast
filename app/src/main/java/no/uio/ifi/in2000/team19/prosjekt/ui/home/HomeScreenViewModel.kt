@@ -189,8 +189,6 @@ class HomeScreenViewModel @Inject constructor(
     //Parameter: a list of (advice) forecast objects that each represent one hour of the day
 
     // TODO move to repository or domain layer
-
-
     private fun forecastGraphFunction(forecasts: List<AdviceForecast>): MutableList<Int> {
 
         val overallRatingList = mutableListOf<Int>()
@@ -350,7 +348,6 @@ class HomeScreenViewModel @Inject constructor(
         val isNight = weather.symbol.contains("night", ignoreCase = true)
         val isThundering = weather.symbol.contains("thunder", ignoreCase = true)
         val windSpeed = weather.wind ?: 0.0
-
 
         return if (isThundering) R.drawable.dog_thunder
         else if (isNight) R.drawable.dog_sleepy

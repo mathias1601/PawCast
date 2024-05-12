@@ -12,7 +12,15 @@ import kotlinx.coroutines.flow.map
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "setup_pref")
 
-class DataStoreRepository(context: Context) {
+/** Used to store a Boolean saying if the user has completed setup.
+ *
+ *  Reading from database is too slow to do at app launch, so we decided
+ *  on using a simple dataStore instead for storing a Boolean if the user has setup their profile.
+ *
+ *  This is updated at the end of the setup process OR end of skip process.
+ *
+ * */
+class DataStoreRepository(context: Context) { // Context is provided by Dagger Hilt.
 
 
     private object PreferancesKey {
@@ -22,15 +30,15 @@ class DataStoreRepository(context: Context) {
     private val dataStore = context.dataStore
 
     suspend fun saveSetupState(isCompleted: Boolean) {
-        dataStore.edit { preferances ->
-            preferances[PreferancesKey.setupStateKey] = isCompleted
+        dataStore.edit { preferences ->
+            preferences[PreferancesKey.setupStateKey] = isCompleted
         }
     }
 
     fun readSetupState(): Flow<Boolean> {
         return dataStore.data.map { preferences ->
             val setupState = preferences[PreferancesKey.setupStateKey]
-                ?: false // :? betyr bare return false vis alt til venstre blir null
+                ?: false // return false if nothing is stored
             setupState
         }
     }
