@@ -102,7 +102,7 @@ fun SetupManager(
                     onDone = { navController.navigate("setup/1") }
                 ) {
                     viewModel.handleUserSkip()
-                    navController.navigate("only_2")
+                    navController.navigate("setup/only_2")
 
                 }
 
