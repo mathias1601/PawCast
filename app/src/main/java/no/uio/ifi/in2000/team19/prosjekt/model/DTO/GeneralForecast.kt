@@ -3,7 +3,7 @@ package no.uio.ifi.in2000.team19.prosjekt.model.DTO
 import java.time.LocalDateTime
 
 data class GeneralForecast(
-    val temperature:Double,
+    val temperature: Double,
     val wind: Double? = null,
     val symbol: String,
     val hour: String,
