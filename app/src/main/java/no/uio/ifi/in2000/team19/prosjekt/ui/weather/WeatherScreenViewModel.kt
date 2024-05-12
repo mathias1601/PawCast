@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.ErrorReasons
@@ -32,9 +31,11 @@ sealed interface WeatherUiState {
         val weatherHours: List<GeneralForecast>,
         val weatherDays: List<WeatherForecast>,
         val meanHoursTomorrow: List<WeatherForecast>,
-        val meanHoursDayAfterTomorrow: List<WeatherForecast>): WeatherUiState
-    data object Loading: WeatherUiState
-    data class Error(val errorReason : ErrorReasons): WeatherUiState
+        val meanHoursDayAfterTomorrow: List<WeatherForecast>
+    ) : WeatherUiState
+
+    data object Loading : WeatherUiState
+    data class Error(val errorReason: ErrorReasons) : WeatherUiState
 }
 
 @HiltViewModel
@@ -48,17 +49,18 @@ class WeatherScreenViewModel @Inject constructor(
         MutableStateFlow(WeatherUiState.Loading)
     var weatherUiState: StateFlow<WeatherUiState> = _weatherUiState.asStateFlow()
 
-    private var _locationUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "default", "default", "69", "69"))
+    private var _locationUiState: MutableStateFlow<Cords> =
+        MutableStateFlow(Cords(0, "default", "default", "69", "69"))
     var locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
 
 
     init {
 
         viewModelScope.launch(Dispatchers.IO) {
-                settingsRepository.getCords().collect {cords ->
-                    _locationUiState.value = cords
-                    loadWeather()
-                }
+            settingsRepository.getCords().collect { cords ->
+                _locationUiState.value = cords
+                loadWeather()
+            }
 
         }
     }
@@ -71,7 +73,12 @@ class WeatherScreenViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val weatherForecast = locationForecastRepository.getGeneralForecast(cords.latitude, cords.longitude, "0", 2)
+                val weatherForecast = locationForecastRepository.getGeneralForecast(
+                    cords.latitude,
+                    cords.longitude,
+                    "0",
+                    2
+                )
                 val weatherHours = weatherForecast.general
                 val weatherDays = weatherForecast.day
                 val weatherMean = weatherForecast.hours
@@ -81,14 +88,19 @@ class WeatherScreenViewModel @Inject constructor(
                 val meanHoursForTomorrow = weatherMean.filter { it.day == differentDays[0] }
                 val meanHoursForDayAfterTomorrow = weatherMean.filter { it.day == differentDays[1] }
 
-                _weatherUiState.value = WeatherUiState.Success(weatherHours, weatherDays, meanHoursForTomorrow, meanHoursForDayAfterTomorrow)
+                _weatherUiState.value = WeatherUiState.Success(
+                    weatherHours,
+                    weatherDays,
+                    meanHoursForTomorrow,
+                    meanHoursForDayAfterTomorrow
+                )
 
-               // See similar try-catch in HomeScreenViewModel for explanation of connection handling.
+                // See similar try-catch in HomeScreenViewModel for explanation of connection handling.
             } catch (e: IOException) {
                 _weatherUiState.value = WeatherUiState.Error(ErrorReasons.INTERRUPTION)
-            } catch (e: UnresolvedAddressException){
+            } catch (e: UnresolvedAddressException) {
                 _weatherUiState.value = WeatherUiState.Error(ErrorReasons.INTERNET)
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 _weatherUiState.value = WeatherUiState.Error(ErrorReasons.UNKNOWN)
             }
 

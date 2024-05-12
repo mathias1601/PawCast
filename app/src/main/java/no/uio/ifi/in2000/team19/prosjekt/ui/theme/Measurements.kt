@@ -8,7 +8,7 @@ import androidx.compose.ui.unit.dp
 // Will also help further development for larger screens, by being able to switch these values here based on screen instead
 // of having hard-coded padding... etc.
 
-enum class Measurements(val measurement : Dp){
+enum class Measurements(val measurement: Dp) {
 
     HorizontalPadding(16.dp),
 

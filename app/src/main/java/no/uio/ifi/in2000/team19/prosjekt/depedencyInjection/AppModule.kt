@@ -33,7 +33,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideCoordsDao(db: SettingsDatabase) = db.getCoordsDao() // The reason we can implement a Dao for the database
+    fun provideCoordsDao(db: SettingsDatabase) =
+        db.getCoordsDao() // The reason we can implement a Dao for the database
 
     @Singleton
     @Provides
@@ -41,13 +42,19 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideSettingsRepository(coordsDao: coordsDao, userInfoDao: userInfoDao): SettingsRepository {
+    fun provideSettingsRepository(
+        coordsDao: coordsDao,
+        userInfoDao: userInfoDao
+    ): SettingsRepository {
         return SettingsRepository(coordsDao, userInfoDao)
     }
 
     @Singleton
     @Provides
-    fun provideLocationForecastRepository(forecastDataSource: LocationForecastDataSource, @ApplicationContext context: Context): LocationForecastRepository {
+    fun provideLocationForecastRepository(
+        forecastDataSource: LocationForecastDataSource,
+        @ApplicationContext context: Context
+    ): LocationForecastRepository {
         return LocationForecastRepository(forecastDataSource, context)
     }
 
@@ -60,11 +67,12 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideDataStoreRepository( @ApplicationContext context: Context ): DataStoreRepository {
+    fun provideDataStoreRepository(@ApplicationContext context: Context): DataStoreRepository {
         return DataStoreRepository(context)
     }
 
     @Provides
     @Named("mapboxAccessToken")
-    fun provideMapBoxAccessToken(@ApplicationContext context : Context): String = context.getString(R.string.mapbox_access_token)
+    fun provideMapBoxAccessToken(@ApplicationContext context: Context): String =
+        context.getString(R.string.mapbox_access_token)
 }

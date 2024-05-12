@@ -53,7 +53,6 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.home.BottomInfo
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
 
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController: NavController) {
@@ -116,9 +115,9 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController:
 
 
 
-                    item {
-                        Column(
-                        ) {
+                item {
+                    Column(
+                    ) {
 
 
                         WeatherNow(weatherHours[0])
@@ -460,7 +459,10 @@ fun WholeDayAverageWeatherCard(weatherForecast: WeatherForecast) {
 
 
                 Text(
-                    text = stringResource(R.string.high_degrees, weatherForecast.highestTemperature!!)  + stringResource(id = R.string.celcius),
+                    text = stringResource(
+                        R.string.high_degrees,
+                        weatherForecast.highestTemperature!!
+                    ) + stringResource(id = R.string.celcius),
                     style = MaterialTheme.typography.titleSmall
                 )
             }

@@ -27,16 +27,16 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-/** Displays in-depth advice information by adviceId.
- *
- * Uses this [markdown library](https://github.com/jeziellago/compose-markdown?tab=readme-ov-file)
- * We chose this to not be limited by technical formatting using compose. We found that we ended up trying to recreate libraries like
- * this one when trying to style our stringResources.
- *
- * In general this allows us to actually focus on content rather than implementing new composables for every screen
- * Of course this also limits us somewhat is custom interaction, but we ended up enjoying this because of the easy flexibility.
- *
- * */
+        /** Displays in-depth advice information by adviceId.
+         *
+         * Uses this [markdown library](https://github.com/jeziellago/compose-markdown?tab=readme-ov-file)
+         * We chose this to not be limited by technical formatting using compose. We found that we ended up trying to recreate libraries like
+         * this one when trying to style our stringResources.
+         *
+         * In general this allows us to actually focus on content rather than implementing new composables for every screen
+         * Of course this also limits us somewhat is custom interaction, but we ended up enjoying this because of the easy flexibility.
+         *
+         * */
 fun AdviceScreen(adviceId: Int, navController: NavController, viewModel: HomeScreenViewModel) {
 
     val advice: Advice = viewModel.collectAdviceById(adviceId)

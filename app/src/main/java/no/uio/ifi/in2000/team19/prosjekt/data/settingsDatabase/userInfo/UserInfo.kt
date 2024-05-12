@@ -19,12 +19,12 @@ data class UserInfo(
 
     //Nose
     @ColumnInfo(name = "isFlatNosed") var isFlatNosed: Boolean,
-    @ColumnInfo(name = "isNormalNosed") var isNormalNosed : Boolean,
+    @ColumnInfo(name = "isNormalNosed") var isNormalNosed: Boolean,
 
     //Body
     @ColumnInfo(name = "isThinBody") var isThin: Boolean,
-    @ColumnInfo(name = "isMediumBody") var isMediumBody:Boolean,
-    @ColumnInfo(name = "isThickBody") var isThickBody:Boolean,
+    @ColumnInfo(name = "isMediumBody") var isMediumBody: Boolean,
+    @ColumnInfo(name = "isThickBody") var isThickBody: Boolean,
     //Fur
     @ColumnInfo(name = "isLongHaired") var isLongHaired: Boolean,
     @ColumnInfo(name = "isShortHaired") var isShortHaired: Boolean,
@@ -36,5 +36,4 @@ data class UserInfo(
     @ColumnInfo(name = "isDarkHaired") var isDarkHaired: Boolean,
 
 
-
-)
+    )

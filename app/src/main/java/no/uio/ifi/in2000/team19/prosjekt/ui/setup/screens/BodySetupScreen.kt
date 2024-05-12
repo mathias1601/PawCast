@@ -37,7 +37,7 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
 
 
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
@@ -62,12 +62,12 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
         }
 
         Column(
-              modifier = Modifier
-                  .weight(2f),
-                ){
+            modifier = Modifier
+                .weight(2f),
+        ) {
 
             Text(
-                text= stringResource(R.string.body_setup_title),
+                text = stringResource(R.string.body_setup_title),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -76,7 +76,7 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
             Spacer(modifier = Modifier.padding(10.dp))
 
 
-            FlowRow (
+            FlowRow(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
@@ -177,13 +177,12 @@ fun BodySetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
             Spacer(modifier = Modifier.padding(10.dp))
 
             Text(
-                text= stringResource(R.string.chooseDogCategoryBottomScreenTip),
+                text = stringResource(R.string.chooseDogCategoryBottomScreenTip),
                 style = MaterialTheme.typography.labelMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
         }
-
 
 
     }

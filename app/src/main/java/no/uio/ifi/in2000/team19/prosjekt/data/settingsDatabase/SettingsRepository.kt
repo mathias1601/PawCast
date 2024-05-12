@@ -11,14 +11,15 @@ import javax.inject.Inject
 
 class SettingsRepository @Inject constructor(
     private val coordsDao: coordsDao,
-    private val userInfoDao: userInfoDao){
+    private val userInfoDao: userInfoDao
+) {
 
 
     // CORDS
     suspend fun getCords(): Flow<Cords> {
         val currentCords = coordsDao.getCords()?.firstOrNull()
 
-        if (currentCords == null){
+        if (currentCords == null) {
             val defaultCoords =
                 Cords(
                     id = 0,
@@ -32,7 +33,7 @@ class SettingsRepository @Inject constructor(
         return coordsDao.getCords()!!
     }
 
-    fun updateCoords(latitude:String, longitude:String, shortName:String, detailedName:String) {
+    fun updateCoords(latitude: String, longitude: String, shortName: String, detailedName: String) {
         val cords = Cords(
             id = 0,
             longitude = longitude,
@@ -45,8 +46,9 @@ class SettingsRepository @Inject constructor(
 
     // USER INFO
     fun getUserInfo(): UserInfo {
-        if(userInfoDao.getUserInfo() == null) {
-            updateUserInfo(createTemporaryUserinfo()) } // just to avoid null errors, but we guarantee using dataStores that the user must complete setup if this is null earilier at runtime
+        if (userInfoDao.getUserInfo() == null) {
+            updateUserInfo(createTemporaryUserinfo())
+        } // just to avoid null errors, but we guarantee using dataStores that the user must complete setup if this is null earilier at runtime
         return userInfoDao.getUserInfo()!!
     }
 
@@ -58,7 +60,7 @@ class SettingsRepository @Inject constructor(
 /**
  *  Returns a UserInfo object populated with fake data. Used for generating temporary UserInfo objects to be later updated by an init method or similar.
  */
-fun createTemporaryUserinfo() : UserInfo{
+fun createTemporaryUserinfo(): UserInfo {
     return UserInfo(
         id = 0,
         userName = "",

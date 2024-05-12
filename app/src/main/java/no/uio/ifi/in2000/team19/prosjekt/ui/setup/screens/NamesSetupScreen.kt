@@ -57,22 +57,22 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.SpaceBetween
 
-        ) {
+    ) {
 
-        Column (
+        Column(
             verticalArrangement = Arrangement.Center
-        ){
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-            ){
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.dog_normal),
                     contentDescription = stringResource(R.string.dog_normal_description),
@@ -97,24 +97,31 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 value = userName,
                 maxLines = 1,
-                leadingIcon = { Icon(imageVector = Icons.Filled.Person, contentDescription = stringResource(R.string.icon_of_person_description)
-                )},
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = stringResource(R.string.icon_of_person_description)
+                    )
+                },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next
                 ),
-                onValueChange = {userName = it},
-                label = { Text(text= stringResource(R.string.your_name)) }
+                onValueChange = { userName = it },
+                label = { Text(text = stringResource(R.string.your_name)) }
             )
-            Spacer(modifier=Modifier.padding(10.dp))
+            Spacer(modifier = Modifier.padding(10.dp))
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = dogName,
                 maxLines = 1,
-                leadingIcon = { Icon(imageVector = Icons.Filled.Pets, contentDescription = stringResource(
-                    R.string.icon_of_pet_description
-                )
-                )},
-                onValueChange = {dogName = it},
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Pets, contentDescription = stringResource(
+                            R.string.icon_of_pet_description
+                        )
+                    )
+                },
+                onValueChange = { dogName = it },
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done
                 ),
@@ -125,7 +132,7 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                     }
                 ),
 
-                label = { Text(text= stringResource(R.string.your_dogs_name)) }
+                label = { Text(text = stringResource(R.string.your_dogs_name)) }
             )
         }
 
@@ -134,10 +141,11 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text= stringResource(R.string.why_store_name_disclaimer),
+                text = stringResource(R.string.why_store_name_disclaimer),
                 style = MaterialTheme.typography.labelMedium,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth())
+                modifier = Modifier.fillMaxWidth()
+            )
 
             Button(
                 modifier = Modifier.fillMaxWidth(),
@@ -151,19 +159,20 @@ fun NamesSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.primary
-                )) {
+                )
+            ) {
                 Text(text = stringResource(R.string.next))
                 Icon(Icons.Filled.ChevronRight, contentDescription = stringResource(R.string.next))
             }
 
             TextButton(
                 onClick = {
-                viewModel.updateUserName("")
-                viewModel.updateDogName("")
-                onDone()
+                    viewModel.updateUserName("")
+                    viewModel.updateDogName("")
+                    onDone()
                 }
             )
-                {
+            {
                 Text(text = stringResource(R.string.skip_this_step))
             }
         }

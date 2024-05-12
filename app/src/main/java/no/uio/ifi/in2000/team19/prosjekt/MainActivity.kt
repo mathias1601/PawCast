@@ -14,22 +14,19 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Team19prosjektoppgaveTheme
 class MainActivity : ComponentActivity() {
 
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
 
         super.onCreate(savedInstanceState)
 
-        WindowCompat.setDecorFitsSystemWindows(window,false)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
 
             Team19prosjektoppgaveTheme {
                 ScreenManager(
                     viewModel = hiltViewModel<ScreenManagerViewModel>(), // viewmodel for navbar and Scaffold.
-                    )
+                )
             }
         }
     }

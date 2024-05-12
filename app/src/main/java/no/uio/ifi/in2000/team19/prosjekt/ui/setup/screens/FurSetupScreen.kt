@@ -68,12 +68,13 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
             )
         }
 
-        Column (
+        Column(
             modifier = Modifier
                 .weight(2f),
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text= stringResource(R.string.fur_setup_screen_title),
+            Text(
+                text = stringResource(R.string.fur_setup_screen_title),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -97,15 +98,45 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                     horizontalArrangement = Arrangement.Center
                 ) {
 
-                    FilterChip(text = stringResource(R.string.thinFur), categoryName = "tynnPels", viewModel, userInfo.isThinHaired)
-                    FilterChip(text = stringResource(R.string.thickFur), categoryName = "tykkPels", viewModel, userInfo.isThickHaired)
-                    FilterChip(text = stringResource(R.string.longFur), categoryName = "langPels", viewModel, userInfo.isLongHaired)
-                    FilterChip(text = stringResource(R.string.shortFur), categoryName = "kortPels", viewModel, userInfo.isShortHaired)
-                    FilterChip(text = stringResource(R.string.lightFur), categoryName = "lysPels", viewModel, userInfo.isLightHaired)
-                    FilterChip(text = stringResource(R.string.darkFur), categoryName = "moerkPels", viewModel, userInfo.isDarkHaired)
+                    FilterChip(
+                        text = stringResource(R.string.thinFur),
+                        categoryName = "tynnPels",
+                        viewModel,
+                        userInfo.isThinHaired
+                    )
+                    FilterChip(
+                        text = stringResource(R.string.thickFur),
+                        categoryName = "tykkPels",
+                        viewModel,
+                        userInfo.isThickHaired
+                    )
+                    FilterChip(
+                        text = stringResource(R.string.longFur),
+                        categoryName = "langPels",
+                        viewModel,
+                        userInfo.isLongHaired
+                    )
+                    FilterChip(
+                        text = stringResource(R.string.shortFur),
+                        categoryName = "kortPels",
+                        viewModel,
+                        userInfo.isShortHaired
+                    )
+                    FilterChip(
+                        text = stringResource(R.string.lightFur),
+                        categoryName = "lysPels",
+                        viewModel,
+                        userInfo.isLightHaired
+                    )
+                    FilterChip(
+                        text = stringResource(R.string.darkFur),
+                        categoryName = "moerkPels",
+                        viewModel,
+                        userInfo.isDarkHaired
+                    )
 
                 }
-                
+
 
             }
 
@@ -116,15 +147,13 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
             Spacer(modifier = Modifier.padding(10.dp))
 
 
-
-
         }
-        Column (
+        Column(
             modifier = Modifier
                 .weight(1f),
             verticalArrangement = Arrangement.Bottom
         ) {
-            
+
 
             Button(
                 modifier = Modifier
@@ -134,7 +163,7 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                     onDone()
                 }
             ) {
-                Text (text= stringResource(R.string.done))
+                Text(text = stringResource(R.string.done))
             }
         }
     }

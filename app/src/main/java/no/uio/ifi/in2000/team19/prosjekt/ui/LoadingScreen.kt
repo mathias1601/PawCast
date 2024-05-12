@@ -15,12 +15,12 @@ import no.uio.ifi.in2000.team19.prosjekt.R
 
 @Composable
 @Preview(showBackground = true)
-fun LoadingScreen(){
-    Column (
+fun LoadingScreen() {
+    Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         CircularProgressIndicator()
         Text(text = stringResource(R.string.loading_text))
     }

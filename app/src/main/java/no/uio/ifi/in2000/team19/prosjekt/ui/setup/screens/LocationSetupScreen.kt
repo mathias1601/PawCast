@@ -35,24 +35,23 @@ fun LocationSetupScreen(
 ) {
 
 
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
     ) {
 
 
-
-
-        Column (
+        Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
 
             Icon(
                 imageVector = Icons.Filled.LocationOn,
-                contentDescription = stringResource(id = R.string.location))
+                contentDescription = stringResource(id = R.string.location)
+            )
 
 
             Text(
@@ -61,10 +60,10 @@ fun LocationSetupScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
-            
+
 
             Spacer(modifier = Modifier.padding(20.dp))
-            
+
             SearchLocationTextField(viewModel = searchLocationViewModel)
         }
 
@@ -79,7 +78,7 @@ fun LocationSetupScreen(
         ) {
 
             Text(
-                text= stringResource(id = R.string.location_disclaimer),
+                text = stringResource(id = R.string.location_disclaimer),
                 style = MaterialTheme.typography.labelMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -93,15 +92,18 @@ fun LocationSetupScreen(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.primary
-                )) {
+                )
+            ) {
                 Text(text = stringResource(id = R.string.next))
-                Icon(Icons.Filled.ChevronRight, contentDescription = stringResource(R.string.next_icon_description))
+                Icon(
+                    Icons.Filled.ChevronRight,
+                    contentDescription = stringResource(R.string.next_icon_description)
+                )
             }
-            
+
             Spacer(modifier = Modifier.padding(24.dp)) // match button heigth due to Skip button on last screen.
         }
     }
-
 
 
 }

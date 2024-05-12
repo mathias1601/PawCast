@@ -36,126 +36,170 @@ fun SettingsScreen(
     searchLocationViewModel: SearchLocationViewModel,
     navController: NavController,
     innerPadding: PaddingValues
-){
+) {
 
 
+    Column(
+        modifier = Modifier
+            .padding(
+                start = Measurements.HorizontalPadding.measurement,
+                end = Measurements.HorizontalPadding.measurement,
+                top = innerPadding.calculateTopPadding() + 30.dp
+            ) // Global horizontal padding for all settings items.
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Filled.Settings,
+                contentDescription = stringResource(R.string.settings)
+            )
+            Spacer(modifier = Modifier.padding(5.dp))
+            Text(
+                text = stringResource(R.string.settings),
+                style = MaterialTheme.typography.displaySmall
+            )
+        }
+
+
+
+        CategoryDivider(text = stringResource(id = R.string.location))
         Column(
-            modifier = Modifier
-                .padding(
-                    start = Measurements.HorizontalPadding.measurement,
-                    end = Measurements.HorizontalPadding.measurement,
-                    top = innerPadding.calculateTopPadding() + 30.dp
-                ) // Global horizontal padding for all settings items.
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+            modifier = Modifier.padding(top = 10.dp)
         ) {
-            Row ( verticalAlignment = Alignment.CenterVertically) {
-                Icon(imageVector = Icons.Filled.Settings, contentDescription = stringResource(R.string.settings))
-                Spacer(modifier = Modifier.padding(5.dp))
-                Text(text = stringResource(R.string.settings), style = MaterialTheme.typography.displaySmall)
-            }
+            SearchLocationTextField(viewModel = searchLocationViewModel)
+            Spacer(modifier = Modifier.padding(5.dp))
+            Text(
+                text = stringResource(R.string.location_disclaimer),
+                style = MaterialTheme.typography.labelMedium
+            )
+        }
+
+
+        CategoryDivider(text = stringResource(R.string.your_dog_title))
+
+        val buttonModifiers = Modifier.weight(1f)
+        val labelModifier = Modifier.weight(1f)
+        val labelStyle = MaterialTheme.typography.titleMedium
+
+        val rowAlignment = Alignment.CenterVertically
+        val userInfo = viewModel.userInfo.collectAsState().value
 
 
 
-            CategoryDivider(text = stringResource(id = R.string.location))
-            Column (
-                modifier = Modifier.padding(top = 10.dp)
-            ){
-                SearchLocationTextField(viewModel = searchLocationViewModel)
-                Spacer(modifier = Modifier.padding(5.dp))
-                Text(text = stringResource(R.string.location_disclaimer), style = MaterialTheme.typography.labelMedium)
-            }
-            
-            
-            CategoryDivider(text = stringResource(R.string.your_dog_title))
+        Row(verticalAlignment = rowAlignment) {
 
-            val buttonModifiers = Modifier.weight(1f)
-            val labelModifier = Modifier.weight(1f)
-            val labelStyle = MaterialTheme.typography.titleMedium
+            Text(
+                text = stringResource(R.string.name_category_label),
+                modifier = labelModifier,
+                style = labelStyle
+            )
 
-            val rowAlignment = Alignment.CenterVertically
-            val userInfo = viewModel.userInfo.collectAsState().value
-
-
-
-            Row(verticalAlignment = rowAlignment) {
-
-                Text(text = stringResource(R.string.name_category_label), modifier = labelModifier, style = labelStyle)
-
-                FilledTonalButton(onClick = { navController.navigate("setup/only_1") }, modifier = buttonModifiers) {
-                    val nameButtonText =
-                        if (userInfo.userName.isNotBlank() && userInfo.dogName.isNotBlank()) "${userInfo.userName} og ${userInfo.dogName}"
-                        else if (userInfo.userName.isNotBlank()) userInfo.userName
-                    else if (userInfo.dogName.isNotBlank() ) userInfo.dogName
+            FilledTonalButton(
+                onClick = { navController.navigate("setup/only_1") },
+                modifier = buttonModifiers
+            ) {
+                val nameButtonText =
+                    if (userInfo.userName.isNotBlank() && userInfo.dogName.isNotBlank()) "${userInfo.userName} og ${userInfo.dogName}"
+                    else if (userInfo.userName.isNotBlank()) userInfo.userName
+                    else if (userInfo.dogName.isNotBlank()) userInfo.dogName
                     else stringResource(R.string.no_name_defined)
 
-                    Text(text = nameButtonText)
-                }
+                Text(text = nameButtonText)
             }
-
-
-            Row(verticalAlignment = rowAlignment) {
-                Text(text = stringResource(R.string.age_category_label), modifier = labelModifier, style = labelStyle)
-                FilledTonalButton(onClick = { navController.navigate("setup/only_3") }, modifier = buttonModifiers) {
-                    val ageButtonText =
-                        if (userInfo.isPuppy) stringResource(id = R.string.puppy)
-                        else if (userInfo.isSenior) stringResource(id = R.string.senior)
-                        else if (userInfo.isAdult) stringResource(id = R.string.adult)
-                        else stringResource(R.string.not_defined)
-                    Text(text = ageButtonText)
-                }
-            }
-
-            Row(verticalAlignment = rowAlignment) {
-                Text(text = stringResource(R.string.nose_category_label), modifier = labelModifier, style = labelStyle)
-                FilledTonalButton(onClick = { navController.navigate("setup/only_4") }, modifier = buttonModifiers) {
-                    val noseButtonText =
-                        if (userInfo.isFlatNosed) stringResource(id = R.string.flat_nose)
-                        else if (userInfo.isNormalNosed) stringResource(id = R.string.normal_nose)
-                        else stringResource(id = R.string.normal_nose)
-                    Text(text = noseButtonText)
-            }
-
-            }
-
-            Row(verticalAlignment = rowAlignment) {
-                Text(text = stringResource(R.string.body_category_label), modifier = labelModifier, style = labelStyle)
-                FilledTonalButton(onClick = { navController.navigate("setup/only_5") }, modifier = buttonModifiers) {
-                    val bodyButtonText =
-                        if (userInfo.isThin) stringResource(id = R.string.skinnyBody)
-                        else if (userInfo.isMediumBody) stringResource(id = R.string.mediumBody)
-                        else if (userInfo.isThickBody) stringResource(id = R.string.fatBody)
-                        else stringResource(id = R.string.not_defined)
-                    Text(text = bodyButtonText)
-                }
-            }
-
-            
-            Row(verticalAlignment = rowAlignment) {
-                Text(text = stringResource(R.string.fur_category_label), modifier = labelModifier, style = labelStyle)
-                FilledTonalButton(onClick = { navController.navigate("setup/only_6") }, modifier = buttonModifiers) {
-
-                    var amountOfFurChoices = 0
-                    if (userInfo.isThinHaired) amountOfFurChoices  += 1
-                    if (userInfo.isThickHaired) amountOfFurChoices += 1
-                    if (userInfo.isDarkHaired) amountOfFurChoices  += 1
-                    if (userInfo.isLightHaired) amountOfFurChoices += 1
-                    if (userInfo.isLongHaired) amountOfFurChoices  += 1
-                    if (userInfo.isShortHaired) amountOfFurChoices += 1
-
-                    Text(text = stringResource(R.string.amount_of_fur_chosen, amountOfFurChoices))
-                }
-            }
-
-            Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
-            TipBox(tipText = "For at anbefalingene vi gir deg skal være best mulig, burde du holde disse kategoriene oppdatert")
-            Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
         }
+
+
+        Row(verticalAlignment = rowAlignment) {
+            Text(
+                text = stringResource(R.string.age_category_label),
+                modifier = labelModifier,
+                style = labelStyle
+            )
+            FilledTonalButton(
+                onClick = { navController.navigate("setup/only_3") },
+                modifier = buttonModifiers
+            ) {
+                val ageButtonText =
+                    if (userInfo.isPuppy) stringResource(id = R.string.puppy)
+                    else if (userInfo.isSenior) stringResource(id = R.string.senior)
+                    else if (userInfo.isAdult) stringResource(id = R.string.adult)
+                    else stringResource(R.string.not_defined)
+                Text(text = ageButtonText)
+            }
+        }
+
+        Row(verticalAlignment = rowAlignment) {
+            Text(
+                text = stringResource(R.string.nose_category_label),
+                modifier = labelModifier,
+                style = labelStyle
+            )
+            FilledTonalButton(
+                onClick = { navController.navigate("setup/only_4") },
+                modifier = buttonModifiers
+            ) {
+                val noseButtonText =
+                    if (userInfo.isFlatNosed) stringResource(id = R.string.flat_nose)
+                    else if (userInfo.isNormalNosed) stringResource(id = R.string.normal_nose)
+                    else stringResource(id = R.string.normal_nose)
+                Text(text = noseButtonText)
+            }
+
+        }
+
+        Row(verticalAlignment = rowAlignment) {
+            Text(
+                text = stringResource(R.string.body_category_label),
+                modifier = labelModifier,
+                style = labelStyle
+            )
+            FilledTonalButton(
+                onClick = { navController.navigate("setup/only_5") },
+                modifier = buttonModifiers
+            ) {
+                val bodyButtonText =
+                    if (userInfo.isThin) stringResource(id = R.string.skinnyBody)
+                    else if (userInfo.isMediumBody) stringResource(id = R.string.mediumBody)
+                    else if (userInfo.isThickBody) stringResource(id = R.string.fatBody)
+                    else stringResource(id = R.string.not_defined)
+                Text(text = bodyButtonText)
+            }
+        }
+
+
+        Row(verticalAlignment = rowAlignment) {
+            Text(
+                text = stringResource(R.string.fur_category_label),
+                modifier = labelModifier,
+                style = labelStyle
+            )
+            FilledTonalButton(
+                onClick = { navController.navigate("setup/only_6") },
+                modifier = buttonModifiers
+            ) {
+
+                var amountOfFurChoices = 0
+                if (userInfo.isThinHaired) amountOfFurChoices += 1
+                if (userInfo.isThickHaired) amountOfFurChoices += 1
+                if (userInfo.isDarkHaired) amountOfFurChoices += 1
+                if (userInfo.isLightHaired) amountOfFurChoices += 1
+                if (userInfo.isLongHaired) amountOfFurChoices += 1
+                if (userInfo.isShortHaired) amountOfFurChoices += 1
+
+                Text(text = stringResource(R.string.amount_of_fur_chosen, amountOfFurChoices))
+            }
+        }
+
+        Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
+        TipBox(tipText = "For at anbefalingene vi gir deg skal være best mulig, burde du holde disse kategoriene oppdatert")
+        Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
     }
+}
 
 
 @Composable
-fun CategoryDivider(text: String){
+fun CategoryDivider(text: String) {
 
     Column(
         modifier = Modifier.padding(top = 40.dp)

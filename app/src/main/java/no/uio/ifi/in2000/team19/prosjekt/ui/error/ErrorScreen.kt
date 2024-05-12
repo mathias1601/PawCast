@@ -25,31 +25,56 @@ import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.model.ErrorReasons
 
 @Composable
-fun ErrorScreen(onReload: () -> Unit, reason:ErrorReasons) {
+fun ErrorScreen(onReload: () -> Unit, reason: ErrorReasons) {
 
-    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         ExtendedFloatingActionButton(
-            text = { Text(
-                when (reason) {
-                    ErrorReasons.INTERNET -> stringResource(R.string.no_internet_button_text)
-                    ErrorReasons.INTERRUPTION -> stringResource(R.string.unknown_error_button_text)
-                    ErrorReasons.DATABASE -> stringResource(R.string.database_error_button_text)
-                    ErrorReasons.UNKNOWN -> stringResource(R.string.unknown_error_button_text)
-                }
-            )
-           },
+            text = {
+                Text(
+                    when (reason) {
+                        ErrorReasons.INTERNET -> stringResource(R.string.no_internet_button_text)
+                        ErrorReasons.INTERRUPTION -> stringResource(R.string.unknown_error_button_text)
+                        ErrorReasons.DATABASE -> stringResource(R.string.database_error_button_text)
+                        ErrorReasons.UNKNOWN -> stringResource(R.string.unknown_error_button_text)
+                    }
+                )
+            },
             icon = {
-                when (reason){
-                    ErrorReasons.INTERNET -> Icon(imageVector = Icons.Filled.WifiOff, contentDescription = stringResource(R.string.no_wifi_icon_description))
-                    ErrorReasons.INTERRUPTION -> Icon(imageVector = Icons.Filled.Close, contentDescription = stringResource(R.string.close_icon_description))
-                    ErrorReasons.DATABASE -> Icon(imageVector = Icons.Filled.DataObject, contentDescription = stringResource(R.string.database_icon_description))
-                    ErrorReasons.UNKNOWN -> Icon(imageVector = Icons.Filled.QuestionMark, contentDescription = stringResource(R.string.question_mark_icon_description))
+                when (reason) {
+                    ErrorReasons.INTERNET -> Icon(
+                        imageVector = Icons.Filled.WifiOff,
+                        contentDescription = stringResource(R.string.no_wifi_icon_description)
+                    )
+
+                    ErrorReasons.INTERRUPTION -> Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = stringResource(R.string.close_icon_description)
+                    )
+
+                    ErrorReasons.DATABASE -> Icon(
+                        imageVector = Icons.Filled.DataObject,
+                        contentDescription = stringResource(R.string.database_icon_description)
+                    )
+
+                    ErrorReasons.UNKNOWN -> Icon(
+                        imageVector = Icons.Filled.QuestionMark,
+                        contentDescription = stringResource(R.string.question_mark_icon_description)
+                    )
                 }
             },
 
             onClick = onReload
         )
         Spacer(modifier = Modifier.padding(10.dp))
-        Text(text = stringResource(R.string.press_to_try_again), style = MaterialTheme.typography.labelLarge)
+        Text(
+            text = stringResource(R.string.press_to_try_again),
+            style = MaterialTheme.typography.labelLarge
+        )
     }
 }

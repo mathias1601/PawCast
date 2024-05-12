@@ -33,10 +33,10 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
     val ageIndex = viewModel.selectedAgeIndex.collectAsState().value
 
 
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize(),
-        ) {
+    ) {
 
         Column(
             modifier = Modifier
@@ -57,9 +57,9 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
         Column(
             modifier = Modifier.weight(2f),
 
-        ) {
+            ) {
             Text(
-                text= stringResource(R.string.age_screen_title),
+                text = stringResource(R.string.age_screen_title),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -67,10 +67,10 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
             Spacer(modifier = Modifier.padding(10.dp))
 
-            FlowRow (
+            FlowRow(
                 modifier = Modifier
                     .fillMaxWidth()
-            ){
+            ) {
 
 
                 Card(
@@ -96,7 +96,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
 
-                    ){
+                    ) {
                         Text(text = stringResource(R.string.puppy))
                     }
                 }
@@ -125,7 +125,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
 
-                    ){
+                    ) {
                         Text(text = stringResource(R.string.adult))
                     }
                 }
@@ -153,7 +153,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
 
-                    ){
+                    ) {
                         Text(text = stringResource(R.string.senior))
                     }
                 }
@@ -161,7 +161,7 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
             Spacer(modifier = Modifier.padding(10.dp))
 
             Text(
-                text= stringResource(R.string.chooseDogCategoryBottomScreenTip),
+                text = stringResource(R.string.chooseDogCategoryBottomScreenTip),
                 style = MaterialTheme.typography.labelMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()

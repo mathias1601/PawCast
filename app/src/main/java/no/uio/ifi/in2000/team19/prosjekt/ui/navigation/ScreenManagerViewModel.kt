@@ -14,23 +14,23 @@ import javax.inject.Inject
 @HiltViewModel
 class ScreenManagerViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
-) : ViewModel(){
+) : ViewModel() {
 
-    private var _navBarSelectedIndex : MutableStateFlow<Int> = MutableStateFlow(0)
+    private var _navBarSelectedIndex: MutableStateFlow<Int> = MutableStateFlow(0)
     var navBarSelectedIndex: StateFlow<Int> = _navBarSelectedIndex.asStateFlow()
 
-    fun updateNavBarSelectedIndex(newIndex:Int){
+    fun updateNavBarSelectedIndex(newIndex: Int) {
         _navBarSelectedIndex.value = newIndex
     }
 
-    private val _startDestination : MutableStateFlow<String> = MutableStateFlow("home")
-    val startDestination : StateFlow<String> = _startDestination.asStateFlow()
+    private val _startDestination: MutableStateFlow<String> = MutableStateFlow("home")
+    val startDestination: StateFlow<String> = _startDestination.asStateFlow()
 
     init {
         viewModelScope.launch {
             dataStoreRepository.readSetupState().collect() { completed ->
 
-                if (completed){
+                if (completed) {
                     _startDestination.value = "home"
                 } else {
                     _startDestination.value = "setup/{STAGE}"

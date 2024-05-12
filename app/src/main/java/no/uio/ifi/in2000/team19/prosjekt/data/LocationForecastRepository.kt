@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.data
 
 import android.content.Context
-import android.util.Log
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
@@ -52,7 +51,6 @@ class LocationForecastRepository @Inject constructor(
 
         return createAdvice(categories, context)
     }
-
 
 
     //this is necessary for the function that contains graph logic;
@@ -299,11 +297,8 @@ class LocationForecastRepository @Inject constructor(
     }
 
 
-
     //this function collects all necessary categories based on forecast and dog type
     //it uses AdviceForecast because it contains the necessary data
-
-
 
 
 }

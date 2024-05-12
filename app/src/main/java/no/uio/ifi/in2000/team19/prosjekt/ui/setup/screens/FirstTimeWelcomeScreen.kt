@@ -40,15 +40,14 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit){
+fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit) {
 
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = Measurements.HorizontalPadding.measurement + 40.dp)
-            .verticalScroll(rememberScrollState())
-        ,
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -56,7 +55,10 @@ fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit){
     ) {
 
 
-        Image(painter = painterResource(id = R.drawable.dog_normal), contentDescription = stringResource(id = R.string.dog_normal_description))
+        Image(
+            painter = painterResource(id = R.drawable.dog_normal),
+            contentDescription = stringResource(id = R.string.dog_normal_description)
+        )
 
         Text(
             text = stringResource(R.string.first_time_greeting),
@@ -67,7 +69,7 @@ fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit){
         Text(
             text = stringResource(R.string.app_description),
             style = MaterialTheme.typography.bodyLarge,
-            )
+        )
 
         Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
 
@@ -85,7 +87,10 @@ fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit){
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(text = stringResource(R.string.configutr_app_button_text))
-                Icon(imageVector = Icons.Filled.Start, contentDescription = stringResource(R.string.dog_paw_icon_description))
+                Icon(
+                    imageVector = Icons.Filled.Start,
+                    contentDescription = stringResource(R.string.dog_paw_icon_description)
+                )
             }
         }
 
@@ -97,14 +102,17 @@ fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit){
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(text = stringResource(R.string.skip_config_button_text))
-                Icon(imageVector = Icons.Outlined.FastForward, contentDescription = stringResource(R.string.skip_symbol_description))
+                Icon(
+                    imageVector = Icons.Outlined.FastForward,
+                    contentDescription = stringResource(R.string.skip_symbol_description)
+                )
 
             }
         }
 
 
 
-        if (showBottomSkipModal){
+        if (showBottomSkipModal) {
             ModalBottomSheet(onDismissRequest = { showBottomSkipModal = false }) {
 
                 Column(
@@ -112,7 +120,8 @@ fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit){
                 ) {
                     Text(
                         text = stringResource(R.string.skip_modal_title),
-                        style = MaterialTheme.typography.titleMedium)
+                        style = MaterialTheme.typography.titleMedium
+                    )
                     Text(
                         text = stringResource(R.string.skip_modal_body),
                         style = MaterialTheme.typography.bodyMedium
@@ -120,24 +129,34 @@ fun WelcomeScreen(onDone: () -> Unit, onSkip: () -> Unit){
                     Spacer(modifier = Modifier.padding(Measurements.WithinSectionVerticalGap.measurement))
 
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            10.dp,
+                            Alignment.CenterHorizontally
+                        ),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         OutlinedButton(
                             onClick = onSkip,
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(text = stringResource(R.string.skip_modal_skip_button), textAlign = TextAlign.Center)
+                            Text(
+                                text = stringResource(R.string.skip_modal_skip_button),
+                                textAlign = TextAlign.Center
+                            )
                         }
-                        Button(onClick = onDone, modifier = Modifier
-                            .weight(1f)
-                            .height(IntrinsicSize.Max)) {
-                            Text(text = stringResource(R.string.configure_button_text), textAlign = TextAlign.Center)
+                        Button(
+                            onClick = onDone, modifier = Modifier
+                                .weight(1f)
+                                .height(IntrinsicSize.Max)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.configure_button_text),
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
                 }
-
 
 
             }

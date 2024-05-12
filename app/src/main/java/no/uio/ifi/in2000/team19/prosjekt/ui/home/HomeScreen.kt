@@ -114,37 +114,50 @@ fun HomeScreenManager(
     val isRefreshing by remember {
         mutableStateOf(false)
     }
-    val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = { viewModel.loadWeatherForecast()})
+    val state = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = { viewModel.loadWeatherForecast() })
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .pullRefresh(state),
-            ) {
-                when (adviceUiState) {
-                    is AdviceUiState.Success -> {
-                        HomeScreen(userInfoUiState, locationUiState, adviceUiState, graphUiState, bestTimeUiState, temperatureUiState, firstYValueUiState , navController, innerPadding, dogImage)
-                    }
-
-                    is AdviceUiState.Loading -> {
-                        LoadingScreen()
-                    }
-
-                    is AdviceUiState.Error -> {
-                        ErrorScreen (
-                            reason = adviceUiState.errorReason,
-                            onReload = { viewModel.loadWeatherForecast() }
-                        )
-                    }
+        Box(
+            Modifier
+                .fillMaxSize()
+                .pullRefresh(state),
+        ) {
+            when (adviceUiState) {
+                is AdviceUiState.Success -> {
+                    HomeScreen(
+                        userInfoUiState,
+                        locationUiState,
+                        adviceUiState,
+                        graphUiState,
+                        bestTimeUiState,
+                        temperatureUiState,
+                        firstYValueUiState,
+                        navController,
+                        innerPadding,
+                        dogImage
+                    )
                 }
 
-                PullRefreshIndicator(
-                    refreshing = isRefreshing, state = state,
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                )
+                is AdviceUiState.Loading -> {
+                    LoadingScreen()
+                }
+
+                is AdviceUiState.Error -> {
+                    ErrorScreen(
+                        reason = adviceUiState.errorReason,
+                        onReload = { viewModel.loadWeatherForecast() }
+                    )
+                }
+            }
+
+            PullRefreshIndicator(
+                refreshing = isRefreshing, state = state,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+            )
         }
     }
 }
@@ -235,7 +248,7 @@ fun HomeScreen(
                 ) {
 
                     // Do not show weather symbol if we don't have the correct icon installed.
-                    if (weather.symbol in WeatherDrawableNameToResourceId.map){
+                    if (weather.symbol in WeatherDrawableNameToResourceId.map) {
                         Image(
                             painter = painterResource(id = WeatherDrawableNameToResourceId.map[weather.symbol]!!),
                             contentDescription = "Værsymbol"
@@ -300,7 +313,7 @@ fun HomeScreen(
                 BottomInfoModalPopUp(
                     title = stringResource(R.string.advice_info_title),
                     bodyText = stringResource(id = R.string.adviceinfo),
-                    onDismiss = { showAdviceInfoSheet = false})
+                    onDismiss = { showAdviceInfoSheet = false })
             }
 
             // Graph Info Sheet
@@ -309,7 +322,7 @@ fun HomeScreen(
                 BottomInfoModalPopUp(
                     title = stringResource(R.string.graph_info_title),
                     bodyText = stringResource(id = R.string.graphinfo),
-                    onDismiss = {showGraphInfoSheet = false})
+                    onDismiss = { showGraphInfoSheet = false })
             }
 
 
@@ -408,7 +421,7 @@ fun HomeScreen(
                                 )
                             }
                         }
-                        
+
                         RecomendedTimesForWalk(bestTimesForWalk = bestTime)
                         Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
                         ForecastGraph(graphUiState, firstYValueUiState)
@@ -423,7 +436,7 @@ fun HomeScreen(
 
 
 @Composable
-fun BottomInfo(lastUpdated: LocalDateTime){
+fun BottomInfo(lastUpdated: LocalDateTime) {
 
     Text(
         text = stringResource(R.string.made_with_data_from_met),
@@ -431,21 +444,17 @@ fun BottomInfo(lastUpdated: LocalDateTime){
     )
 
     val format = DateTimeFormatter.ofPattern("HH:mm")
-    Text(text = stringResource(R.string.last_updated, lastUpdated.format(format)),
+    Text(
+        text = stringResource(R.string.last_updated, lastUpdated.format(format)),
         style = MaterialTheme.typography.bodySmall
     )
 
 }
 
 
-
-
-
-
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState:PagerState) {
+fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState: PagerState) {
 
     val navigateToMoreInfoScreen = { navController.navigate("advice/$id") }
 
@@ -471,47 +480,47 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
                 )
             }
 
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(Measurements.HorizontalPadding.measurement),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(Measurements.HorizontalPadding.measurement)
-                        ,
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
 
-                        Column {
-                            Text(
-                                text = advice.title,
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
+            Column {
+                Text(
+                    text = advice.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
 
-                            Spacer(modifier = Modifier.size(10.dp))
+                Spacer(modifier = Modifier.size(10.dp))
 
-                            MarkdownText(
-                                markdown = advice.shortAdvice,
-                                style = MaterialTheme.typography.bodyMedium,
-                                linkColor = MaterialTheme.colorScheme.onPrimaryContainer)
-                        }
+                MarkdownText(
+                    markdown = advice.shortAdvice,
+                    style = MaterialTheme.typography.bodyMedium,
+                    linkColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
 
-                        Button(
-                            onClick = {
-                                navigateToMoreInfoScreen()
-                            },
-                            modifier = Modifier.align(Alignment.End),
+            Button(
+                onClick = {
+                    navigateToMoreInfoScreen()
+                },
+                modifier = Modifier.align(Alignment.End),
 
-                        ) {
-                            Text(
-                                text = stringResource(R.string.read_more)
-                            )
-                        }
-                    }
+                ) {
+                Text(
+                    text = stringResource(R.string.read_more)
+                )
+            }
+        }
     }
 }
 
 @Composable
-/** Displays a card that displays the best time for taking a walk at morning, midday and evening */
+        /** Displays a card that displays the best time for taking a walk at morning, midday and evening */
 fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
 
 
@@ -529,9 +538,8 @@ fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
         ) {
 
 
-
             // When there is no recommend times for a walk
-            if (bestTimesForWalk.morning.isBlank() && bestTimesForWalk.midday.isBlank() && bestTimesForWalk.evening.isBlank()){
+            if (bestTimesForWalk.morning.isBlank() && bestTimesForWalk.midday.isBlank() && bestTimesForWalk.evening.isBlank()) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -539,23 +547,38 @@ fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
                             horizontal = Measurements.HorizontalPadding.measurement,
                             vertical = Measurements.WithinSectionVerticalGap.measurement
                         ),
-                ){
-                    Icon(imageVector = Icons.Filled.Warning, contentDescription = stringResource(R.string.warning_icon_description))
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Warning,
+                        contentDescription = stringResource(R.string.warning_icon_description)
+                    )
                     Spacer(modifier = Modifier.padding(5.dp))
-                    Text(text = stringResource(R.string.bad_weather_alert), modifier = Modifier.fillMaxWidth())
+                    Text(
+                        text = stringResource(R.string.bad_weather_alert),
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
 
                 // Show recommended times
             } else {
 
                 val morningText =
-                    if (bestTimesForWalk.morning.isNotBlank()) stringResource( R.string.morning_walk_time, bestTimesForWalk.morning)
+                    if (bestTimesForWalk.morning.isNotBlank()) stringResource(
+                        R.string.morning_walk_time,
+                        bestTimesForWalk.morning
+                    )
                     else stringResource(R.string.morning_walk_is_not_recommended)
                 val middayText =
-                    if (bestTimesForWalk.midday.isNotBlank()) stringResource(R.string.midday_walk_time, bestTimesForWalk.midday)
+                    if (bestTimesForWalk.midday.isNotBlank()) stringResource(
+                        R.string.midday_walk_time,
+                        bestTimesForWalk.midday
+                    )
                     else stringResource(R.string.midday_walk_not_recommended)
                 val eveningText =
-                    if (bestTimesForWalk.evening.isNotBlank()) stringResource(R.string.evening_walk_time, bestTimesForWalk.evening)
+                    if (bestTimesForWalk.evening.isNotBlank()) stringResource(
+                        R.string.evening_walk_time,
+                        bestTimesForWalk.evening
+                    )
                     else stringResource(R.string.evening_walk_not_recommened)
 
                 Row(
@@ -574,7 +597,10 @@ fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
                         Text(text = middayText)
                         Text(text = eveningText)
                     }
-                    Icon(imageVector = Icons.Filled.AccessTime, contentDescription = stringResource(R.string.klokke_ikon_description))
+                    Icon(
+                        imageVector = Icons.Filled.AccessTime,
+                        contentDescription = stringResource(R.string.klokke_ikon_description)
+                    )
 
 
                 }
@@ -584,20 +610,21 @@ fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
 }
 
 @Composable
-/** Displays a fullwidth card, containing a Graph representing hours in a day with a Score per hour */
+        /** Displays a fullwidth card, containing a Graph representing hours in a day with a Score per hour */
 fun ForecastGraph(graphUiState: CartesianChartModelProducer, scoreAtIndexZeroInGraph: Int) {
 
     val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour
     val bottomAxisValueFormatter =
-        AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _, _->
-            var label = time  + x.toInt() // Label = time now + x index... x = 0 = now, x = 1 = in hour hour... formatted as Int 0 <= 36
-            if (label > 23){ // Loop around to 00:00
+        AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _, _ ->
+            var label =
+                time + x.toInt() // Label = time now + x index... x = 0 = now, x = 1 = in hour hour... formatted as Int 0 <= 36
+            if (label > 23) { // Loop around to 00:00
                 label -= 24
             }
 
-            if (label < 10){
+            if (label < 10) {
                 "0$label"
-            } else  {
+            } else {
                 "$label"
             }
 
@@ -610,64 +637,64 @@ fun ForecastGraph(graphUiState: CartesianChartModelProducer, scoreAtIndexZeroInG
         modifier = Modifier
             .fillMaxWidth()
             .height(Measurements.GraphHeight.measurement),
-    ){
-        Column (
+    ) {
+        Column(
             modifier = Modifier.padding(
                 horizontal = Measurements.WithinSectionHorizontalGap.measurement,
                 vertical = Measurements.WithinSectionVerticalGap.measurement
             ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
-        ){
+        ) {
             CartesianChartHost(
                 modifier = Modifier        // Workaround to enable alpha compositing
                     .fillMaxSize(),
                 chart =
-                    rememberCartesianChart(
-                        rememberLineCartesianLayer(
-                            listOf(
-                                rememberLineSpec(
-                                    shader = DynamicShaders.color(scoreColor),
-                                )
-                            ),
-                            axisValueOverrider = AxisValueOverrider.fixed(minY = 0f, maxY = 10f)
+                rememberCartesianChart(
+                    rememberLineCartesianLayer(
+                        listOf(
+                            rememberLineSpec(
+                                shader = DynamicShaders.color(scoreColor),
+                            )
                         ),
-                        startAxis = rememberStartAxis(
-                            titleComponent = rememberTextComponent(
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                background = ShapeComponent(
-                                    shape = Shapes.pillShape,
-                                    color = MaterialTheme.colorScheme.primaryContainer.hashCode()
-                                ),
-
-                                padding = MutableDimensions(8f, 1f),
-                                textAlignment = Layout.Alignment.ALIGN_CENTER,
-                                textSize = MaterialTheme.typography.bodyMedium.fontSize
-                                ),
-
-                            title = stringResource(R.string.y_axis_title)
-                        ),
-                        bottomAxis = rememberBottomAxis(
-                            itemPlacer = AxisItemPlacer.Horizontal.default(
-                                spacing = 1
+                        axisValueOverrider = AxisValueOverrider.fixed(minY = 0f, maxY = 10f)
+                    ),
+                    startAxis = rememberStartAxis(
+                        titleComponent = rememberTextComponent(
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            background = ShapeComponent(
+                                shape = Shapes.pillShape,
+                                color = MaterialTheme.colorScheme.primaryContainer.hashCode()
                             ),
-                            labelRotationDegrees = -30f,
-                            valueFormatter = bottomAxisValueFormatter,
-                            titleComponent = rememberTextComponent(
 
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-
-                                background = ShapeComponent(
-                                    shape = Shapes.pillShape,
-                                    color = MaterialTheme.colorScheme.primaryContainer.hashCode()
-                                ),
-                                padding = MutableDimensions(8f, 1f),
-                                textAlignment = Layout.Alignment.ALIGN_CENTER,
-                                textSize = MaterialTheme.typography.bodyMedium.fontSize
-                            ),
-                            title = stringResource(R.string.x_axis_title),
-                            guideline = null
+                            padding = MutableDimensions(8f, 1f),
+                            textAlignment = Layout.Alignment.ALIGN_CENTER,
+                            textSize = MaterialTheme.typography.bodyMedium.fontSize
                         ),
+
+                        title = stringResource(R.string.y_axis_title)
+                    ),
+                    bottomAxis = rememberBottomAxis(
+                        itemPlacer = AxisItemPlacer.Horizontal.default(
+                            spacing = 1
+                        ),
+                        labelRotationDegrees = -30f,
+                        valueFormatter = bottomAxisValueFormatter,
+                        titleComponent = rememberTextComponent(
+
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+
+                            background = ShapeComponent(
+                                shape = Shapes.pillShape,
+                                color = MaterialTheme.colorScheme.primaryContainer.hashCode()
+                            ),
+                            padding = MutableDimensions(8f, 1f),
+                            textAlignment = Layout.Alignment.ALIGN_CENTER,
+                            textSize = MaterialTheme.typography.bodyMedium.fontSize
+                        ),
+                        title = stringResource(R.string.x_axis_title),
+                        guideline = null
+                    ),
                 ),
                 modelProducer = graphUiState,
                 zoomState = rememberVicoZoomState(zoomEnabled = false),
@@ -684,13 +711,13 @@ fun getColorForScore(number: Int): Color {
         in 3..5 -> Color(242, 140, 40)
         in 6..7 -> Color.Yellow
         in 8..10 -> Color(76, 187, 23)
-        else -> throw IllegalArgumentException("Score is not between 0 and 10")
+        else -> Color(76, 187, 23) // just to stop app from crashing in this scenario. Should not happen.
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomInfoModalPopUp(title: String, bodyText: String, onDismiss : () -> Unit ){
+fun BottomInfoModalPopUp(title: String, bodyText: String, onDismiss: () -> Unit) {
     ModalBottomSheet(
         modifier = Modifier
             .defaultMinSize(minHeight = 200.dp),

@@ -42,7 +42,7 @@ private val DarkColorPalette = darkColorScheme(
     outline = outlineDark,
 
 
-)
+    )
 
 private val LightColorPalette = lightColorScheme(
 
@@ -78,13 +78,13 @@ private val LightColorPalette = lightColorScheme(
     onSurfaceVariant = onSurfaceVariantLight,
     outline = outlineLight,
 
-)
+    )
 
 @Composable
 fun Team19prosjektoppgaveTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit)
-{
+    content: @Composable () -> Unit
+) {
     val colors = when {
 
         darkTheme -> DarkColorPalette

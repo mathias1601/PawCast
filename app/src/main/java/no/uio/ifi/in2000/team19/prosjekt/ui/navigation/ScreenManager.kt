@@ -50,7 +50,7 @@ fun ScreenManager(
 
     Scaffold(
         bottomBar = {
-            if (startDestination == "home" || startDestination == "weather" || startDestination == "settings")  {
+            if (startDestination == "home" || startDestination == "weather" || startDestination == "settings") {
                 NavigationBar {
                     navBarItems.forEachIndexed { index, item ->
                         NavigationBarItem(
@@ -74,124 +74,133 @@ fun ScreenManager(
                 }
             }
         }
-    ) {innerPadding ->
+    ) { innerPadding ->
 
         Column(
-            modifier = Modifier.
-            padding(
+            modifier = Modifier.padding(
                 bottom = innerPadding.calculateBottomPadding(),
             )
         ) {
-                //Sjekk kun for når man åpner appen
+            //Sjekk kun for når man åpner appen
             NavHost(
                 navController = navController,
                 startDestination = startDestination,
                 route = "parent"
 
-            ){
-                    composable("home") { backStackEntry ->
-                        viewModel.updateNavBarSelectedIndex(0) // added to make sure index is correct, as when user re-enters home screen after going through setup from settings, the navbar would still remember its last position.
+            ) {
+                composable("home") { backStackEntry ->
+                    viewModel.updateNavBarSelectedIndex(0) // added to make sure index is correct, as when user re-enters home screen after going through setup from settings, the navbar would still remember its last position.
 
-                        // hiltViewModel creates new viewmodel model if there is none and stores it scoped to the navigation graph. https://developer.android.com/reference/kotlin/androidx/hilt/navigation/compose/package-summary
-                        val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
-                        val homeScreenViewModel: HomeScreenViewModel = hiltViewModel(parentEntry)
+                    // hiltViewModel creates new viewmodel model if there is none and stores it scoped to the navigation graph. https://developer.android.com/reference/kotlin/androidx/hilt/navigation/compose/package-summary
+                    val parentEntry =
+                        remember(backStackEntry) { navController.getBackStackEntry("parent") }
+                    val homeScreenViewModel: HomeScreenViewModel = hiltViewModel(parentEntry)
 
-                        if (homeScreenViewModel.checkIfUiStateIsError()){
-                            homeScreenViewModel.loadWeatherForecast()
-                        }
-
-                        HomeScreenManager(
-                            viewModel = homeScreenViewModel,
-                            navController = navController
-                        )
-
+                    if (homeScreenViewModel.checkIfUiStateIsError()) {
+                        homeScreenViewModel.loadWeatherForecast()
                     }
 
-                    composable("weather"){backStackEntry ->
+                    HomeScreenManager(
+                        viewModel = homeScreenViewModel,
+                        navController = navController
+                    )
 
-                        viewModel.updateNavBarSelectedIndex(1)
+                }
 
-                        val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
-                        val weatherScreenViewModel: WeatherScreenViewModel = hiltViewModel(parentEntry)
+                composable("weather") { backStackEntry ->
 
-                        if (weatherScreenViewModel.checkIfUiStateIsError()){
-                            weatherScreenViewModel.loadWeather()
-                        }
+                    viewModel.updateNavBarSelectedIndex(1)
 
-                        WeatherScreen(
-                            weatherScreenViewModel = weatherScreenViewModel,
-                            navController = navController,
-                            )
+                    val parentEntry =
+                        remember(backStackEntry) { navController.getBackStackEntry("parent") }
+                    val weatherScreenViewModel: WeatherScreenViewModel = hiltViewModel(parentEntry)
+
+                    if (weatherScreenViewModel.checkIfUiStateIsError()) {
+                        weatherScreenViewModel.loadWeather()
                     }
 
-
-                    composable("settings"){ backStackEntry ->
-
-                        viewModel.updateNavBarSelectedIndex(2)
-
-
-                        val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
-
-                        val settingsScreenViewModel: SettingsScreenViewModel = hiltViewModel(parentEntry)
-                        val searchLocationViewModel: SearchLocationViewModel = hiltViewModel(parentEntry)
-
-                        settingsScreenViewModel.fetchUserInfo() // always keep these settings updated when user navigates to this screen.
-
-                        SettingsScreen(
-                            viewModel = settingsScreenViewModel,
-                            searchLocationViewModel = searchLocationViewModel,
-                            navController = navController,
-                            innerPadding = innerPadding
-                        )
-                    }
+                    WeatherScreen(
+                        weatherScreenViewModel = weatherScreenViewModel,
+                        navController = navController,
+                    )
+                }
 
 
+                composable("settings") { backStackEntry ->
 
-                    composable(
-                        route = "setup/{STAGE}",
-                        arguments = listOf(navArgument("STAGE") { defaultValue = "0" })
+                    viewModel.updateNavBarSelectedIndex(2)
 
 
-                    ){ backStackEntry ->
+                    val parentEntry =
+                        remember(backStackEntry) { navController.getBackStackEntry("parent") }
 
-                        val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
-                        val setupScreenViewModel: SetupScreenViewModel = hiltViewModel(parentEntry)
-                        val searchLocationViewModel : SearchLocationViewModel = hiltViewModel(parentEntry)
+                    val settingsScreenViewModel: SettingsScreenViewModel =
+                        hiltViewModel(parentEntry)
+                    val searchLocationViewModel: SearchLocationViewModel =
+                        hiltViewModel(parentEntry)
 
-                        val id = backStackEntry.arguments?.getString("STAGE") ?: "0" // 0 to force it to start if wrong parameter is supplied. Elvis operator needs to stay for when start destination supplies the argument
-                        SetupManager(
-                            id=id,
-                            navController = navController,
-                            viewModel = setupScreenViewModel,
-                            searchLocationViewModel = searchLocationViewModel
-                        )
-                    }
+                    settingsScreenViewModel.fetchUserInfo() // always keep these settings updated when user navigates to this screen.
 
-                    composable("advice/{id}") {backStackEntry->
+                    SettingsScreen(
+                        viewModel = settingsScreenViewModel,
+                        searchLocationViewModel = searchLocationViewModel,
+                        navController = navController,
+                        innerPadding = innerPadding
+                    )
+                }
 
-                        val parentEntry = remember(backStackEntry) { navController.getBackStackEntry("parent") }
-                        val homeScreenViewModel: HomeScreenViewModel = hiltViewModel(parentEntry)
 
-                        val id = backStackEntry.arguments?.getString("id") ?: "0"
 
-                        AdviceScreen(
-                            navController = navController,
-                            adviceId = id.toInt(),
-                            viewModel = homeScreenViewModel)
-                    }
+                composable(
+                    route = "setup/{STAGE}",
+                    arguments = listOf(navArgument("STAGE") { defaultValue = "0" })
+
+
+                ) { backStackEntry ->
+
+                    val parentEntry =
+                        remember(backStackEntry) { navController.getBackStackEntry("parent") }
+                    val setupScreenViewModel: SetupScreenViewModel = hiltViewModel(parentEntry)
+                    val searchLocationViewModel: SearchLocationViewModel =
+                        hiltViewModel(parentEntry)
+
+                    val id = backStackEntry.arguments?.getString("STAGE")
+                        ?: "0" // 0 to force it to start if wrong parameter is supplied. Elvis operator needs to stay for when start destination supplies the argument
+                    SetupManager(
+                        id = id,
+                        navController = navController,
+                        viewModel = setupScreenViewModel,
+                        searchLocationViewModel = searchLocationViewModel
+                    )
+                }
+
+                composable("advice/{id}") { backStackEntry ->
+
+                    val parentEntry =
+                        remember(backStackEntry) { navController.getBackStackEntry("parent") }
+                    val homeScreenViewModel: HomeScreenViewModel = hiltViewModel(parentEntry)
+
+                    val id = backStackEntry.arguments?.getString("id") ?: "0"
+
+                    AdviceScreen(
+                        navController = navController,
+                        adviceId = id.toInt(),
+                        viewModel = homeScreenViewModel
+                    )
+                }
             }
         }
     }
 }
 
 
-data class BottomNavBarItem (
-    val title : String,
-    val selectedIcon : ImageVector,
-    val unselectedIcon : ImageVector,
+data class BottomNavBarItem(
+    val title: String,
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector,
 )
 
-fun createBottomNavbarItems() : List<BottomNavBarItem> {
+fun createBottomNavbarItems(): List<BottomNavBarItem> {
 
 
     return listOf(
@@ -214,5 +223,5 @@ fun createBottomNavbarItems() : List<BottomNavBarItem> {
             unselectedIcon = Icons.Outlined.Settings
         ),
 
-    )
+        )
 }

@@ -48,10 +48,10 @@ import com.mapbox.search.autocomplete.PlaceAutocompleteSuggestion
 import no.uio.ifi.in2000.team19.prosjekt.R
 
 
-@Composable 
+@Composable
 fun SearchLocationTextField(
     viewModel: SearchLocationViewModel
-){
+) {
     val searchQuery = viewModel.searchFieldValue.collectAsState().value
     val showSavedConfirmation = viewModel.isDone.collectAsState().value
 
@@ -77,8 +77,7 @@ fun SearchLocationTextField(
                         viewModel.setSearchStateToHidden()
                         viewModel.updateSearchBoxToRepresentStoredLocation()
                     }
-                }
-            ,
+                },
 
             keyboardActions = KeyboardActions(
                 onDone = {
@@ -97,11 +96,16 @@ fun SearchLocationTextField(
                 viewModel.searchLocation(query)
 
             },
-            label = {Text(stringResource(R.string.search_box_label))},
-            leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = "Location Search-field") }
+            label = { Text(stringResource(R.string.search_box_label)) },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = "Location Search-field"
+                )
+            }
         )
-        
-        if (showSavedConfirmation){
+
+        if (showSavedConfirmation) {
             Text(text = stringResource(R.string.changes_saved_label))
         }
 
@@ -111,8 +115,7 @@ fun SearchLocationTextField(
 
         AnimatedVisibility(
 
-            modifier = Modifier
-            ,
+            modifier = Modifier,
             visible = (searchState != SearchState.Hidden)
 
         ) {
@@ -139,9 +142,15 @@ fun SearchLocationTextField(
                     is SearchState.Loading -> TextScreenBox { Loading() }
                     is SearchState.NoSuggestions -> TextScreenBox { NoSuggestions() }
                     is SearchState.Error -> TextScreenBox { Error() }
-                    is SearchState.Suggestions -> SearchSuggestions(searchState.suggestions, viewModel, focusManager)
+                    is SearchState.Suggestions -> SearchSuggestions(
+                        searchState.suggestions,
+                        viewModel,
+                        focusManager
+                    )
+
                     is SearchState.Idle -> TextScreenBox { Idle() }
-                    is SearchState.Hidden -> { /* Do nothing */}
+                    is SearchState.Hidden -> { /* Do nothing */
+                    }
                 }
             }
         }
@@ -149,21 +158,20 @@ fun SearchLocationTextField(
 }
 
 
-
 @Composable
-fun Loading(){
+fun Loading() {
     CircularProgressIndicator()
     Text(text = stringResource(R.string.search_loading_results))
 }
 
 @Composable
-fun TextScreenBox(composable: @Composable () -> Unit){
+fun TextScreenBox(composable: @Composable () -> Unit) {
     Column(
         Modifier
             .height(100.dp)
             .padding(horizontal = 40.dp)
             .fillMaxWidth(),
-        
+
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -173,26 +181,27 @@ fun TextScreenBox(composable: @Composable () -> Unit){
 
 
 @Composable
-fun Idle(){
+fun Idle() {
     Text(
         text = stringResource(R.string.search_start_writing),
-        textAlign = TextAlign.Center)
+        textAlign = TextAlign.Center
+    )
 }
 
 
 @Composable
-fun Error(){
+fun Error() {
     Text(
         text = stringResource(R.string.search_error_msg),
-        textAlign = TextAlign.Center) // Might be bad to ask if user has internet but something else went wrong. Compromise made due to time.
+        textAlign = TextAlign.Center
+    ) // Might be bad to ask if user has internet but something else went wrong. Compromise made due to time.
 }
 
 @Composable
-fun NoSuggestions(){
+fun NoSuggestions() {
     Text(text = "🌧️")
-    Text(text = "Ingen resultater") 
+    Text(text = "Ingen resultater")
 }
-
 
 
 @Composable
@@ -200,14 +209,14 @@ fun SearchSuggestions(
     suggestions: List<PlaceAutocompleteSuggestion>,
     viewModel: SearchLocationViewModel,
     focusManager: FocusManager
-){
+) {
 
-    LazyColumn (
+    LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(max = 300.dp)
 
-    ){
+    ) {
 
         items(suggestions) { suggestion ->
             SearchSuggestion(suggestion, viewModel, focusManager)
@@ -219,7 +228,8 @@ fun SearchSuggestions(
 fun SearchSuggestion(
     suggestion: PlaceAutocompleteSuggestion,
     viewModel: SearchLocationViewModel,
-    focusManager: FocusManager, ) {
+    focusManager: FocusManager,
+) {
 
 
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -227,8 +237,7 @@ fun SearchSuggestion(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(75.dp)
-        ,
+            .height(75.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -244,11 +253,10 @@ fun SearchSuggestion(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-            ,
+                .padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
 
-        ) {
+            ) {
 
             Row {
 
@@ -256,7 +264,7 @@ fun SearchSuggestion(
 
                 Spacer(modifier = Modifier.width(10.dp))
 
-                if (suggestion.formattedAddress == null){
+                if (suggestion.formattedAddress == null) {
                     Text(text = suggestion.name, maxLines = 1)
                 } else {
                     Text(text = suggestion.formattedAddress!!, maxLines = 1)

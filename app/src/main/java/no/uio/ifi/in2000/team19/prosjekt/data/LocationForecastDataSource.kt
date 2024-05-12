@@ -18,9 +18,14 @@ class LocationForecastDataSource @Inject constructor() {
         }
     }
 
-    suspend fun getLocationForecast (LATITUDE: String, LONGITUDE: String, HEIGHT: String): LocationForecast {
+    suspend fun getLocationForecast(
+        LATITUDE: String,
+        LONGITUDE: String,
+        HEIGHT: String
+    ): LocationForecast {
 
-        val path = "https://api.met.no/weatherapi/locationforecast/2.0/edr/collections/complete/position?coords=POINT($LONGITUDE+$LATITUDE)&z=$HEIGHT"
+        val path =
+            "https://api.met.no/weatherapi/locationforecast/2.0/edr/collections/complete/position?coords=POINT($LONGITUDE+$LATITUDE)&z=$HEIGHT"
 
         val result = client.get(path)
 

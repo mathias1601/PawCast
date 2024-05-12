@@ -44,11 +44,11 @@ fun SetupManager(
 ) {
 
 
-    Scaffold (
+    Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    if (!id.contains("only") && id != "0"){ // hide progress indicator if user has navigated to Setup from settings (using "only_id")
+                    if (!id.contains("only") && id != "0") { // hide progress indicator if user has navigated to Setup from settings (using "only_id")
                         val amountOfSetupPages = "7"
                         Text(
                             text = stringResource(
@@ -64,11 +64,11 @@ fun SetupManager(
 
                 },
                 navigationIcon = {
-                    if (id != "0"){
+                    if (id != "0") {
                         IconButton(onClick = {
                             // This double if check needs to stay as there is some bug in "hiding" the navigation Icon that does hide the icon,
                             // but allows the user to run the function below after its hidden by clicking the area it was.
-                            if (id != "0"){ // <--- keep this.
+                            if (id != "0") { // <--- keep this.
                                 navController.popBackStack()
                             }
                         }
@@ -82,8 +82,8 @@ fun SetupManager(
                 }
             )
         }
-    ){innerPadding ->
-        Column (
+    ) { innerPadding ->
+        Column(
             modifier = Modifier
                 .padding(
                     top = innerPadding.calculateTopPadding(),
@@ -91,7 +91,7 @@ fun SetupManager(
                     start = Measurements.HorizontalPadding.measurement,
                     end = Measurements.HorizontalPadding.measurement,
 
-                )
+                    )
         ) {
 
             viewModel.updateSelectedIndexesBasedOnUserData()
@@ -99,12 +99,18 @@ fun SetupManager(
             when (id) {
                 // For going to next step after finnishing.
                 "0" -> WelcomeScreen(
-                    onDone = { navController.navigate("setup/1") }
-                ) {
-                    viewModel.handleUserSkip()
-                    navController.navigate("setup/only_2")
+                    onDone = { navController.navigate("setup/1") },
+                    onSkip = {
+                        navController.navigate("setup/skip_and_only_setup_location")
+                    }
+                )
 
+                // when user wants to skip from Welcome screen
+                "skip_and_only_setup_location" -> LocationSetupScreen(searchLocationViewModel) {
+                    viewModel.handleUserSkip()
+                    navController.navigate("settings")
                 }
+
 
                 "1" -> NamesSetupScreen(viewModel) { navController.navigate("setup/2") }
                 "2" -> LocationSetupScreen(searchLocationViewModel) { navController.navigate("setup/3") }
@@ -120,34 +126,45 @@ fun SetupManager(
                 // When editing from settings screen.
                 "only_1" -> NamesSetupScreen(viewModel) {
                     viewModel.saveUserInfo()
-                    navController.navigate("settings") }
+                    navController.navigate("settings")
+                }
+
                 "only_2" -> LocationSetupScreen(searchLocationViewModel) {
                     viewModel.saveUserInfo()
-                    navController.navigate("settings") }
+                    navController.navigate("settings")
+                }
+
                 "only_3" -> AgeSetupScreen(viewModel) {
                     viewModel.saveUserInfo()
-                    navController.navigate("settings") }
+                    navController.navigate("settings")
+                }
+
                 "only_4" -> NoseSetupScreen(viewModel) {
                     viewModel.saveUserInfo()
-                    navController.navigate("settings") }
+                    navController.navigate("settings")
+                }
+
                 "only_5" -> BodySetupScreen(viewModel) {
                     viewModel.saveUserInfo()
-                    navController.navigate("settings") }
+                    navController.navigate("settings")
+                }
+
                 "only_6" -> FurSetupScreen(viewModel) {
                     viewModel.saveUserInfo()
-                    navController.navigate("settings") }
+                    navController.navigate("settings")
+                }
             }
         }
     }
 }
 
 @Composable
-fun TipBox(tipText:String){
+fun TipBox(tipText: String) {
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-    ){
+    ) {
 
         Row(
             modifier = Modifier
@@ -155,7 +172,10 @@ fun TipBox(tipText:String){
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(imageVector = Icons.Outlined.Lightbulb, contentDescription = stringResource(R.string.lightbulb_icon_description))
+            Icon(
+                imageVector = Icons.Outlined.Lightbulb,
+                contentDescription = stringResource(R.string.lightbulb_icon_description)
+            )
             Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
             Text(text = tipText, style = MaterialTheme.typography.bodyMedium)
         }

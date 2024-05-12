@@ -98,7 +98,8 @@ fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<Advic
         typeOfDog.isPuppy ||
         typeOfDog.isShortHaired ||
         typeOfDog.isSenior ||
-        typeOfDog.isThinHaired) {
+        typeOfDog.isThinHaired
+    ) {
 
         if (AdviceCategory.COOL in categoryList) {
             categoryList.remove(AdviceCategory.COOL)
@@ -129,9 +130,7 @@ fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<Advic
         if (AdviceCategory.COLD in categoryList) {
             categoryList.remove(AdviceCategory.COLD)
             categoryList.add(AdviceCategory.COLDLONGFUR)
-        }
-
-        else if (AdviceCategory.COLDOTHER in categoryList) {
+        } else if (AdviceCategory.COLDOTHER in categoryList) {
             categoryList.remove(AdviceCategory.COLDOTHER)
             categoryList.add(AdviceCategory.COLDOTHERLONGFUR)
         }
@@ -157,7 +156,8 @@ fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<Advic
     }
 
 
-    val tickSeasonStart = LocalDateTime.of(2024, 3, 15, 0, 0
+    val tickSeasonStart = LocalDateTime.of(
+        2024, 3, 15, 0, 0
     )
     // Year, Month, Day, Hour, Minute (defaults to 00:00)
 
@@ -215,7 +215,9 @@ fun createAdvice(categories: List<AdviceCategory>, context: Context): List<Advic
             "COLD" -> adviceArray = context.resources.getStringArray(R.array.COLD)
             "COLDLONGFUR" -> adviceArray = context.resources.getStringArray(R.array.COLDLONGFUR)
             "COLDOTHER" -> adviceArray = context.resources.getStringArray(R.array.COLDOTHER)
-            "COLDOTHERLONGFUR" -> adviceArray = context.resources.getStringArray(R.array.COLDOTHERLONGFUR)
+            "COLDOTHERLONGFUR" -> adviceArray =
+                context.resources.getStringArray(R.array.COLDOTHERLONGFUR)
+
             "FREEZING" -> adviceArray = context.resources.getStringArray(R.array.FREEZING)
             "SALT" -> adviceArray = context.resources.getStringArray(R.array.SALT)
             "WARM" -> adviceArray = context.resources.getStringArray(R.array.WARM)

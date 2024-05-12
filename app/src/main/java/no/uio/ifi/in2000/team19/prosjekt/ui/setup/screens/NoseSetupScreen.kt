@@ -35,11 +35,11 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
     val noseIndex = viewModel.selectedNoseIndex.collectAsState().value
 
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
-        ) {
+    ) {
 
         Column(
             modifier = Modifier
@@ -61,9 +61,9 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
         Column(
             modifier = Modifier.weight(2f),
 
-        ) {
+            ) {
             Text(
-                text= stringResource(R.string.nose_setup_screen_title),
+                text = stringResource(R.string.nose_setup_screen_title),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -72,11 +72,11 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
             Spacer(modifier = Modifier.padding(10.dp))
 
 
-            FlowRow (
+            FlowRow(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-            ){
+            ) {
 
 
                 Card(
@@ -103,7 +103,7 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
 
-                    ){
+                    ) {
                         Text(text = stringResource(R.string.normal_nose))
                     }
 
@@ -132,7 +132,7 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
 
-                    ){
+                    ) {
                         Text(text = stringResource(R.string.flat_nose))
                     }
                 }
@@ -141,7 +141,7 @@ fun NoseSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
             Spacer(modifier = Modifier.padding(10.dp))
 
             Text(
-                text= stringResource(R.string.chooseDogCategoryBottomScreenTip),
+                text = stringResource(R.string.chooseDogCategoryBottomScreenTip),
                 style = MaterialTheme.typography.labelMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()

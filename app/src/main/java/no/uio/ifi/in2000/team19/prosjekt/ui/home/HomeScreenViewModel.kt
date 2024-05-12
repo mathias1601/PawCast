@@ -27,16 +27,16 @@ import java.time.LocalDateTime
 import javax.inject.Inject
 
 
-sealed interface AdviceUiState{
-    data class  Success(val allAdvice:List<Advice>) : AdviceUiState
+sealed interface AdviceUiState {
+    data class Success(val allAdvice: List<Advice>) : AdviceUiState
     data object Loading : AdviceUiState
-    data class Error(val errorReason : ErrorReasons) : AdviceUiState
+    data class Error(val errorReason: ErrorReasons) : AdviceUiState
 }
 
-data class BestTimesForWalk (
-    var morning : String,
-    var midday : String,
-    var evening : String
+data class BestTimesForWalk(
+    var morning: String,
+    var midday: String,
+    var evening: String
 )
 
 
@@ -44,43 +44,54 @@ data class BestTimesForWalk (
 class HomeScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val locationForecastRepository: LocationForecastRepository
-): ViewModel() {
+) : ViewModel() {
 
     // Contains all advice cards
-    private var _adviceUiState: MutableStateFlow<AdviceUiState> = MutableStateFlow(AdviceUiState.Loading)
+    private var _adviceUiState: MutableStateFlow<AdviceUiState> =
+        MutableStateFlow(AdviceUiState.Loading)
     val adviceUiState: StateFlow<AdviceUiState> = _adviceUiState.asStateFlow()
 
 
     private val _graphUiState = MutableStateFlow(CartesianChartModelProducer.build())
+
     /** Contains graph data */
     val graphUiState: StateFlow<CartesianChartModelProducer> = _graphUiState.asStateFlow()
 
     private val _bestTimeUiState = MutableStateFlow(BestTimesForWalk("", "", ""))
+
     /** Contains the best time for a trip for morning, midday and evening based on score. */
     val bestTimeUiState: StateFlow<BestTimesForWalk> = _bestTimeUiState.asStateFlow()
 
     private val _firstYValueUiState = MutableStateFlow(0)
+
     /** Contains the value of graphs score on index 0. Used to set graph color to different color based on this value. */
     val firstYValueUiState: StateFlow<Int> = _firstYValueUiState.asStateFlow()
 
-    private var _locationUiState:MutableStateFlow<Cords> = MutableStateFlow(Cords(0, "not loaded", "not loaded", "0", "0"))
+    private var _locationUiState: MutableStateFlow<Cords> =
+        MutableStateFlow(Cords(0, "not loaded", "not loaded", "0", "0"))
+
     /** Contains the users location. Exposed to UI so show location in HomeScreen. */
 
     val locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
 
-    private var _userInfoUiState:MutableStateFlow<UserInfo> = MutableStateFlow(createTemporaryUserinfo())
+    private var _userInfoUiState: MutableStateFlow<UserInfo> =
+        MutableStateFlow(createTemporaryUserinfo())
+
     /** Is exposed to UI to show username and dog name. */
     val userInfoUiState: StateFlow<UserInfo> = _userInfoUiState.asStateFlow()
 
 
-    private var _temperatureUiState:MutableStateFlow<GeneralForecast> = MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", LocalDateTime.now(), 0.0, 0.0, 0.0))
+    private var _temperatureUiState: MutableStateFlow<GeneralForecast> =
+        MutableStateFlow(GeneralForecast(0.0, 0.0, "", "", LocalDateTime.now(), 0.0, 0.0, 0.0))
+
     /** Used to show current temperature. */
     val temperatureUiState: StateFlow<GeneralForecast> = _temperatureUiState.asStateFlow()
 
 
-    private var _dogImage:MutableStateFlow<Int> = MutableStateFlow(R.drawable.dog_normal)
+    private var _dogImage: MutableStateFlow<Int> = MutableStateFlow(R.drawable.dog_normal)
+
     /** Is used to determine which to dog show in home screen. */
-    val dogImage:StateFlow<Int> = _dogImage.asStateFlow()
+    val dogImage: StateFlow<Int> = _dogImage.asStateFlow()
 
     /** height doesnt matter for our use case, so is just always set to 0 */
     private val height: String = "0"
@@ -90,7 +101,7 @@ class HomeScreenViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                settingsRepository.getCords().collect {cords ->
+                settingsRepository.getCords().collect { cords ->
                     _locationUiState.value = cords
                     loadWeatherForecast()
                 }
@@ -121,7 +132,8 @@ class HomeScreenViewModel @Inject constructor(
 
                 _userInfoUiState.value = settingsRepository.getUserInfo()
 
-                val allAdvice = locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
+                val allAdvice =
+                    locationForecastRepository.getAdvice(generalForecast, _userInfoUiState.value)
 
                 _adviceUiState.value = AdviceUiState.Success(allAdvice)
 
@@ -157,9 +169,9 @@ class HomeScreenViewModel @Inject constructor(
 
             } catch (e: IOException) {
                 _adviceUiState.value = AdviceUiState.Error(ErrorReasons.INTERRUPTION)
-            } catch (e: UnresolvedAddressException){
+            } catch (e: UnresolvedAddressException) {
                 _adviceUiState.value = AdviceUiState.Error(ErrorReasons.INTERNET)
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 _adviceUiState.value = AdviceUiState.Error(ErrorReasons.UNKNOWN)
             }
 
@@ -204,7 +216,7 @@ class HomeScreenViewModel @Inject constructor(
 
             val ratings = listOf(tempRating, percRating, uvRating)
 
-            var overallRating : Int = (tempRating + percRating + uvRating) / 3
+            var overallRating: Int = (tempRating + percRating + uvRating) / 3
 
             ratings.forEach {
                 if (it < 3) {
@@ -316,8 +328,8 @@ class HomeScreenViewModel @Inject constructor(
     //this function is used to fetch the rating of a given weather specification
     private fun rating(weatherTypeValue: Double, limitsMap: HashMap<List<Double>, Int>): Int {
 
-        for((key, value) in limitsMap) {
-            if (weatherTypeValue in key[0] .. key[1]) {
+        for ((key, value) in limitsMap) {
+            if (weatherTypeValue in key[0]..key[1]) {
                 return value
             }
         }
@@ -325,7 +337,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     // used by advice screen. Really simple so didnt move to other viewmodel, as that would require sharing existing advice with that viewmodel.
-    fun collectAdviceById(id: Int): Advice{
+    fun collectAdviceById(id: Int): Advice {
         return adviceList[id]
     }
 
@@ -341,12 +353,12 @@ class HomeScreenViewModel @Inject constructor(
 
 
         return if (isThundering) R.drawable.dog_thunder
-                else if (isNight) R.drawable.dog_sleepy
-                else if (windSpeed > 5) R.drawable.dog_wind
-                else if (weather.precipitation > 1) R.drawable.dog_rain
-                else if (weather.temperature >= temperatureToShowSunnyDog) R.drawable.dog_sunny
-                else if (weather.temperature <= temperatureToShowColdDog) R.drawable.dog_cold
-                else R.drawable.dog_normal
+        else if (isNight) R.drawable.dog_sleepy
+        else if (windSpeed > 5) R.drawable.dog_wind
+        else if (weather.precipitation > 1) R.drawable.dog_rain
+        else if (weather.temperature >= temperatureToShowSunnyDog) R.drawable.dog_sunny
+        else if (weather.temperature <= temperatureToShowColdDog) R.drawable.dog_cold
+        else R.drawable.dog_normal
     }
 
     fun checkIfUiStateIsError(): Boolean {

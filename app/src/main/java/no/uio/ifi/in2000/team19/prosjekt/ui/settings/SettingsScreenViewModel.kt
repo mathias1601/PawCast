@@ -18,10 +18,10 @@ class SettingsScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
-    private val _userInfo : MutableStateFlow<UserInfo> = MutableStateFlow(createTemporaryUserinfo())
-    val userInfo : StateFlow<UserInfo> = _userInfo.asStateFlow()
+    private val _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(createTemporaryUserinfo())
+    val userInfo: StateFlow<UserInfo> = _userInfo.asStateFlow()
 
-    fun fetchUserInfo(){
+    fun fetchUserInfo() {
         viewModelScope.launch(Dispatchers.IO) {
             _userInfo.value = settingsRepository.getUserInfo()
         }

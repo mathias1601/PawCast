@@ -21,27 +21,27 @@ import javax.inject.Inject
 class SetupScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val dataStoreRepository: DataStoreRepository
-): ViewModel() {
-
+) : ViewModel() {
 
 
     private var _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(createTemporaryUserinfo())
     var userInfo: StateFlow<UserInfo> = _userInfo.asStateFlow()
 
-    init{
-        viewModelScope.launch (Dispatchers.IO){
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
             _userInfo.value = settingsRepository.getUserInfo()
         }
     }
 
     // SCREEN ONE
-    fun updateUserName(userName: String){
+    fun updateUserName(userName: String) {
         val updatedUserName = _userInfo.value.copy(userName = userName)
         _userInfo.value = updatedUserName
         Log.d("SETUP_DEBUG", _userInfo.value.userName)
 
     }
-    fun updateDogName(dogName: String){
+
+    fun updateDogName(dogName: String) {
         val updatedDogName = _userInfo.value.copy(dogName = dogName)
         _userInfo.value = updatedDogName
 
@@ -50,10 +50,11 @@ class SetupScreenViewModel @Inject constructor(
 
 
     // SCREEN TWO
-    private var _selectedAgeIndex: MutableStateFlow<Int?> = MutableStateFlow(null) // Null when none are chosen.
+    private var _selectedAgeIndex: MutableStateFlow<Int?> =
+        MutableStateFlow(null) // Null when none are chosen.
     var selectedAgeIndex: StateFlow<Int?> = _selectedAgeIndex.asStateFlow()
 
-    fun updateAgeIndex(newIndex:Int){
+    fun updateAgeIndex(newIndex: Int) {
         _selectedAgeIndex.value = newIndex
     }
 
@@ -61,7 +62,7 @@ class SetupScreenViewModel @Inject constructor(
         _userInfo.value.isPuppy = newValue
     }
 
-    fun updateIsAdult(newValue: Boolean){
+    fun updateIsAdult(newValue: Boolean) {
         _userInfo.value.isAdult = newValue
     }
 
@@ -71,68 +72,77 @@ class SetupScreenViewModel @Inject constructor(
     }
 
 
-
-
     // SCREEN THREE
 
-    private var _selectedNoseIndex: MutableStateFlow<Int?> = MutableStateFlow(null) // Null when none are chosen.
+    private var _selectedNoseIndex: MutableStateFlow<Int?> =
+        MutableStateFlow(null) // Null when none are chosen.
     var selectedNoseIndex: StateFlow<Int?> = _selectedNoseIndex.asStateFlow()
 
-    fun updateIsFlatNosed(newValue: Boolean){
+    fun updateIsFlatNosed(newValue: Boolean) {
         _userInfo.value.isFlatNosed = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isFlatNosed.toString())
     }
 
-    fun updateIsNormalNosed(newBoolean: Boolean){
+    fun updateIsNormalNosed(newBoolean: Boolean) {
         _userInfo.value.isNormalNosed = newBoolean
     }
 
-    fun updateNoseIndex(newIndex:Int){
+    fun updateNoseIndex(newIndex: Int) {
         _selectedNoseIndex.value = newIndex
     }
-
-
 
 
     // SCREEN FOUR
 
     private var _selectedBodyIndex: MutableStateFlow<Int?> = MutableStateFlow(null)
-    var selectedThinIndex:StateFlow<Int?> = _selectedBodyIndex.asStateFlow()
+    var selectedThinIndex: StateFlow<Int?> = _selectedBodyIndex.asStateFlow()
 
     fun updateIsThin(newValue: Boolean) {
         _userInfo.value.isThin = newValue
         Log.d("SETUP_DEBUG", _userInfo.value.isThin.toString())
     }
 
-    fun updateIsMedium(newValue: Boolean){
+    fun updateIsMedium(newValue: Boolean) {
         _userInfo.value.isMediumBody = newValue
     }
 
-    fun updateIsThick(newValue: Boolean){
+    fun updateIsThick(newValue: Boolean) {
         _userInfo.value.isThickBody = newValue
     }
 
-    fun updateBodyIndex(newIndex: Int){
+    fun updateBodyIndex(newIndex: Int) {
         _selectedBodyIndex.value = newIndex
     }
-
-
-
-
 
 
     // SCREEN FIVE
     fun updateFilterCategories(categoryName: String, newValue: Boolean) {
         when (categoryName) {
-            "tynnPels" -> { _userInfo.value.isThinHaired = newValue }
-            "tykkPels" -> {_userInfo.value.isThickHaired = newValue}
-            "langPels" -> {_userInfo.value.isLongHaired = newValue}
-            "kortPels" -> {_userInfo.value.isShortHaired = newValue}
-            "lysPels" -> {_userInfo.value.isLightHaired = newValue}
-            "moerkPels" -> {_userInfo.value.isDarkHaired = newValue}
+            "tynnPels" -> {
+                _userInfo.value.isThinHaired = newValue
+            }
+
+            "tykkPels" -> {
+                _userInfo.value.isThickHaired = newValue
+            }
+
+            "langPels" -> {
+                _userInfo.value.isLongHaired = newValue
+            }
+
+            "kortPels" -> {
+                _userInfo.value.isShortHaired = newValue
+            }
+
+            "lysPels" -> {
+                _userInfo.value.isLightHaired = newValue
+            }
+
+            "moerkPels" -> {
+                _userInfo.value.isDarkHaired = newValue
+            }
         }
     }
-
 
 
     // SAVE EVERY CHOICE. Only done at the end to make sure the user finnished the Setup process.
@@ -141,14 +151,14 @@ class SetupScreenViewModel @Inject constructor(
             try {
                 settingsRepository.updateUserInfo(_userInfo.value)
                 Log.d("SETUP_DEBUG", _userInfo.value.toString())
-            }  catch (e: IOException) {
+            } catch (e: IOException) {
                 println(e)
                 Log.d("SETUP_DEBUG", e.toString())
             }
         }
     }
 
-    fun handleUserSkip(){
+    fun handleUserSkip() {
         val defaultUserInfo = UserInfo(
             id = 0,
             userName = "",
@@ -173,18 +183,22 @@ class SetupScreenViewModel @Inject constructor(
         saveSetupState(true)
     }
 
-    fun saveSetupState(isCompleted:Boolean){
-        viewModelScope.launch (Dispatchers.IO){
+    fun saveSetupState(isCompleted: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
             dataStoreRepository.saveSetupState(isCompleted)
         }
     }
 
-    fun updateSelectedIndexesBasedOnUserData(){
+    fun updateSelectedIndexesBasedOnUserData() {
         val ui = userInfo.value
 
-        if (ui.isSenior) updateAgeIndex(2) else if (ui.isAdult) updateAgeIndex(1) else if (ui.isPuppy) updateAgeIndex(0)
+        if (ui.isSenior) updateAgeIndex(2) else if (ui.isAdult) updateAgeIndex(1) else if (ui.isPuppy) updateAgeIndex(
+            0
+        )
         if (ui.isNormalNosed) updateNoseIndex(0) else if (ui.isFlatNosed) updateAgeIndex(1)
-        if (ui.isThin) updateBodyIndex(0) else if (ui.isMediumBody) updateBodyIndex(1) else if (ui.isThickBody) updateBodyIndex(2)
+        if (ui.isThin) updateBodyIndex(0) else if (ui.isMediumBody) updateBodyIndex(1) else if (ui.isThickBody) updateBodyIndex(
+            2
+        )
 
     }
 }
