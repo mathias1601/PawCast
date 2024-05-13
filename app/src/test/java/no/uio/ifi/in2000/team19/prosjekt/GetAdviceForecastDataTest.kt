@@ -1,14 +1,14 @@
 package no.uio.ifi.in2000.team19.prosjekt
 
-import no.uio.ifi.in2000.team19.prosjekt.data.getAdviceForecastData
+import no.uio.ifi.in2000.team19.prosjekt.data.AdviceFunctions
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import org.junit.Assert
 import org.junit.Test
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 class GetAdviceForecastDataTest {
+    private lateinit var adviceFunctions: AdviceFunctions
 
     @Test
     fun getAdviceForecastDataIsCorrect() {
@@ -28,7 +28,7 @@ class GetAdviceForecastDataTest {
 
         val expectedAdviceForecast =
             AdviceForecast(14.6, 44.2, 1.8, 2.7, LocalDateTime.of(2024, 3, 1, 0, 0), "12")
-        val result = getAdviceForecastData(generalForecast)
+        val result = adviceFunctions.getAdviceForecastData(generalForecast)
 
         // Assert
         Assert.assertEquals(expectedAdviceForecast, result)

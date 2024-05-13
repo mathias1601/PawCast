@@ -2,6 +2,7 @@ package no.uio.ifi.in2000.team19.prosjekt
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import no.uio.ifi.in2000.team19.prosjekt.data.AdviceFunctions
 import no.uio.ifi.in2000.team19.prosjekt.data.createAdvice
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
@@ -11,6 +12,7 @@ import org.junit.Assert.*
 
 @RunWith(AndroidJUnit4::class)
 class CreateAdviceTest {
+    private lateinit var adviceFunctions: AdviceFunctions
 
     @Test
     fun createAdvice_Safe() {
@@ -26,7 +28,7 @@ class CreateAdviceTest {
         val expectedStrings = appContext.resources.getStringArray(R.array.SAFE)
         val expectedAdvice = listOf(Advice(expectedStrings[0], expectedStrings[1], expectedStrings[2]))
 
-        val result = createAdvice(categories, appContext)
+        val result = adviceFunctions.createAdvice(categories, appContext)
 
 
         // Assert
@@ -48,7 +50,7 @@ class CreateAdviceTest {
         val expectedStrings = appContext.resources.getStringArray(R.array.COLDOTHERLONGFUR)
         val expectedAdvice = listOf(Advice(expectedStrings[0], expectedStrings[1], expectedStrings[2]))
 
-        val result = createAdvice(categories, appContext)
+        val result = adviceFunctions.createAdvice(categories, appContext)
 
 
         // Assert

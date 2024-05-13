@@ -91,18 +91,19 @@ class LocationForecastRepository @Inject constructor(
         //If the time is past midnight, hours will get a negative value
         val adjustedStart = if (hours < 0) 24 + hours.toInt() else hours.toInt()
 
-        //Find ending point of for-loop.
+        //Find ending point of for-loop
+        //This equation was suggested from GPT UiO
         val hoursTo23 = (23 - now.hour + 24) % 24 + adjustedStart
 
         //Used for the other weather functions
         val startOfNextDay = hoursTo23 + 1
 
+        //We always want to show 12 hours ahead, even if the time is 23:00
         val lastHour = (hoursTo23 + 12)
 
         val genForecastList = mutableListOf<GeneralForecast>()
 
-        //we only collect 12 hours at a time, from now til 12 hours from now
-        //necessary data is retrieved for each hour, and added to the list of general forecasts
+        //Necessary data is retrieved for each hour, and added to the list of general forecasts
 
         for (i in adjustedStart..lastHour) {
 
@@ -115,7 +116,7 @@ class LocationForecastRepository @Inject constructor(
             val time = locationForecast.properties.timeseries[i].time
             val zonedDateTime = ZonedDateTime.parse(time)
             val hourFormatter = DateTimeFormatter.ofPattern("HH")
-            val hourAsInt = zonedDateTime.format(hourFormatter).toString()
+            val hourAsString = zonedDateTime.format(hourFormatter).toString()
 
             val timeFetched = LocalDateTime.now() // Store when
 
@@ -128,7 +129,7 @@ class LocationForecastRepository @Inject constructor(
                     temperature,
                     wind,
                     symbol,
-                    hourAsInt,
+                    hourAsString,
                     timeFetched,
                     precipitation,
                     thunderProbability,
@@ -138,15 +139,14 @@ class LocationForecastRepository @Inject constructor(
 
         }
 
-        //the two other forecast types are also created, and added to a ForecastTypes-object
-        //TODO: add explanation of what meanHours means, not very clear
+        //The two other forecast types are also created, and added to a ForecastTypes-object
         val dayForecastList = getWeatherForecastForDays(locationForecast, nrDays, startOfNextDay)
-        val meanHours = getWeatherForecastHours(locationForecast, startOfNextDay)
+        val sixHoursIntervalForecastList =
+            getWeatherForecastSixHoursInterval(locationForecast, startOfNextDay)
 
-        return ForecastTypes(genForecastList, dayForecastList, meanHours)
+        return ForecastTypes(genForecastList, dayForecastList, sixHoursIntervalForecastList)
     }
 
-    //TODO: ISABELLE forklare litt med kommentarer
     private fun getWeatherForecastForDays(
         locationForecast: LocationForecast,
         nrDays: Int,
@@ -170,14 +170,17 @@ class LocationForecastRepository @Inject constructor(
 
             val temperatures = mutableListOf<Double>()
 
+            //Counter so the right hours are included in the repeat
             var hourCounter = theHour
 
+            //Repeat 4 times since we have data for the next 6 hours
             repeat(4) {
                 temperatures.add(locationForecast.properties.timeseries[hourCounter].data.next_6_hours.details.air_temperature_max)
                 temperatures.add(locationForecast.properties.timeseries[hourCounter].data.next_6_hours.details.air_temperature_min)
                 hourCounter += 6
             }
 
+            //Finding the warmest and coldest temperature in 24 hours
             val warmestTemperature = temperatures.max()
             val coldestTemperature = temperatures.min()
 
@@ -200,7 +203,7 @@ class LocationForecastRepository @Inject constructor(
     }
 
 
-    private fun getWeatherForecastHours(
+    private fun getWeatherForecastSixHoursInterval(
         locationForecast: LocationForecast,
         startHour: Int
     ): List<WeatherForecast> {
@@ -211,9 +214,10 @@ class LocationForecastRepository @Inject constructor(
 
         var nextDay = LocalDate.now().plusDays(1)
 
-        //One day is 8, two is 16
+        //4 intervals per day, so 8 in total
         repeat(8) { i ->
 
+            //Collecting the different times to compare them
             var firstHour: String = locationForecast.properties.timeseries[theHour].time
             var secondHour: String = locationForecast.properties.timeseries[theHour + 1].time
             var lastHour: String = locationForecast.properties.timeseries[theHour + 6].time
@@ -229,6 +233,8 @@ class LocationForecastRepository @Inject constructor(
             val firstHourAsInt = firstHour.toInt()
             val secondHourInt = secondHour.toInt()
 
+            //Check how many hours are between the first and second hour
+            //Also if they belong to different days
             val hoursBetween = if (firstHourAsInt <= secondHourInt) {
                 secondHourInt - firstHourAsInt
             } else {
@@ -236,15 +242,19 @@ class LocationForecastRepository @Inject constructor(
             }
 
             //Sometimes the difference between two timeseries is 6 hours instead of one
+            //Then there is a need to handle the data differently
             if (hoursBetween == 6) {
 
                 meanWind =
                     (locationForecast.properties.timeseries[theHour].data.instant.details.wind_speed +
                             locationForecast.properties.timeseries[theHour + 1].data.instant.details.wind_speed) / 2
 
+                //The end hour is the second hour since there is six hours between them
                 endHour = secondHour
+
             } else {
 
+                //Here the difference is one hour, so we need to check all six
                 var hourCounter = theHour
 
                 repeat(6) {
@@ -252,22 +262,26 @@ class LocationForecastRepository @Inject constructor(
                     hourCounter += 1
                 }
 
-
+                //The end hour is the last hour
                 endHour = lastHour
             }
 
+            //Finding the mean temperature
             val meanTemperature =
                 (locationForecast.properties.timeseries[theHour].data.next_6_hours.details.air_temperature_max +
                         locationForecast.properties.timeseries[theHour].data.next_6_hours.details.air_temperature_min) / 2
 
             val symbolCode =
                 locationForecast.properties.timeseries[theHour].data.next_6_hours.summary.symbol_code
+
             val precipitation =
                 locationForecast.properties.timeseries[theHour].data.next_6_hours.details.precipitation_amount
 
+            //Only want one decimal for simplicity
             val roundedTemperature = String.format("%.1f", meanTemperature)
             val roundedWind = String.format("%.1f", meanWind)
 
+            //To update the day
             if (i == 4) {
                 nextDay = nextDay.plusDays(1)
             }
@@ -288,19 +302,10 @@ class LocationForecastRepository @Inject constructor(
                     precipitation
                 )
             )
-
             theHour += 6
         }
-
         return forecastList
-
     }
-
-
-    //this function collects all necessary categories based on forecast and dog type
-    //it uses AdviceForecast because it contains the necessary data
-
-
 }
 
 

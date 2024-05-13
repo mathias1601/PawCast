@@ -1,16 +1,16 @@
 package no.uio.ifi.in2000.team19.prosjekt
 
-import no.uio.ifi.in2000.team19.prosjekt.data.getCategory
+import no.uio.ifi.in2000.team19.prosjekt.data.AdviceFunctions
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
 import org.junit.Assert.*
 import org.junit.Test
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 
 class GetCategoryTest {
+    private lateinit var adviceFunctions: AdviceFunctions
 
     @Test
     fun getCategory_forVeryWarmWeather_flatNosed_IsCorrect() {
@@ -30,15 +30,19 @@ class GetCategoryTest {
             "Per",
             "Bella",
             isSenior = false,
+            isAdult = true,
             isPuppy = false,
             isFlatNosed = true,
+            isNormalNosed = false,
             isThin = false,
+            isMediumBody = false,
+            isThickBody = true,
             isLongHaired = false,
             isShortHaired = true,
-            isThinHaired = true,
+            isThinHaired = false,
             isThickHaired = false,
             isLightHaired = true,
-            isDarkHaired = false
+            isDarkHaired = false,
         )
 
         // Act
@@ -51,7 +55,7 @@ class GetCategoryTest {
             AdviceCategory.VIPER
         ).toSet()
 
-        val result = getCategory(warmAdviceForecast, userInfo).toSet()
+        val result = adviceFunctions.getCategory(warmAdviceForecast, userInfo).toSet()
 
         // Assert
         assertEquals(categoryList, result)
@@ -70,20 +74,25 @@ class GetCategoryTest {
                 date = LocalDateTime.of(2024, 11, 19, 0, 0),
                 time = "18")
 
+
         val userInfo = UserInfo(
             1,
             "Per",
             "Bella",
             isSenior = false,
+            isAdult = true,
             isPuppy = false,
             isFlatNosed = true,
+            isNormalNosed = false,
             isThin = false,
+            isMediumBody = false,
+            isThickBody = true,
             isLongHaired = false,
             isShortHaired = true,
-            isThinHaired = true,
+            isThinHaired = false,
             isThickHaired = false,
             isLightHaired = true,
-            isDarkHaired = false
+            isDarkHaired = false,
         )
 
         // Act
@@ -93,7 +102,7 @@ class GetCategoryTest {
             AdviceCategory.CAR,
         ).toSet()
 
-        val result = getCategory(adviceForecast, userInfo).toSet()
+        val result = adviceFunctions.getCategory(adviceForecast, userInfo).toSet()
 
         // Assert
         assertNotEquals(categoryList, result)
@@ -117,15 +126,19 @@ class GetCategoryTest {
             "Per",
             "Bella",
             isSenior = false,
+            isAdult = true,
             isPuppy = false,
             isFlatNosed = false,
+            isNormalNosed = true,
             isThin = false,
+            isMediumBody = true,
+            isThickBody = false,
             isLongHaired = true,
-            isShortHaired = false,
+            isShortHaired = true,
             isThinHaired = true,
             isThickHaired = false,
-            isLightHaired = false,
-            isDarkHaired = false
+            isLightHaired = true,
+            isDarkHaired = false,
         )
 
         // Act
@@ -135,7 +148,7 @@ class GetCategoryTest {
             AdviceCategory.VIPER
         ).toSet()
 
-        val result = getCategory(warmAdviceForecast, userInfo).toSet()
+        val result = adviceFunctions.getCategory(warmAdviceForecast, userInfo).toSet()
 
         // Assert
         assertEquals(categoryList, result)
@@ -154,20 +167,25 @@ class GetCategoryTest {
                 date = LocalDateTime.of(2024, 7, 4, 0, 0),
                 time = "15")
 
+
         val userInfo = UserInfo(
             1,
             "Per",
             "Bella",
             isSenior = false,
+            isAdult = true,
             isPuppy = false,
             isFlatNosed = false,
+            isNormalNosed = true,
             isThin = false,
+            isMediumBody = true,
+            isThickBody = false,
             isLongHaired = true,
-            isShortHaired = false,
-            isThinHaired = false,
-            isThickHaired = true,
-            isLightHaired = false,
-            isDarkHaired = false
+            isShortHaired = true,
+            isThinHaired = true,
+            isThickHaired = false,
+            isLightHaired = true,
+            isDarkHaired = false,
         )
 
         // Act
@@ -177,7 +195,7 @@ class GetCategoryTest {
             AdviceCategory.VIPER
         ).toSet()
 
-        val result = getCategory(warmAdviceForecast, userInfo).toSet()
+        val result = adviceFunctions.getCategory(warmAdviceForecast, userInfo).toSet()
 
         // Assert
         assertNotEquals(categoryList, result)
@@ -201,15 +219,19 @@ class GetCategoryTest {
             "Per",
             "Bella",
             isSenior = false,
+            isAdult = false,
             isPuppy = true,
             isFlatNosed = false,
+            isNormalNosed = true,
             isThin = false,
+            isMediumBody = true,
+            isThickBody = false,
             isLongHaired = true,
-            isShortHaired = false,
+            isShortHaired = true,
             isThinHaired = false,
             isThickHaired = true,
             isLightHaired = false,
-            isDarkHaired = false
+            isDarkHaired = false,
         )
 
         // Act
@@ -218,7 +240,7 @@ class GetCategoryTest {
             AdviceCategory.SALT
         ).toSet()
 
-        val result = getCategory(adviceForecast, userInfo).toSet()
+        val result = adviceFunctions.getCategory(adviceForecast, userInfo).toSet()
 
         // Assert
         assertEquals(categoryList, result)
@@ -237,20 +259,25 @@ class GetCategoryTest {
                 date = LocalDateTime.of(2024, 12, 31, 0, 0),
                 time = "12")
 
+
         val userInfo = UserInfo(
             1,
             "Per",
             "Bella",
             isSenior = false,
+            isAdult = true,
             isPuppy = false,
             isFlatNosed = false,
+            isNormalNosed = true,
             isThin = false,
+            isMediumBody = true,
+            isThickBody = false,
             isLongHaired = true,
-            isShortHaired = false,
-            isThinHaired = false,
-            isThickHaired = true,
-            isLightHaired = false,
-            isDarkHaired = false
+            isShortHaired = true,
+            isThinHaired = true,
+            isThickHaired = false,
+            isLightHaired = true,
+            isDarkHaired = false,
         )
 
         // Act
@@ -258,7 +285,7 @@ class GetCategoryTest {
             AdviceCategory.NEWYEAR
         ).toSet()
 
-        val result = getCategory(adviceForecast, userInfo).toSet()
+        val result = adviceFunctions.getCategory(adviceForecast, userInfo).toSet()
 
         // Assert
         assertEquals(categoryList, result)
