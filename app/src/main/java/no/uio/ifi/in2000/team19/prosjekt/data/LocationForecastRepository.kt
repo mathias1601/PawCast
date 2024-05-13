@@ -1,6 +1,7 @@
 package no.uio.ifi.in2000.team19.prosjekt.data
 
 import android.content.Context
+import androidx.core.app.NotificationCompat.getCategory
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
@@ -24,7 +25,8 @@ import javax.inject.Inject
 
 class LocationForecastRepository @Inject constructor(
     private val locationForecastDataSource: LocationForecastDataSource,
-    private val context: Context
+    private val context: Context,
+    private val adviceFunctions: AdviceFunctions
 ) {
 
 
@@ -45,11 +47,11 @@ class LocationForecastRepository @Inject constructor(
     //a list of Advice-objects used to display advice cards
     fun getAdvice(generalForecast: ForecastTypes, typeOfDog: UserInfo): List<Advice> {
 
-        val adviceForecast = getAdviceForecastData(generalForecast.general[0])
+        val adviceForecast = adviceFunctions.getAdviceForecastData(generalForecast.general[0])
 
-        val categories = getCategory(adviceForecast, typeOfDog)
+        val categories = adviceFunctions.getCategory(adviceForecast, typeOfDog)
 
-        return createAdvice(categories, context)
+        return adviceFunctions.createAdvice(categories, context)
     }
 
 
@@ -60,7 +62,7 @@ class LocationForecastRepository @Inject constructor(
         val adviceForecasts = mutableListOf<AdviceForecast>()
         val general: List<GeneralForecast> = listOfGeneralForecasts.general
         general.forEach {
-            adviceForecasts.add(getAdviceForecastData(it))
+            adviceForecasts.add(adviceFunctions.getAdviceForecastData(it))
         }
         return adviceForecasts
     }
