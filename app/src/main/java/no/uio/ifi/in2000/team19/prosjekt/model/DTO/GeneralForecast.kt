@@ -9,8 +9,8 @@ data class GeneralForecast(
     val hour: String,
     val date: LocalDateTime,
     val precipitation: Double,
-    val thunderprobability: Double,
-    val UVindex: Double,
+    val thunderProbability: Double,
+    val uvIndex: Double,
 )
 
 //TODO add all relevant data

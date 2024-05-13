@@ -22,15 +22,20 @@ import javax.inject.Named
 
 
 sealed class SearchState {
-
-    object Hidden : SearchState()
-    object Idle : SearchState()
-    object Loading : SearchState()
-    object NoSuggestions : SearchState()
+    data object Hidden : SearchState()
+    data object Idle : SearchState()
+    data object Loading : SearchState()
+    data object NoSuggestions : SearchState()
     data class Suggestions(val suggestions: List<PlaceAutocompleteSuggestion>) : SearchState()
-    object Error : SearchState()
+    data object Error : SearchState()
 
 }
+
+data class SearchLocationUiState(
+    var isDone : Boolean,
+    var searchFieldValue : String,
+    var searchState: SearchState
+)
 
 
 @HiltViewModel
@@ -40,51 +45,46 @@ class SearchLocationViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val _isDone: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isDone: StateFlow<Boolean> = _isDone.asStateFlow()
+    private val _uiState : MutableStateFlow<SearchLocationUiState> = MutableStateFlow(
+        SearchLocationUiState(
+            isDone = false,
+            searchFieldValue = "",
+            searchState = SearchState.Hidden
+        )
+    )
+    val uiState : StateFlow<SearchLocationUiState> = _uiState.asStateFlow()
 
-
-    // TODO: Access token should be handled better. Ask veileder
     private val placeAutocomplete = PlaceAutocomplete.create(mapboxAccessToken)
-
-    private val _searchFieldValue: MutableStateFlow<String> = MutableStateFlow("initial")
-    val searchFieldValue: StateFlow<String> = _searchFieldValue.asStateFlow()
-
 
     // Set Text in TextField to match stored value
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            settingsRepository.getCords().collect {
-                _searchFieldValue.value = it.detailedName
-
-                if (it.detailedName != "") { // if database is already populated from database.
-                    _isDone.value = true
+            settingsRepository.getLocation().collect {storedLocation ->
+                updateSearchField(storedLocation.detailedName)
+                if (storedLocation.detailedName != "") { // if database is already populated from database.
+                    setIsDone(true)
                 }
-
             }
         }
     }
 
     fun updateSearchField(search: String) {
-        _searchFieldValue.value = search
+        _uiState.value = _uiState.value.copy( searchFieldValue = search)
+        Log.d("debug", "Updating search: ${_uiState.value.searchFieldValue}")
     }
-
-
-    private val _searchState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState.Hidden)
-    val searchState: StateFlow<SearchState> = _searchState.asStateFlow()
 
     private var debounceJob: Job? = null
     private var topSuggestion = mutableStateOf<PlaceAutocompleteSuggestion?>(null)
 
-    // Takes Query from TextBox.
-    // 🚨 NB: Is called everytime the user makes a change to the text field. Therefore needs debounceing
-    fun searchLocation(query: String) {
+    /** Makes search using current value from SearchField.
+    🚨 NB: Is called everytime the user makes a change to the text field. Therefore contains debouncing. */
+    fun searchLocation() {
 
-        _searchState.value = SearchState.Loading
+        setSearchState(SearchState.Loading)
 
         // Debounce is about waiting 200ms to make sure the user has stopped typing. Helps with making less API calls.
         debounceJob?.cancel() // Cancel last job (if it exists)
-        val DEBOUNCE_DELAY = 200 // milliseconds
+        val debounceDelay = 200 // milliseconds
 
 
         // Assigning this coroutine to a variable allows us to use methods like .cancel()
@@ -92,28 +92,28 @@ class SearchLocationViewModel @Inject constructor(
 
             try {
 
-                delay(timeMillis = DEBOUNCE_DELAY.toLong()) // Debounce / wait 200 ms.
+                delay(timeMillis = debounceDelay.toLong()) // Debounce / wait 200 ms.
 
                 // Debounce allows us not call the API for every letter typed, only when the user typed then paused for 200 ms
 
                 if (isActive) {
-                    val response = placeAutocomplete.suggestions(query)
+                    val response = placeAutocomplete.suggestions(_uiState.value.searchFieldValue)
 
                     // ⛔ if API returns error or response is null
                     if (response.value == null || response.isError) {
-                        _searchState.value = SearchState.Error
+                        setSearchState(SearchState.Error)
                     }
 
                     // ✅ if search is Successful
                     else if (response.value!!.isNotEmpty()) {
                         topSuggestion.value =
                             response.value!![0] // Save top result in case user just presses done.
-                        _searchState.value = SearchState.Suggestions(response.value!!)
+                        setSearchState(SearchState.Suggestions(response.value!!))
                     }
 
                     // 👎 There was no results.
                     else {
-                        _searchState.value = SearchState.NoSuggestions
+                        setSearchState(SearchState.NoSuggestions)
                     }
                 }
             } catch (e: CancellationException) {
@@ -122,10 +122,10 @@ class SearchLocationViewModel @Inject constructor(
         }
     }
 
-    // Tell API that we have selected this suggestions. API then returns more detailed info about Place.
+    /** Tell API that we have selected this suggestions. API then returns more detailed info about Place. */
     fun selectSearchLocation(selectedSuggestion: PlaceAutocompleteSuggestion) {
 
-        _searchState.value = SearchState.Hidden
+        setSearchState(SearchState.Hidden)
 
         viewModelScope.launch(Dispatchers.IO) {
             val response = placeAutocomplete.select(selectedSuggestion)
@@ -135,14 +135,14 @@ class SearchLocationViewModel @Inject constructor(
                     longitude = response.value!!.coordinate.longitude().toString(),
                     shortName = response.value!!.name,
                     detailedName = response.value!!.address!!.formattedAddress
-                        ?: response.value!!.name, // some adresses dont have a detailedName.
+                        ?: response.value!!.name, // some addresses don't have a detailedName.
                 )
 
                 updateSearchBoxToRepresentStoredLocation()
-                _isDone.value = true
+                setIsDone(true)
 
             } else {
-                _searchState.value = SearchState.Error
+                setSearchState(SearchState.Error)
             }
 
         }
@@ -152,29 +152,27 @@ class SearchLocationViewModel @Inject constructor(
     fun updateSearchBoxToRepresentStoredLocation() {
 
         viewModelScope.launch(Dispatchers.IO) {
-            val cords = settingsRepository.getCords()
+            val cords = settingsRepository.getLocation()
             cords.collect {
-                _searchFieldValue.value = it.shortName
+                _uiState.value.searchFieldValue = it.shortName
             }
         }
     }
 
-    fun setSearchStateToIdle() {
-        _isDone.value = false
-        _searchState.value = SearchState.Idle
+    fun setSearchState(state: SearchState){
+        if (state is SearchState.Idle) setIsDone(false)
+        _uiState.value = _uiState.value.copy( searchState = state )
     }
 
-    fun setSearchStateToHidden() {
-        _searchState.value = SearchState.Hidden
+    fun setIsDone(value:Boolean){
+        _uiState.value = _uiState.value.copy( isDone = value )
     }
 
+    /** This method picks the current top result in the suggestions. Used if the user just presses done on their keyboard */
     fun pickTopResult() {
-
         if (topSuggestion.value != null) {
             selectSearchLocation(topSuggestion.value!!)
         }
-
-
     }
 }
 

@@ -4,15 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsDatabase
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.coordsDao
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Location
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.LocationDao
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -21,8 +17,8 @@ import org.junit.runner.RunWith
 
 
 @RunWith(AndroidJUnit4::class)
-class CoordsDatabaseTest {
-    private lateinit var dao: coordsDao
+class LocationDatabaseTest {
+    private lateinit var dao: LocationDao
     private lateinit var db: SettingsDatabase
 
     @Before
@@ -31,7 +27,7 @@ class CoordsDatabaseTest {
         db = Room.inMemoryDatabaseBuilder(
             context, SettingsDatabase::class.java
         ).build()
-        dao = db.getCoordsDao()
+        dao = db.getLocationDao()
     }
 
     @After
@@ -41,22 +37,22 @@ class CoordsDatabaseTest {
 
     @Test
     fun checkDatabaseContent() = runTest {
-        val expectedCoords = Cords(0, "navn", "navn2", "60", "10")
-        dao.insertCords(expectedCoords)
+        val expectedLocation = Location(0, "navn", "navn2", "60", "10")
+        dao.insertLocation(expectedLocation)
 
-        val coords = getCoordsFromFlow()
-        assertEquals(expectedCoords, coords)
+        val location = getLocationFromFlow()
+        assertEquals(expectedLocation, location)
 
-        val fakeCoords = Cords(0, "hallo", "ok", "2", "5")
-        dao.deleteCords(fakeCoords)
+        val fakeLocation = Location(0, "hallo", "ok", "2", "5")
+        dao.deleteLocation(fakeLocation)
 
-        assertEquals(expectedCoords, coords)
+        assertEquals(expectedLocation, location)
 
-        dao.deleteCords(expectedCoords)
+        dao.deleteLocation(expectedLocation)
 
-        assertEquals(null, getCoordsFromFlow())
+        assertEquals(null, getLocationFromFlow())
     }
 
-    private suspend fun getCoordsFromFlow(): Cords? = dao.getCords()?.firstOrNull()
+    private suspend fun getLocationFromFlow(): Location? = dao.getLocation()?.firstOrNull()
 
 }

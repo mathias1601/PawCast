@@ -77,6 +77,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+
     // EGNE DEPENDENCIES
 
     // ktor dependencies
@@ -89,6 +90,8 @@ dependencies {
     // Android dependecies vi har lagt til: f.eks viewModel...
     implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0") // collectAsStateWithLifecycle
+
 
     // MapBox!
     implementation("com.mapbox.search:mapbox-search-android-ui:1.2.0")

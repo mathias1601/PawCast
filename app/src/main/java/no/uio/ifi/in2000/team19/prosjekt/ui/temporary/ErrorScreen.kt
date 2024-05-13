@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team19.prosjekt.ui.error
+package no.uio.ifi.in2000.team19.prosjekt.ui.temporary
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

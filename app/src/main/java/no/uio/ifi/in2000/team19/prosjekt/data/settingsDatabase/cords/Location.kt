@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class Cords(
+data class Location(
     @PrimaryKey(autoGenerate = false) val id: Int,
     @ColumnInfo(name = "location-short-name") var shortName: String,
     @ColumnInfo(name = "location-detailed-name") var detailedName: String,

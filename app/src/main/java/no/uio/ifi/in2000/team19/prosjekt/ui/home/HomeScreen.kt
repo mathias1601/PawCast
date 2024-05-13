@@ -42,7 +42,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +55,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
@@ -82,13 +82,10 @@ import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import no.uio.ifi.in2000.team19.prosjekt.R
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.WeatherDrawableNameToResourceId
-import no.uio.ifi.in2000.team19.prosjekt.ui.LoadingScreen
-import no.uio.ifi.in2000.team19.prosjekt.ui.error.ErrorScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.ErrorScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.LoadingScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -102,19 +99,12 @@ fun HomeScreenManager(
     navController: NavController
 ) {
 
-    val adviceUiState = viewModel.adviceUiState.collectAsState().value
-    val graphUiState = viewModel.graphUiState.collectAsState().value
-    val bestTimeUiState = viewModel.bestTimeUiState.collectAsState().value
-    val firstYValueUiState = viewModel.firstYValueUiState.collectAsState().value
-    val userInfoUiState = viewModel.userInfoUiState.collectAsState().value
-    val locationUiState = viewModel.locationUiState.collectAsState().value
-    val temperatureUiState = viewModel.temperatureUiState.collectAsState().value
-    val dogImage = viewModel.dogImage.collectAsState().value
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
     val isRefreshing by remember {
         mutableStateOf(false)
     }
-    val state = rememberPullRefreshState(
+    val refreshState = rememberPullRefreshState(
         refreshing = isRefreshing,
         onRefresh = { viewModel.loadWeatherForecast() })
 
@@ -123,38 +113,32 @@ fun HomeScreenManager(
         Box(
             Modifier
                 .fillMaxSize()
-                .pullRefresh(state),
+                .pullRefresh(refreshState),
         ) {
-            when (adviceUiState) {
-                is AdviceUiState.Success -> {
+            when (uiState.dataState) {
+                is DataState.Success -> {
                     HomeScreen(
-                        userInfoUiState,
-                        locationUiState,
-                        adviceUiState,
-                        graphUiState,
-                        bestTimeUiState,
-                        temperatureUiState,
-                        firstYValueUiState,
-                        navController,
+                        uiState,
                         innerPadding,
-                        dogImage
+                        onNavigateToSettings = { navController.navigate("settings") },
+                        onNavigateToAdvice = {id ->  navController.navigate("advice/$id")}
                     )
                 }
 
-                is AdviceUiState.Loading -> {
+                is DataState.Loading -> {
                     LoadingScreen()
                 }
 
-                is AdviceUiState.Error -> {
+                is DataState.Error -> {
                     ErrorScreen(
-                        reason = adviceUiState.errorReason,
+                        reason = (uiState.dataState as DataState.Error).errorReason,
                         onReload = { viewModel.loadWeatherForecast() }
                     )
                 }
             }
 
             PullRefreshIndicator(
-                refreshing = isRefreshing, state = state,
+                refreshing = isRefreshing, state = refreshState,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
             )
@@ -165,21 +149,17 @@ fun HomeScreenManager(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
-    userInfo: UserInfo,
-    location: Cords,
-    advice: AdviceUiState.Success,
-    graphUiState: CartesianChartModelProducer,
-    bestTime: BestTimesForWalk,
-    weather: GeneralForecast,
-    firstYValueUiState: Int,
-    navController: NavController,
-    innerPadding: PaddingValues,
-    dogImage: Int,
+    uiState: HomeUiState,
+    innerPadding : PaddingValues,
+    onNavigateToSettings : () -> Unit,
+    onNavigateToAdvice : (id : Int) -> Unit
+
 ) {
 
+    val userInfo = uiState.userInfo
+    val weather = uiState.weather
 
     // ============================ TOP BLUE WEATHER SECTION =================================
-
 
     // Gradient colors from 0% to 50% of height
     val colorStops = arrayOf(
@@ -187,7 +167,6 @@ fun HomeScreen(
         0.5f to Color(0xFFFFB1C1),
         0.6f to MaterialTheme.colorScheme.surface // blend at bottom into same color as surface
     )
-
 
     // Column containing ALL content of rest of screen.
     val scrollState = rememberScrollState()
@@ -251,7 +230,7 @@ fun HomeScreen(
                     if (weather.symbol in WeatherDrawableNameToResourceId.map) {
                         Image(
                             painter = painterResource(id = WeatherDrawableNameToResourceId.map[weather.symbol]!!),
-                            contentDescription = "Værsymbol"
+                            contentDescription = stringResource(R.string.weather_symbol_description)
                         )
                     }
 
@@ -268,13 +247,16 @@ fun HomeScreen(
                 }
 
                 // Location Button / Text and Dog avatar
+
+                val location = uiState.location
+
                 Row(
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
                 ) {
 
-                    ElevatedButton(onClick = { navController.navigate("settings") }) {
+                    ElevatedButton(onClick = onNavigateToSettings) {
                         Icon(
                             imageVector = Icons.Filled.LocationOn,
                             contentDescription = stringResource(R.string.location)
@@ -285,8 +267,10 @@ fun HomeScreen(
                         )
                     }
 
+                    val dogImageId = uiState.dogImageId
+
                     Image(
-                        painter = painterResource(id = dogImage), // !! because we always feed it correct information.
+                        painter = painterResource(id = dogImageId), // !! because we always feed it correct information.
                         contentDescription = stringResource(R.string.dog_avatar_description), // is formatted like dog_normal, dog_normal_white_sticker, dog_rain_white_sticker ... etc.
                         modifier = Modifier
                             .height(175.dp)
@@ -366,9 +350,12 @@ fun HomeScreen(
 
                         // ADVICE CARDS / Horizontal Pager / Carousel + Indicator for card index
                         // Inspired by official documentaion: https://developer.android.com/develop/ui/compose/layouts/pager
+
+                        val advice = uiState.advice
+
                         Column {
                             val pagerState = rememberPagerState(pageCount = {
-                                advice.allAdvice.size
+                                advice.size
                             })
 
                             // Advice cards / Horizontal Pager
@@ -377,9 +364,9 @@ fun HomeScreen(
                                 pageSpacing = Measurements.HorizontalPadding.measurement
                             ) { id ->
                                 AdviceCard(
-                                    advice = advice.allAdvice[id],
+                                    advice = advice[id],
                                     id = id,
-                                    navController = navController,
+                                    onNavigateToAdvice = { onNavigateToAdvice(id) },
                                     pagerState = pagerState
                                 )
                             }
@@ -392,7 +379,7 @@ fun HomeScreen(
                             ) {
                                 // used to have gray circle showing current card, but this lagged quite a lot even though it taken from documentation, so we landed on numbers which lags alot less.
                                 Text(
-                                    text = "${pagerState.currentPage + 1}/${advice.allAdvice.size}",
+                                    text = "${pagerState.currentPage + 1}/${advice.size}",
                                     style = MaterialTheme.typography.labelLarge
                                 )
                             }
@@ -422,9 +409,9 @@ fun HomeScreen(
                             }
                         }
 
-                        RecomendedTimesForWalk(bestTimesForWalk = bestTime)
+                        RecomendedTimesForWalk(bestTimesForWalk = uiState.bestTimesForWalk)
                         Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
-                        ForecastGraph(graphUiState, firstYValueUiState)
+                        ForecastGraph(uiState.graphModel, uiState.scoreAtIndexZero)
                         Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
                         BottomInfo(lastUpdated = weather.date)
                     }
@@ -454,9 +441,13 @@ fun BottomInfo(lastUpdated: LocalDateTime) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState: PagerState) {
+fun AdviceCard(
+    advice: Advice,
+    id: Int,
+    pagerState: PagerState,
+    onNavigateToAdvice: () -> Unit
+) {
 
-    val navigateToMoreInfoScreen = { navController.navigate("advice/$id") }
 
     Card(
         modifier = Modifier
@@ -505,9 +496,7 @@ fun AdviceCard(advice: Advice, id: Int, navController: NavController, pagerState
             }
 
             Button(
-                onClick = {
-                    navigateToMoreInfoScreen()
-                },
+                onClick = onNavigateToAdvice ,
                 modifier = Modifier.align(Alignment.End),
 
                 ) {
@@ -610,7 +599,7 @@ fun RecomendedTimesForWalk(bestTimesForWalk: BestTimesForWalk) {
 }
 
 @Composable
-        /** Displays a fullwidth card, containing a Graph representing hours in a day with a Score per hour */
+        /** Displays a full width card, containing a Graph representing hours in a day with a Score per hour */
 fun ForecastGraph(graphUiState: CartesianChartModelProducer, scoreAtIndexZeroInGraph: Int) {
 
     val time = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) // get hour

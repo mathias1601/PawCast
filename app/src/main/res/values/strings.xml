@@ -145,5 +145,7 @@
     <string name="body_category_label">Kropp</string>
     <string name="fur_category_label">Pels</string>
     <string name="dog_avatar_description">Dog drawing responding to current weather</string>
+    <string name="search_icon_description">Forstørrelses-glass</string>
+    <string name="weather_symbol_description">Værsymbol</string>
 
 </resources>

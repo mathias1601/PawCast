@@ -13,8 +13,8 @@ import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.dataStore.DataStoreRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsDatabase
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.coordsDao
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.userInfoDao
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.LocationDao
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfoDao
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -33,8 +33,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideCoordsDao(db: SettingsDatabase) =
-        db.getCoordsDao() // The reason we can implement a Dao for the database
+    fun provideLocationDao(db: SettingsDatabase) =
+        db.getLocationDao() // The reason we can implement a Dao for the database
 
     @Singleton
     @Provides
@@ -43,8 +43,8 @@ object AppModule {
     @Singleton
     @Provides
     fun provideSettingsRepository(
-        coordsDao: coordsDao,
-        userInfoDao: userInfoDao
+        coordsDao: LocationDao,
+        userInfoDao: UserInfoDao
     ): SettingsRepository {
         return SettingsRepository(coordsDao, userInfoDao)
     }

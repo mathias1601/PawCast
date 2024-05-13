@@ -17,9 +17,9 @@ fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
 
     return AdviceForecast(
         generalForecast.temperature,
-        generalForecast.thunderprobability,
+        generalForecast.thunderProbability,
         generalForecast.precipitation,
-        generalForecast.UVindex,
+        generalForecast.uvIndex,
         generalForecast.date,
         generalForecast.hour
     )

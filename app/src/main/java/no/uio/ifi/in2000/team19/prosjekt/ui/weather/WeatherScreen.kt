@@ -47,8 +47,8 @@ import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForecast
-import no.uio.ifi.in2000.team19.prosjekt.ui.LoadingScreen
-import no.uio.ifi.in2000.team19.prosjekt.ui.error.ErrorScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.LoadingScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.ErrorScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.BottomInfo
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
 

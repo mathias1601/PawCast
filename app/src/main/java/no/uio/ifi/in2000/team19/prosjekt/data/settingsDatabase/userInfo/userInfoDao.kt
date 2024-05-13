@@ -6,7 +6,7 @@ import androidx.room.Query
 import androidx.room.Upsert
 
 @Dao
-interface userInfoDao {
+interface UserInfoDao {
 
     @Upsert
     fun upsertUserInfo(userInfo: UserInfo)

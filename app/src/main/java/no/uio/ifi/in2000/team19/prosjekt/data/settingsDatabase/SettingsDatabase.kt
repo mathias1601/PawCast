@@ -2,19 +2,17 @@ package no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.coordsDao
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Location
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.LocationDao
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.userInfoDao
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfoDao
 
 
 @Database(
-    entities = [Cords::class, UserInfo::class],
+    entities = [Location::class, UserInfo::class],
     version = 1
 )
 abstract class SettingsDatabase : RoomDatabase() {
-    abstract fun getCoordsDao(): coordsDao
-    abstract fun getUserInfoDao(): userInfoDao
-
-
+    abstract fun getLocationDao(): LocationDao
+    abstract fun getUserInfoDao(): UserInfoDao
 }

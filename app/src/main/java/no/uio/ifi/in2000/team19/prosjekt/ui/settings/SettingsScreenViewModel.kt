@@ -13,17 +13,26 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.createTemporaryUs
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import javax.inject.Inject
 
+
+data class SettingsUiState(
+    var userInfo : UserInfo
+)
+
+
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
-    private val _userInfo: MutableStateFlow<UserInfo> = MutableStateFlow(createTemporaryUserinfo())
-    val userInfo: StateFlow<UserInfo> = _userInfo.asStateFlow()
+    private val _uiState : MutableStateFlow<SettingsUiState> = MutableStateFlow(
+        SettingsUiState(
+            createTemporaryUserinfo())
+    )
+    val uiState : StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
     fun fetchUserInfo() {
         viewModelScope.launch(Dispatchers.IO) {
-            _userInfo.value = settingsRepository.getUserInfo()
+            _uiState.value.userInfo = settingsRepository.getUserInfo()
         }
     }
 }

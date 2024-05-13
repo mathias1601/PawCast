@@ -7,14 +7,14 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface coordsDao {
+interface LocationDao {
 
     @Upsert
-    fun insertCords(cords: Cords)
+    fun insertLocation(location: Location)
 
     @Delete
-    fun deleteCords(cords: Cords)
+    fun deleteLocation(location: Location)
 
-    @Query("SELECT * FROM cords")
-    fun getCords(): Flow<Cords>?
+    @Query("SELECT * FROM location")
+    fun getLocation(): Flow<Location>?
 }

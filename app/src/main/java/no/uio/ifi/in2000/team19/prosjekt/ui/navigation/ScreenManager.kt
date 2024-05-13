@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -61,11 +62,10 @@ fun ScreenManager(
                             },
                             icon = {
                                 Icon(
-                                    imageVector = if (index == navBarSelectedItemIndex) {
-                                        item.selectedIcon
-                                    } else {
-                                        item.unselectedIcon
-                                    },
+                                    imageVector =
+                                        if (index == navBarSelectedItemIndex) item.selectedIcon
+                                        else item.unselectedIcon,
+
                                     contentDescription = item.title
                                 )
                             }
@@ -104,7 +104,6 @@ fun ScreenManager(
                         viewModel = homeScreenViewModel,
                         navController = navController
                     )
-
                 }
 
                 composable("weather") { backStackEntry ->
@@ -140,9 +139,10 @@ fun ScreenManager(
                         hiltViewModel(parentEntry)
 
                     settingsScreenViewModel.fetchUserInfo() // always keep these settings updated when user navigates to this screen.
+                    val settingUiState = settingsScreenViewModel.uiState.collectAsStateWithLifecycle().value
 
                     SettingsScreen(
-                        viewModel = settingsScreenViewModel,
+                        uiState = settingUiState,
                         searchLocationViewModel = searchLocationViewModel,
                         navController = navController,
                         innerPadding = innerPadding

@@ -26,13 +26,14 @@ import androidx.navigation.NavController
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationTextField
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
+import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchState
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.TipBox
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
 
 
 @Composable
 fun SettingsScreen(
-    viewModel: SettingsScreenViewModel,
+    uiState: SettingsUiState,
     searchLocationViewModel: SearchLocationViewModel,
     navController: NavController,
     innerPadding: PaddingValues
@@ -67,7 +68,21 @@ fun SettingsScreen(
         Column(
             modifier = Modifier.padding(top = 10.dp)
         ) {
-            SearchLocationTextField(viewModel = searchLocationViewModel)
+
+            val searchLocationUiState = searchLocationViewModel.uiState.collectAsState().value
+
+            SearchLocationTextField(
+                uiState = searchLocationUiState,
+
+                /** Methods to update state based on user interactions */
+                makeSearch = { searchLocationViewModel.searchLocation() },
+                updateSearchBoxToRepresentStoredLocation = { searchLocationViewModel.updateSearchBoxToRepresentStoredLocation() },
+                updateSearchField = { searchQuery: String -> searchLocationViewModel.updateSearchField(searchQuery) },
+                selectLocation = {selectedLocation -> searchLocationViewModel.selectSearchLocation(selectedLocation)},
+                pickTopResult = { searchLocationViewModel.pickTopResult() },
+                updateSearchStateToHidden = { searchLocationViewModel.setSearchState(SearchState.Hidden) },
+                updateSearchStateToIdle = { searchLocationViewModel.setSearchState(SearchState.Idle)}
+            )
             Spacer(modifier = Modifier.padding(5.dp))
             Text(
                 text = stringResource(R.string.location_disclaimer),
@@ -83,7 +98,8 @@ fun SettingsScreen(
         val labelStyle = MaterialTheme.typography.titleMedium
 
         val rowAlignment = Alignment.CenterVertically
-        val userInfo = viewModel.userInfo.collectAsState().value
+
+        val userInfo = uiState.userInfo
 
 
 

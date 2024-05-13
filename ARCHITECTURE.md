@@ -61,7 +61,7 @@ subgraph UI Layer
         settingsViewModel --> settingsScreen
         searchLocationViewModel --> LocationSetupScreen
         searchLocationViewModel --> settingsScreen
-        homeViewModel --> homeScreen
+        homeViewModel -->  
 
 
         weatherScreenViewModel --> weatherScreen
@@ -138,4 +138,4 @@ I composables bruker vi følgende biblioteker:
 - [MapBox Search SDK](https://docs.mapbox.com/android/search/guides/), for å hente forslag på steder basert på søk. Se `SearchLocationTextField`
 - [Compose-Markdown](https://github.com/jeziellago/compose-markdown?tab=readme-ov-file) for å vise Advice stylet fritt. Se `AdviceCard` og `AdviceScreen`
 
-
+For design og utforming blir MaterialTheme brukt for farger, typografi og former. Se `Themes.kt` i `ui` pakken.

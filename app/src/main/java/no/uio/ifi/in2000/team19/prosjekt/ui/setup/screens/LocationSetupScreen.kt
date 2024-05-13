@@ -17,30 +17,31 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationTextField
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationViewModel
+import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchState
 
 
 @Composable
 fun LocationSetupScreen(
     searchLocationViewModel: SearchLocationViewModel,
-    onDone: () -> Unit
+    onDone: () -> Unit,
 ) {
 
+    val searchLocationUiState = searchLocationViewModel.uiState.collectAsStateWithLifecycle().value
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
     ) {
-
 
         Column(
             modifier = Modifier.weight(1f),
@@ -64,8 +65,23 @@ fun LocationSetupScreen(
 
             Spacer(modifier = Modifier.padding(20.dp))
 
-            SearchLocationTextField(viewModel = searchLocationViewModel)
+
+
+            SearchLocationTextField(
+
+                uiState = searchLocationUiState,
+
+                /** Methods to update state based on user interactions */
+                makeSearch = { searchLocationViewModel.searchLocation() },
+                updateSearchBoxToRepresentStoredLocation = { searchLocationViewModel.updateSearchBoxToRepresentStoredLocation() },
+                updateSearchField = { searchQuery: String -> searchLocationViewModel.updateSearchField(searchQuery) },
+                selectLocation = {selectedLocation -> searchLocationViewModel.selectSearchLocation(selectedLocation)},
+                pickTopResult = { searchLocationViewModel.pickTopResult() },
+                updateSearchStateToHidden = { searchLocationViewModel.setSearchState(SearchState.Hidden) },
+                updateSearchStateToIdle = { searchLocationViewModel.setSearchState(SearchState.Idle)}
+            )
         }
+
 
         Spacer(modifier = Modifier.padding(10.dp))
 
@@ -86,7 +102,7 @@ fun LocationSetupScreen(
 
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                enabled = searchLocationViewModel.isDone.collectAsState().value,
+                enabled = searchLocationUiState.isDone,
 
                 onClick = onDone,
                 colors = ButtonDefaults.buttonColors(

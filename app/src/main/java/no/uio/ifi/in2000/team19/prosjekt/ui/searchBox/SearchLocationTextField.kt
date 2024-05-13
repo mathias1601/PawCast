@@ -29,7 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,10 +49,21 @@ import no.uio.ifi.in2000.team19.prosjekt.R
 
 @Composable
 fun SearchLocationTextField(
-    viewModel: SearchLocationViewModel
+    uiState: SearchLocationUiState,
+    makeSearch: () -> Unit,
+    updateSearchBoxToRepresentStoredLocation: () ->  Unit,
+    updateSearchField: (search : String) -> Unit,
+    selectLocation : (selectedLocation : PlaceAutocompleteSuggestion) -> Unit,
+    updateSearchStateToIdle : () -> Unit,
+    updateSearchStateToHidden : () -> Unit,
+    pickTopResult : () -> Unit
+
 ) {
-    val searchQuery = viewModel.searchFieldValue.collectAsState().value
-    val showSavedConfirmation = viewModel.isDone.collectAsState().value
+
+    val searchQuery = uiState.searchFieldValue
+    val searchState = uiState.searchState
+    val isDone = uiState.isDone
+
 
     var isTextFieldFocused by remember { mutableStateOf(false) }
 
@@ -66,16 +76,17 @@ fun SearchLocationTextField(
         modifier = Modifier
     ) {
 
+
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .onFocusChanged { focusState ->
                     isTextFieldFocused = focusState.isFocused
                     if (isTextFieldFocused) {
-                        viewModel.setSearchStateToIdle()
+                        updateSearchStateToIdle()
                     } else {
-                        viewModel.setSearchStateToHidden()
-                        viewModel.updateSearchBoxToRepresentStoredLocation()
+                        updateSearchStateToHidden()
+                        updateSearchBoxToRepresentStoredLocation()
                     }
                 },
 
@@ -83,8 +94,8 @@ fun SearchLocationTextField(
                 onDone = {
                     focusManager.clearFocus()
                     keyboardController?.hide()
-                    viewModel.pickTopResult()
-                    viewModel.updateSearchBoxToRepresentStoredLocation()
+                    pickTopResult()
+                    updateSearchBoxToRepresentStoredLocation()
 
                 }
             ),
@@ -92,25 +103,24 @@ fun SearchLocationTextField(
             value = searchQuery,
             singleLine = true,
             onValueChange = { query ->
-                viewModel.updateSearchField(query)
-                viewModel.searchLocation(query)
+
+                updateSearchField(query)
+                makeSearch()
 
             },
             label = { Text(stringResource(R.string.search_box_label)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Search,
-                    contentDescription = "Location Search-field"
+                    contentDescription = stringResource(R.string.search_icon_description)
                 )
             }
         )
 
-        if (showSavedConfirmation) {
+        if (isDone) {
             Text(text = stringResource(R.string.changes_saved_label))
         }
 
-
-        val searchState: SearchState = viewModel.searchState.collectAsState().value
 
 
         AnimatedVisibility(
@@ -135,22 +145,18 @@ fun SearchLocationTextField(
                     .padding(10.dp)
             ) {
 
-                // Not implemented location handling as it needs permissions. 😭
-                // UseUserLocation(viewModel = viewModel, focusManager = focusManager)
-
                 when (searchState) {
                     is SearchState.Loading -> TextScreenBox { Loading() }
                     is SearchState.NoSuggestions -> TextScreenBox { NoSuggestions() }
                     is SearchState.Error -> TextScreenBox { Error() }
                     is SearchState.Suggestions -> SearchSuggestions(
-                        searchState.suggestions,
-                        viewModel,
+                        suggestions = searchState.suggestions,
+                        selectSearchLocation = { suggestion -> selectLocation(suggestion) },
                         focusManager
                     )
 
                     is SearchState.Idle -> TextScreenBox { Idle() }
-                    is SearchState.Hidden -> { /* Do nothing */
-                    }
+                    is SearchState.Hidden -> { /* Do nothing */ }
                 }
             }
         }
@@ -207,7 +213,7 @@ fun NoSuggestions() {
 @Composable
 fun SearchSuggestions(
     suggestions: List<PlaceAutocompleteSuggestion>,
-    viewModel: SearchLocationViewModel,
+    selectSearchLocation: (suggestion : PlaceAutocompleteSuggestion) -> Unit,
     focusManager: FocusManager
 ) {
 
@@ -219,7 +225,10 @@ fun SearchSuggestions(
     ) {
 
         items(suggestions) { suggestion ->
-            SearchSuggestion(suggestion, viewModel, focusManager)
+            SearchSuggestion(
+                suggestion,
+                selectSearchLocation = { selectSearchLocation(suggestion)},
+                focusManager = focusManager)
         }
     }
 }
@@ -227,7 +236,7 @@ fun SearchSuggestions(
 @Composable
 fun SearchSuggestion(
     suggestion: PlaceAutocompleteSuggestion,
-    viewModel: SearchLocationViewModel,
+    selectSearchLocation: () -> Unit,
     focusManager: FocusManager,
 ) {
 
@@ -245,7 +254,7 @@ fun SearchSuggestion(
 
             keyboardController?.hide()
             focusManager.clearFocus()
-            viewModel.selectSearchLocation(suggestion)
+            selectSearchLocation()
 
         }
     ) {

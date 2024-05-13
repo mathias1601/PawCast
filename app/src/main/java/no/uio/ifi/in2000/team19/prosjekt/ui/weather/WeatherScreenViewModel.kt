@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Location
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.ErrorReasons
@@ -49,16 +49,16 @@ class WeatherScreenViewModel @Inject constructor(
         MutableStateFlow(WeatherUiState.Loading)
     var weatherUiState: StateFlow<WeatherUiState> = _weatherUiState.asStateFlow()
 
-    private var _locationUiState: MutableStateFlow<Cords> =
-        MutableStateFlow(Cords(0, "default", "default", "69", "69"))
-    var locationUiState: StateFlow<Cords> = _locationUiState.asStateFlow()
+    private var _locationUiState: MutableStateFlow<Location> =
+        MutableStateFlow(Location(0, "default", "default", "69", "69"))
+    var locationUiState: StateFlow<Location> = _locationUiState.asStateFlow()
 
 
     init {
 
         viewModelScope.launch(Dispatchers.IO) {
-            settingsRepository.getCords().collect { cords ->
-                _locationUiState.value = cords
+            settingsRepository.getLocation().collect { location ->
+                _locationUiState.value = location
                 loadWeather()
             }
 
@@ -68,14 +68,14 @@ class WeatherScreenViewModel @Inject constructor(
     //this function is public in order to reload the weather and location when needed
     fun loadWeather() {
 
-        val cords = _locationUiState.value
+        val location = _locationUiState.value
         _weatherUiState.value = WeatherUiState.Loading
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val weatherForecast = locationForecastRepository.getGeneralForecast(
-                    cords.latitude,
-                    cords.longitude,
+                    location.latitude,
+                    location.longitude,
                     "0",
                     2
                 )

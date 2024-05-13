@@ -2,46 +2,46 @@ package no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Cords
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.coordsDao
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Location
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.LocationDao
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.userInfoDao
+import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfoDao
 import javax.inject.Inject
 
 
 class SettingsRepository @Inject constructor(
-    private val coordsDao: coordsDao,
-    private val userInfoDao: userInfoDao
+    private val locationDao: LocationDao,
+    private val userInfoDao: UserInfoDao
 ) {
 
 
     // CORDS
-    suspend fun getCords(): Flow<Cords> {
-        val currentCords = coordsDao.getCords()?.firstOrNull()
+    suspend fun getLocation(): Flow<Location> {
+        val currentLocation = locationDao.getLocation()?.firstOrNull()
 
-        if (currentCords == null) {
-            val defaultCoords =
-                Cords(
+        if (currentLocation == null) {
+            val defaultLocation =
+                Location(
                     id = 0,
                     longitude = "60",
                     latitude = "10",
                     shortName = "",
                     detailedName = ""
                 )
-            coordsDao.insertCords(defaultCoords)
+            locationDao.insertLocation(defaultLocation)
         }
-        return coordsDao.getCords()!!
+        return locationDao.getLocation()!!
     }
 
     fun updateCoords(latitude: String, longitude: String, shortName: String, detailedName: String) {
-        val cords = Cords(
+        val cords = Location(
             id = 0,
             longitude = longitude,
             latitude = latitude,
             shortName = shortName,
             detailedName = detailedName,
         )
-        coordsDao.insertCords(cords)
+        locationDao.insertLocation(cords)
     }
 
     // USER INFO
