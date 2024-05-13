@@ -9,10 +9,10 @@
 
 
 ## 📦 Hvordan kjøre appen
-+ Klone repository
-+ Trykk play
++ Klone repository eller last ned mappen. 
++ ..
++ Trykk play i Android Studio
 
-(idk om dette e riktig 💀) todo
 
 
 
