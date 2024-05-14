@@ -17,7 +17,7 @@ class LocationForecastDataSource @Inject constructor() {
     private val client = HttpClient {
         defaultRequest {
             url("https://gw-uio.intark.uh-it.no/in2000/")
-            headers.appendIfNameAbsent("X-Gravitee-API-key", ApiKeys.proxyKey)
+            headers.appendIfNameAbsent("X-Gravitee-API-key", ApiKeys.PROXY_KEY)
         }
         install(ContentNegotiation) {
             gson()
@@ -25,14 +25,13 @@ class LocationForecastDataSource @Inject constructor() {
     }
 
     suspend fun getLocationForecast(
-        LATITUDE: String,
-        LONGITUDE: String,
-        HEIGHT: String
+        latitude: String,
+        longitude: String,
     ): LocationForecast {
 
 
         val path =
-            "${ApiUrls.locationForecastEDR}position?coords=POINT($LONGITUDE+$LATITUDE)&z=$HEIGHT"
+            "${ApiUrls.locationForecastEDR}position?coords=POINT($longitude+$latitude)"
 
         val result = client.get(path)
         return result.body<LocationForecast>()

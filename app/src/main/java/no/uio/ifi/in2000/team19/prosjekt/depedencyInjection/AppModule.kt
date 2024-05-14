@@ -7,7 +7,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.AdviceFunctions
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastDataSource
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
@@ -16,7 +15,6 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsDatabase
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.LocationDao
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfoDao
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -71,9 +69,4 @@ object AppModule {
     fun provideDataStoreRepository(@ApplicationContext context: Context): DataStoreRepository {
         return DataStoreRepository(context)
     }
-
-    @Provides
-    @Named("mapboxAccessToken")
-    fun provideMapBoxAccessToken(@ApplicationContext context: Context): String =
-        context.getString(R.string.mapbox_access_token)
 }

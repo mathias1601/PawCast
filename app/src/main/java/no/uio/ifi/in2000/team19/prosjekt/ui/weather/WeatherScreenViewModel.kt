@@ -76,7 +76,6 @@ class WeatherScreenViewModel @Inject constructor(
                 val weatherForecast = locationForecastRepository.getGeneralForecast(
                     location.latitude,
                     location.longitude,
-                    "0",
                     2
                 )
                 val weatherHours = weatherForecast.general

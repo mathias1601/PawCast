@@ -81,10 +81,6 @@ class HomeScreenViewModel @Inject constructor(
     )
     val uiState : StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-
-    /** height doesn't matter for our use case, so is just always set to 0 */
-    private val height: String = "0"
-
     init {
         Log.d("debug", "Init homeviewmodel!")
 
@@ -118,7 +114,6 @@ class HomeScreenViewModel @Inject constructor(
                 val generalForecast = locationForecastRepository.getGeneralForecast(
                     location.latitude,
                     location.longitude,
-                    height,
                     2
                 )
                 val weatherNow = generalForecast.general[0]
