@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.data
 
 import android.content.Context
-import androidx.core.app.NotificationCompat.getCategory
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
@@ -106,7 +105,6 @@ class LocationForecastRepository @Inject constructor(
         val genForecastList = mutableListOf<GeneralForecast>()
 
         //Necessary data is retrieved for each hour, and added to the list of general forecasts
-
         for (i in adjustedStart..lastHour) {
 
             val data = locationForecast.properties.timeseries[i].data // shortcut
@@ -138,7 +136,6 @@ class LocationForecastRepository @Inject constructor(
                     uvIndex,
                 )
             )
-
         }
 
         //The two other forecast types are also created, and added to a ForecastTypes-object

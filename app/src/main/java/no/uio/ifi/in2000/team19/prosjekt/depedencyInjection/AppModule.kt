@@ -56,7 +56,7 @@ object AppModule {
         forecastDataSource: LocationForecastDataSource,
         @ApplicationContext context: Context
     ): LocationForecastRepository {
-        return LocationForecastRepository(forecastDataSource, context, adviceFunctions: AdviceFunctions)
+        return LocationForecastRepository(forecastDataSource, context, AdviceFunctions())
     }
 
     @Singleton
