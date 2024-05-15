@@ -413,7 +413,7 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.padding(Measurements.WithinSectionHorizontalGap.measurement))
                         ForecastGraph(uiState.graphModel, uiState.scoreAtIndexZero)
                         Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
-                        BottomInfo(lastUpdated = weather.date)
+                        BottomInfo(lastUpdated = weather.timeFetched)
                     }
                 }
             }

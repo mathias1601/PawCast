@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.team19.prosjekt.data
 
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -7,7 +8,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
 import io.ktor.util.appendIfNameAbsent
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.locationForecast.LocationForecast
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,6 +30,7 @@ class LocationForecastDataSource @Inject constructor() {
         longitude: String,
     ): LocationForecast {
 
+        Log.d("debug", "Making api call with coords: $latitude, $longitude")
 
         val path =
             "${ApiUrls.locationForecastEDR}position?coords=POINT($longitude+$latitude)"

@@ -18,10 +18,10 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepositor
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Location
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.createTemporaryUserinfo
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.ErrorReasons
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.AdviceForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
 import java.io.IOException
 import java.nio.channels.UnresolvedAddressException
@@ -32,7 +32,8 @@ import javax.inject.Inject
 sealed interface DataState {
     data object Success : DataState
     data object Loading : DataState
-    data class Error (val errorReason: ErrorReasons) : DataState}
+    data class Error(val errorReason: ErrorReasons) : DataState
+}
 
 data class BestTimesForWalk(
     var morning: String,
@@ -44,14 +45,14 @@ data class BestTimesForWalk(
  * Splitting them into multiple StateFlows are therefore unnecessary */
 data class HomeUiState(
     var dataState: DataState,
-    var advice : List<Advice>,
-    var graphModel : CartesianChartModelProducer,
-    var bestTimesForWalk : BestTimesForWalk,
-    var scoreAtIndexZero : Int,
-    var location : Location,
+    var advice: List<Advice>,
+    var graphModel: CartesianChartModelProducer,
+    var bestTimesForWalk: BestTimesForWalk,
+    var scoreAtIndexZero: Int,
+    var location: Location,
     var userInfo: UserInfo,
-    var weather : GeneralForecast,
-    var dogImageId : Int
+    var weather: GeneralForecast,
+    var dogImageId: Int
 )
 
 
@@ -61,7 +62,7 @@ class HomeScreenViewModel @Inject constructor(
     private val locationForecastRepository: LocationForecastRepository
 ) : ViewModel() {
 
-    private val _uiState : MutableStateFlow<HomeUiState> = MutableStateFlow(
+    private val _uiState: MutableStateFlow<HomeUiState> = MutableStateFlow(
         HomeUiState(
             dataState = DataState.Loading,
             /**Contains all advice cards */
@@ -73,7 +74,7 @@ class HomeScreenViewModel @Inject constructor(
             /** Contains the value of graphs score on index 0. Used to set graph color to different color based on this value. */
             scoreAtIndexZero = 0,
             /** Contains the users location. Exposed to UI so show location in HomeScreen. */
-            location = Location(0, "not loaded", "not loaded", "0", "0"),
+            location = Location(0, "not loaded", "not loaded", "", ""),
             /** Is exposed to UI to show username and dog name. */
             userInfo = createTemporaryUserinfo(),
             /** Used to show current weather (temperature and icon). */
@@ -82,81 +83,92 @@ class HomeScreenViewModel @Inject constructor(
             dogImageId = R.drawable.dog_normal,
         )
     )
-    val uiState : StateFlow<HomeUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     init {
-        Log.d("debug", "Init homeviewmodel!")
 
-
-            try {
-                viewModelScope.launch(Dispatchers.IO) {
-                    settingsRepository.getLocation().collect { location ->
-                        updateLocation(location)
+                try {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        Log.d("debug", "1")
+                        settingsRepository.getLocation().collect { location ->
+                            updateLocation(location)
+                        }
                     }
-
-                }
-            } catch (e: IOException) {
-                updateDataState(DataState.Error(ErrorReasons.DATABASE))
-            }
-
-        try {
+                } catch (e: IOException) {
+                    updateDataState(DataState.Error(ErrorReasons.DATABASE))
+                } catch (e: Exception) {
+                    updateDataState(DataState.Error(ErrorReasons.UNKNOWN))
+                    Log.d("debug", "2")
             loadWeatherForecast()
-        } catch (e:Exception){
-            updateDataState(DataState.Error(ErrorReasons.UNKNOWN))
-        }
+            }
     }
 
     fun loadWeatherForecast() {
 
-        lateinit var generalForecast : ForecastTypes
+        var generalForecast: ForecastTypes? = null
 
         val uiState = _uiState.value
         val location = uiState.location
 
+
         updateDataState(DataState.Loading)
 
+        Log.d("debug", "3")
         viewModelScope.launch(Dispatchers.IO) {
+
             try {
                 generalForecast = locationForecastRepository.getGeneralForecast(
                     location.latitude,
                     location.longitude,
                     2
                 )
+                Log.d("debug", "4")
 
-                Log.d("debug", "temp: ${generalForecast.general[0].temperature}")
+                Log.d("debug", "temp: ${generalForecast!!.general[0].temperature}")
+
+
+            } catch (e: IOException) {
+                updateDataState(DataState.Error(ErrorReasons.INTERRUPTION))
+                Log.e("Error", e.toString())
+            } catch (e: UnresolvedAddressException) {
+                updateDataState(DataState.Error(ErrorReasons.INTERNET))
+                Log.e("Error", e.toString())
+            } catch (e: Exception) {
+                updateDataState(DataState.Error(ErrorReasons.UNKNOWN))
+                Log.e("Error", e.toString())
+            }
 
             // This is how we handle connectivity. Instead of using connectivity manager (which seems like the correct way).
             // Essentially we catch our errors, and use the error message to decode if we lost internet, and update
             // our screen to reflect this. This solution is a LOT simpler, although not as flexible. Landed on this
-            // mostly due to time constraints / focus on other issues under development, and this works and is robust.
-            } catch (e: IOException) {
-                updateDataState(DataState.Error(ErrorReasons.INTERRUPTION))
-            } catch (e: UnresolvedAddressException) {
-                updateDataState(DataState.Error(ErrorReasons.INTERNET))
-            } catch (e: Exception) {
+            // mostly due to time constraints / focus on other issues under development, and this works and is robust enough.
+
+            // >>  This is one of the areas of technical debt to focus on for future. <<
+
+            Log.d("debug", "5")
+
+            if (generalForecast != null){
+                updateUiStateBasedOnForecast(generalForecast!!)
+            } else {
                 updateDataState(DataState.Error(ErrorReasons.UNKNOWN))
             }
-
-            updateUiStateBasedOnForecast(generalForecast)
-
         }
     }
 
-    private fun updateUiStateBasedOnForecast(generalForecast: ForecastTypes){
+    private fun updateUiStateBasedOnForecast(generalForecast: ForecastTypes) {
 
         val uiState = _uiState.value
         val weatherNow = generalForecast.general[0]
 
         updateWeather(weatherNow)
-        updateDogImageId( getWhichDogTypeSymbol( weatherNow ) )
+        updateDogImageId(getWhichDogTypeSymbol(weatherNow))
         updateUserInfo(settingsRepository.getUserInfo())
         updateAdvice(locationForecastRepository.getAdvice(generalForecast, uiState.userInfo))
 
 
-
-
         // Graph values
-        val graphScores = forecastGraphFunction(locationForecastRepository.getAdviceForecastList(generalForecast))
+        val graphScores =
+            forecastGraphFunction(locationForecastRepository.getAdviceForecastList(generalForecast))
         updateScoreAtIndexZero(graphScores[0])
         updateGraphValues(graphScores)
 
@@ -241,8 +253,6 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-
-
     /** Function is used to fetch the rating of a given weather specification */
     private fun rating(weatherTypeValue: Double, limitsMap: HashMap<List<Double>, Int>): Int {
 
@@ -271,13 +281,13 @@ class HomeScreenViewModel @Inject constructor(
         val isThundering = weather.symbol.contains("thunder", ignoreCase = true)
         val windSpeed = weather.wind ?: 0.0
 
-        return  if (isThundering) R.drawable.dog_thunder
-                else if (isNight) R.drawable.dog_sleepy
-                else if (windSpeed > 5) R.drawable.dog_wind
-                else if (weather.precipitation > 1) R.drawable.dog_rain
-                else if (weather.temperature >= temperatureToShowSunnyDog) R.drawable.dog_sunny
-                else if (weather.temperature <= temperatureToShowColdDog) R.drawable.dog_cold
-                else R.drawable.dog_normal
+        return if (isThundering) R.drawable.dog_thunder
+        else if (isNight) R.drawable.dog_sleepy
+        else if (windSpeed > 5) R.drawable.dog_wind
+        else if (weather.precipitation > 1) R.drawable.dog_rain
+        else if (weather.temperature >= temperatureToShowSunnyDog) R.drawable.dog_sunny
+        else if (weather.temperature <= temperatureToShowColdDog) R.drawable.dog_cold
+        else R.drawable.dog_normal
 
     }
 
@@ -299,7 +309,6 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-
     private fun updateBestTimesForWalk(bestTimes: BestTimesForWalk) {
         _uiState.update { it.copy(bestTimesForWalk = bestTimes) }
     }
@@ -308,7 +317,7 @@ class HomeScreenViewModel @Inject constructor(
         _uiState.update { it.copy(scoreAtIndexZero = score) }
     }
 
-    private fun updateGraphValues(yAxisValue : List<Int>) {
+    private fun updateGraphValues(yAxisValue: List<Int>) {
         _uiState.value.graphModel.tryRunTransaction {
             lineSeries {
                 series(
@@ -338,8 +347,8 @@ class HomeScreenViewModel @Inject constructor(
         return _uiState.value.dataState is DataState.Error
     }
 
-    class LimitMaps{
-        companion object{
+    class LimitMaps {
+        companion object {
             //these maps are used to determine rating
             val tempLimitMap: HashMap<List<Double>, Int> =
                 hashMapOf(

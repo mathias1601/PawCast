@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team19.prosjekt.model.DTO
+package no.uio.ifi.in2000.team19.prosjekt.model.dto
 
 import java.time.LocalDateTime
 
@@ -7,7 +7,7 @@ data class GeneralForecast(
     val wind: Double? = null,
     val symbol: String,
     val hour: String,
-    val date: LocalDateTime,
+    val timeFetched: LocalDateTime,
     val precipitation: Double,
     val thunderProbability: Double,
     val uvIndex: Double,

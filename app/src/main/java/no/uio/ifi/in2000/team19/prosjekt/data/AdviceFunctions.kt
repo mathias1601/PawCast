@@ -11,8 +11,8 @@ import java.time.LocalDateTime
 
 // functions used by LocationForecastRepository.
 // Moved outside for easier testing.
-
-class AdviceFunctions {
+// todo write why this is not a domain class
+object AdviceFunctions {
 
     fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
         return AdviceForecast(
@@ -20,7 +20,7 @@ class AdviceFunctions {
             generalForecast.thunderProbability,
             generalForecast.precipitation,
             generalForecast.uvIndex,
-            generalForecast.date,
+            generalForecast.timeFetched,
             generalForecast.hour
         )
     }

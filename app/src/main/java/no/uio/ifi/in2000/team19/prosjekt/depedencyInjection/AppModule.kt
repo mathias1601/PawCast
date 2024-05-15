@@ -7,7 +7,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import no.uio.ifi.in2000.team19.prosjekt.data.AdviceFunctions
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastDataSource
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.dataStore.DataStoreRepository
@@ -54,7 +53,7 @@ object AppModule {
         forecastDataSource: LocationForecastDataSource,
         @ApplicationContext context: Context
     ): LocationForecastRepository {
-        return LocationForecastRepository(forecastDataSource, context, AdviceFunctions())
+        return LocationForecastRepository(forecastDataSource, context)
     }
 
     @Singleton

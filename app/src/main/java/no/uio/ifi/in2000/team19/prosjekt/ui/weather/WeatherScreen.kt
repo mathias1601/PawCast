@@ -46,7 +46,7 @@ import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.WeatherForecast
 import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.LoadingScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.ErrorScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.BottomInfo
@@ -161,7 +161,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController:
 
                 item {
                     Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement))
-                    BottomInfo(lastUpdated = (weatherHours[0].date))
+                    BottomInfo(lastUpdated = (weatherHours[0].timeFetched))
                     Spacer(modifier = Modifier.padding(Measurements.BetweenSectionVerticalGap.measurement)) // spacing to not lock items to top of app bar
                 }
             }
