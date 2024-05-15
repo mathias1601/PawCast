@@ -14,6 +14,7 @@ object ApiKeys {
     const val PROXY_KEY = "bfccf7dd-446a-4d37-9cf8-76e504f397b4"
 
     /** Please see ApiKeys for explanation */
-    const val MAPBOX_ACCESS_TOKEN = "pk.eyJ1IjoibWFya3VzZXYiLCJhIjoiY2x0ZWFydGZnMGQyeTJpcnQ2ZXd6ZWdjciJ9.09_6aHo-sftYJs6mTXhOyA"
+    const val MAPBOX_ACCESS_TOKEN =
+        "pk.eyJ1IjoibWFya3VzZXYiLCJhIjoiY2x0ZWFydGZnMGQyeTJpcnQ2ZXd6ZWdjciJ9.09_6aHo-sftYJs6mTXhOyA"
 
 }

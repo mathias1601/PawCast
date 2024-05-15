@@ -22,16 +22,15 @@ import org.junit.Test
 class LocationDataSourceTest {
 
 
-
     @Test
-    fun get_valid_result_with_valid_coordinates(){
+    fun get_valid_result_with_valid_coordinates() {
 
         val dataSource = LocationForecastDataSource()
 
         // ARRANGE
         val latitude = "50"
         val longitude = "50"
-        var apiResult : LocationForecast?
+        var apiResult: LocationForecast?
 
 
         // ACT
@@ -44,14 +43,14 @@ class LocationDataSourceTest {
     }
 
     @Test
-    fun get_null_with_invalid_coordinates(){
+    fun get_null_with_invalid_coordinates() {
 
         val dataSource = LocationForecastDataSource()
 
         // ARRANGE
         val latitude = "0"
         val longitude = "9999"
-        var apiResult : LocationForecast?
+        var apiResult: LocationForecast?
 
 
         // ACT

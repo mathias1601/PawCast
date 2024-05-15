@@ -28,7 +28,7 @@ class ScreenManagerViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            dataStoreRepository.readSetupState().collect() { completed ->
+            dataStoreRepository.readSetupState().collect { completed ->
 
                 if (completed) {
                     _startDestination.value = "home"

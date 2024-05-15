@@ -105,7 +105,8 @@ class LocationForecastRepository @Inject constructor(
         for (i in adjustedStart..lastHour) {
 
             val instant = locationForecast.properties.timeseries[i].data.instant.details // shortcut
-            val nextOneHours = locationForecast.properties.timeseries[i].data.next_1_hours // shortcut
+            val nextOneHours =
+                locationForecast.properties.timeseries[i].data.next_1_hours // shortcut
 
             val temperature = instant.air_temperature
             val wind = instant.wind_speed

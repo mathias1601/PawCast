@@ -47,7 +47,8 @@ class AdviceTest {
                 precipitation = 0.2,
                 uvIndex = 4.1,
                 date = LocalDateTime.of(2024, 7, 4, 0, 0),
-                time = "14")
+                time = "14"
+            )
 
         val userInfo = UserInfo(
             1,

@@ -63,8 +63,8 @@ fun ScreenManager(
                             icon = {
                                 Icon(
                                     imageVector =
-                                        if (index == navBarSelectedItemIndex) item.selectedIcon
-                                        else item.unselectedIcon,
+                                    if (index == navBarSelectedItemIndex) item.selectedIcon
+                                    else item.unselectedIcon,
 
                                     contentDescription = item.title
                                 )
@@ -139,7 +139,8 @@ fun ScreenManager(
                         hiltViewModel(parentEntry)
 
                     settingsScreenViewModel.fetchUserInfo() // always keep these settings updated when user navigates to this screen.
-                    val settingUiState = settingsScreenViewModel.uiState.collectAsStateWithLifecycle().value
+                    val settingUiState =
+                        settingsScreenViewModel.uiState.collectAsStateWithLifecycle().value
 
                     SettingsScreen(
                         uiState = settingUiState,

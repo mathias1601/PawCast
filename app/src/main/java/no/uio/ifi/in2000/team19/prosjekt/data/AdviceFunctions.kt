@@ -7,6 +7,7 @@ import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 // functions used by LocationForecastRepository.
@@ -74,7 +75,6 @@ object AdviceFunctions {
 
 
         if (typeOfDog.isFlatNosed) {
-
             if (AdviceCategory.WARM in categoryList) {
                 categoryList.remove(AdviceCategory.WARM)
                 categoryList.add(AdviceCategory.WARMFLAT)
@@ -85,6 +85,7 @@ object AdviceFunctions {
                 categoryList.add(AdviceCategory.VERYWARMFLAT)
             }
         }
+
 
         if (typeOfDog.isLongHaired)
             if (AdviceCategory.COLD in categoryList) {
@@ -105,28 +106,28 @@ object AdviceFunctions {
             categoryList.add(AdviceCategory.SUNBURN)
         }
 
-        //TODO find right number
-        if (adviceForecast.thunderProbability >= 50) {
+        val minimumThunderProbabilityForThunderAdvice = 50 // %
+        if (adviceForecast.thunderProbability >= minimumThunderProbabilityForThunderAdvice) {
             categoryList.add(AdviceCategory.THUNDER)
         }
 
-        //TODO find right number
-        if (adviceForecast.precipitation >= 1) {
+        val minimumPrecipitationForRainAlert = 1 // in millimeters
+        if (adviceForecast.precipitation >= minimumPrecipitationForRainAlert) {
             categoryList.add(AdviceCategory.RAIN)
         }
 
+        val currentYear = LocalDate.now().year
 
         val tickSeasonStart = LocalDateTime.of(
-            2024, 3, 15, 0, 0
+            currentYear, 3, 15, 0, 0
         )
         // Year, Month, Day, Hour, Minute (defaults to 00:00)
+        val tickSeasonEnd = LocalDateTime.of(currentYear, 11, 15, 0, 0)
 
-        val tickSeasonEnd = LocalDateTime.of(2024, 11, 15, 0, 0)
+        val viperSeasonStart = LocalDateTime.of(currentYear, 2, 28, 0, 0)
+        val viperSeasonEnd = LocalDateTime.of(currentYear, 11, 1, 0, 0)
 
-        val viperSeasonStart = LocalDateTime.of(2024, 2, 28, 0, 0)
-        val viperSeasonEnd = LocalDateTime.of(2024, 11, 1, 0, 0)
-
-        val newYear = LocalDateTime.of(2024, 12, 31, 0, 0)
+        val newYear = LocalDateTime.of(currentYear, 12, 31, 0, 0)
 
         val theDate = adviceForecast.date
 

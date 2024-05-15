@@ -32,8 +32,8 @@ sealed class SearchState {
 }
 
 data class SearchLocationUiState(
-    var isDone : Boolean,
-    var searchFieldValue : String,
+    var isDone: Boolean,
+    var searchFieldValue: String,
     var searchState: SearchState
 )
 
@@ -44,21 +44,21 @@ class SearchLocationViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val _uiState : MutableStateFlow<SearchLocationUiState> = MutableStateFlow(
+    private val _uiState: MutableStateFlow<SearchLocationUiState> = MutableStateFlow(
         SearchLocationUiState(
             isDone = false,
             searchFieldValue = "",
             searchState = SearchState.Hidden
         )
     )
-    val uiState : StateFlow<SearchLocationUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<SearchLocationUiState> = _uiState.asStateFlow()
 
     private val placeAutocomplete = PlaceAutocomplete.create(ApiKeys.MAPBOX_ACCESS_TOKEN)
 
     // Set Text in TextField to match stored value
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            settingsRepository.getLocation().collect {storedLocation ->
+            settingsRepository.getLocation().collect { storedLocation ->
                 updateSearchField(storedLocation.detailedName)
                 if (storedLocation.detailedName != "") { // if database is already populated from database.
                     setIsDone(true)
@@ -68,7 +68,7 @@ class SearchLocationViewModel @Inject constructor(
     }
 
     fun updateSearchField(search: String) {
-        _uiState.value = _uiState.value.copy( searchFieldValue = search)
+        _uiState.value = _uiState.value.copy(searchFieldValue = search)
         Log.d("debug", "Updating search: ${_uiState.value.searchFieldValue}")
     }
 
@@ -158,13 +158,13 @@ class SearchLocationViewModel @Inject constructor(
         }
     }
 
-    fun setSearchState(state: SearchState){
+    fun setSearchState(state: SearchState) {
         if (state is SearchState.Idle) setIsDone(false)
-        _uiState.value = _uiState.value.copy( searchState = state )
+        _uiState.value = _uiState.value.copy(searchState = state)
     }
 
-    fun setIsDone(value:Boolean){
-        _uiState.value = _uiState.value.copy( isDone = value )
+    fun setIsDone(value: Boolean) {
+        _uiState.value = _uiState.value.copy(isDone = value)
     }
 
     /** This method picks the current top result in the suggestions. Used if the user just presses done on their keyboard */

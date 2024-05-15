@@ -51,12 +51,12 @@ import no.uio.ifi.in2000.team19.prosjekt.R
 fun SearchLocationTextField(
     uiState: SearchLocationUiState,
     makeSearch: () -> Unit,
-    updateSearchBoxToRepresentStoredLocation: () ->  Unit,
-    updateSearchField: (search : String) -> Unit,
-    selectLocation : (selectedLocation : PlaceAutocompleteSuggestion) -> Unit,
-    updateSearchStateToIdle : () -> Unit,
-    updateSearchStateToHidden : () -> Unit,
-    pickTopResult : () -> Unit
+    updateSearchBoxToRepresentStoredLocation: () -> Unit,
+    updateSearchField: (search: String) -> Unit,
+    selectLocation: (selectedLocation: PlaceAutocompleteSuggestion) -> Unit,
+    updateSearchStateToIdle: () -> Unit,
+    updateSearchStateToHidden: () -> Unit,
+    pickTopResult: () -> Unit
 
 ) {
 
@@ -156,7 +156,8 @@ fun SearchLocationTextField(
                     )
 
                     is SearchState.Idle -> TextScreenBox { Idle() }
-                    is SearchState.Hidden -> { /* Do nothing */ }
+                    is SearchState.Hidden -> { /* Do nothing */
+                    }
                 }
             }
         }
@@ -213,7 +214,7 @@ fun NoSuggestions() {
 @Composable
 fun SearchSuggestions(
     suggestions: List<PlaceAutocompleteSuggestion>,
-    selectSearchLocation: (suggestion : PlaceAutocompleteSuggestion) -> Unit,
+    selectSearchLocation: (suggestion: PlaceAutocompleteSuggestion) -> Unit,
     focusManager: FocusManager
 ) {
 
@@ -227,8 +228,9 @@ fun SearchSuggestions(
         items(suggestions) { suggestion ->
             SearchSuggestion(
                 suggestion,
-                selectSearchLocation = { selectSearchLocation(suggestion)},
-                focusManager = focusManager)
+                selectSearchLocation = { selectSearchLocation(suggestion) },
+                focusManager = focusManager
+            )
         }
     }
 }

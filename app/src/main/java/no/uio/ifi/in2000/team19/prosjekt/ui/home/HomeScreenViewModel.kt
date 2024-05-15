@@ -87,19 +87,19 @@ class HomeScreenViewModel @Inject constructor(
 
     init {
 
-                try {
-                    viewModelScope.launch(Dispatchers.IO) {
-                        settingsRepository.getLocation().collect { location ->
-                            updateLocation(location)
-                            loadWeatherForecast()
-                        }
+        try {
+            viewModelScope.launch(Dispatchers.IO) {
+                settingsRepository.getLocation().collect { location ->
+                    updateLocation(location)
+                    loadWeatherForecast()
+                }
 
-                    }
-                } catch (e: IOException) {
-                    updateDataState(DataState.Error(ErrorReasons.DATABASE))
-                } catch (e: Exception) {
-                    updateDataState(DataState.Error(ErrorReasons.UNKNOWN))
             }
+        } catch (e: IOException) {
+            updateDataState(DataState.Error(ErrorReasons.DATABASE))
+        } catch (e: Exception) {
+            updateDataState(DataState.Error(ErrorReasons.UNKNOWN))
+        }
     }
 
     fun loadWeatherForecast() {

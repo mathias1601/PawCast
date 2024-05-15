@@ -4,7 +4,8 @@ import no.uio.ifi.in2000.team19.prosjekt.data.AdviceFunctions
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.AdviceForecast
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Test
 import java.time.LocalDateTime
 
@@ -23,7 +24,8 @@ class GetCategoryTest {
                 precipitation = 0.2,
                 uvIndex = 4.1,
                 date = LocalDateTime.of(2024, 7, 4, 0, 0),
-                time = "14")
+                time = "14"
+            )
 
         val userInfo = UserInfo(
             1,
@@ -55,7 +57,7 @@ class GetCategoryTest {
             AdviceCategory.VIPER
         ).toSet()
 
-        val result = adviceFunctions.getCategory(warmAdviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(warmAdviceForecast, userInfo).toSet()
 
         // Assert
         assertEquals(categoryList, result)
@@ -72,7 +74,8 @@ class GetCategoryTest {
                 precipitation = 0.1,
                 uvIndex = 3.5,
                 date = LocalDateTime.of(2024, 11, 19, 0, 0),
-                time = "18")
+                time = "18"
+            )
 
 
         val userInfo = UserInfo(
@@ -102,7 +105,7 @@ class GetCategoryTest {
             AdviceCategory.CAR,
         ).toSet()
 
-        val result = adviceFunctions.getCategory(adviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).toSet()
 
         // Assert
         assertNotEquals(categoryList, result)
@@ -119,7 +122,8 @@ class GetCategoryTest {
                 precipitation = 0.0,
                 uvIndex = 5.1,
                 date = LocalDateTime.of(2024, 7, 4, 0, 0),
-                time = "15")
+                time = "15"
+            )
 
         val userInfo = UserInfo(
             1,
@@ -148,9 +152,10 @@ class GetCategoryTest {
             AdviceCategory.VIPER
         ).toSet()
 
-        val result = adviceFunctions.getCategory(warmAdviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(warmAdviceForecast, userInfo).toSet()
 
         // Assert
+
         assertEquals(categoryList, result)
     }
 
@@ -165,7 +170,8 @@ class GetCategoryTest {
                 precipitation = 0.0,
                 uvIndex = 5.1,
                 date = LocalDateTime.of(2024, 7, 4, 0, 0),
-                time = "15")
+                time = "15"
+            )
 
 
         val userInfo = UserInfo(
@@ -195,9 +201,10 @@ class GetCategoryTest {
             AdviceCategory.VIPER
         ).toSet()
 
-        val result = adviceFunctions.getCategory(warmAdviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(warmAdviceForecast, userInfo).toSet()
 
         // Assert
+        println(result)
         assertNotEquals(categoryList, result)
     }
 
@@ -212,7 +219,8 @@ class GetCategoryTest {
                 precipitation = 0.0,
                 uvIndex = 0.0,
                 date = LocalDateTime.of(2024, 12, 9, 0, 0),
-                time = "20")
+                time = "20"
+            )
 
         val userInfo = UserInfo(
             1,
@@ -240,7 +248,7 @@ class GetCategoryTest {
             AdviceCategory.SALT
         ).toSet()
 
-        val result = adviceFunctions.getCategory(adviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).toSet()
 
         // Assert
         assertEquals(categoryList, result)
@@ -257,7 +265,8 @@ class GetCategoryTest {
                 precipitation = 0.0,
                 uvIndex = 0.0,
                 date = LocalDateTime.of(2024, 12, 31, 0, 0),
-                time = "12")
+                time = "12"
+            )
 
 
         val userInfo = UserInfo(
@@ -285,7 +294,7 @@ class GetCategoryTest {
             AdviceCategory.NEWYEAR
         ).toSet()
 
-        val result = adviceFunctions.getCategory(adviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).toSet()
 
         // Assert
         assertEquals(categoryList, result)

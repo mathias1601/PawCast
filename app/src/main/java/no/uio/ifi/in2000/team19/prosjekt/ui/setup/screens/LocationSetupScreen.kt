@@ -74,11 +74,19 @@ fun LocationSetupScreen(
                 /** Methods to update state based on user interactions */
                 makeSearch = { searchLocationViewModel.searchLocation() },
                 updateSearchBoxToRepresentStoredLocation = { searchLocationViewModel.updateSearchBoxToRepresentStoredLocation() },
-                updateSearchField = { searchQuery: String -> searchLocationViewModel.updateSearchField(searchQuery) },
-                selectLocation = {selectedLocation -> searchLocationViewModel.selectSearchLocation(selectedLocation)},
+                updateSearchField = { searchQuery: String ->
+                    searchLocationViewModel.updateSearchField(
+                        searchQuery
+                    )
+                },
+                selectLocation = { selectedLocation ->
+                    searchLocationViewModel.selectSearchLocation(
+                        selectedLocation
+                    )
+                },
                 pickTopResult = { searchLocationViewModel.pickTopResult() },
                 updateSearchStateToHidden = { searchLocationViewModel.setSearchState(SearchState.Hidden) },
-                updateSearchStateToIdle = { searchLocationViewModel.setSearchState(SearchState.Idle)}
+                updateSearchStateToIdle = { searchLocationViewModel.setSearchState(SearchState.Idle) }
             )
         }
 

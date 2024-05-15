@@ -6,4 +6,4 @@ import dagger.hilt.android.HiltAndroidApp
 // Needed for Dagger Hilt dependency injection.
 
 @HiltAndroidApp
-class WeatherApp : Application() {}
+class WeatherApp : Application()

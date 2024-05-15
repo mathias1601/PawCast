@@ -5,9 +5,9 @@ import androidx.test.platform.app.InstrumentationRegistry
 import no.uio.ifi.in2000.team19.prosjekt.data.AdviceFunctions
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.Advice
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.Assert.*
 
 @RunWith(AndroidJUnit4::class)
 class CreateAdviceTest {
@@ -25,7 +25,8 @@ class CreateAdviceTest {
 
         // Act
         val expectedStrings = appContext.resources.getStringArray(R.array.SAFE)
-        val expectedAdvice = listOf(Advice(expectedStrings[0], expectedStrings[1], expectedStrings[2]))
+        val expectedAdvice =
+            listOf(Advice(expectedStrings[0], expectedStrings[1], expectedStrings[2]))
 
         val result = adviceFunctions.createAdvice(categories, appContext)
 
@@ -47,7 +48,8 @@ class CreateAdviceTest {
 
         // Act
         val expectedStrings = appContext.resources.getStringArray(R.array.COLDOTHERLONGFUR)
-        val expectedAdvice = listOf(Advice(expectedStrings[0], expectedStrings[1], expectedStrings[2]))
+        val expectedAdvice =
+            listOf(Advice(expectedStrings[0], expectedStrings[1], expectedStrings[2]))
 
         val result = adviceFunctions.createAdvice(categories, appContext)
 

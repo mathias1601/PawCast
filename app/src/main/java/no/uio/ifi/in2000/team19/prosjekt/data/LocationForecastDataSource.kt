@@ -40,7 +40,7 @@ class LocationForecastDataSource @Inject constructor() {
 
             result.body<LocationForecast>()
 
-        } catch (e: Exception){
+        } catch (e: Exception) {
             null
         }
 

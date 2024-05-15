@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 
 data class SettingsUiState(
-    var userInfo : UserInfo
+    var userInfo: UserInfo
 )
 
 
@@ -24,11 +24,12 @@ class SettingsScreenViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
-    private val _uiState : MutableStateFlow<SettingsUiState> = MutableStateFlow(
+    private val _uiState: MutableStateFlow<SettingsUiState> = MutableStateFlow(
         SettingsUiState(
-            createTemporaryUserinfo())
+            createTemporaryUserinfo()
+        )
     )
-    val uiState : StateFlow<SettingsUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
     fun fetchUserInfo() {
         viewModelScope.launch(Dispatchers.IO) {

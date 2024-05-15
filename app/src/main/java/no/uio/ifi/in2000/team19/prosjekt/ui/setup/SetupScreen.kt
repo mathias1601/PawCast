@@ -95,7 +95,6 @@ fun SetupManager(
         ) {
 
 
-
             when (id) {
                 // For going to next step after finnishing.
                 "0" -> WelcomeScreen(

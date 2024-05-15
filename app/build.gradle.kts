@@ -101,7 +101,7 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
-    implementation ("androidx.room:room-ktx:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
 
     //graphs
     implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.14")
@@ -115,7 +115,7 @@ dependencies {
 
     //Pull to refresh
     implementation("eu.bambooapps:compose-material3-pullrefresh:1.1.1")
-    
+
     // Extended icons pack for more choice. Needed for cloud icon for navbar
     implementation("androidx.compose.material:material-icons-extended:1.6.7")
 
@@ -134,7 +134,6 @@ dependencies {
 
     // MARKDOWN LIBRARY for advice screens
     implementation("com.github.jeziellago:compose-markdown:0.5.0")
-
 
 
 }

@@ -82,8 +82,8 @@ import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import no.uio.ifi.in2000.team19.prosjekt.R
-import no.uio.ifi.in2000.team19.prosjekt.model.dto.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.WeatherDrawableNameToResourceId
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.Advice
 import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.ErrorScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.LoadingScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
@@ -121,7 +121,7 @@ fun HomeScreenManager(
                         uiState,
                         innerPadding,
                         onNavigateToSettings = { navController.navigate("settings") },
-                        onNavigateToAdvice = {id ->  navController.navigate("advice/$id")}
+                        onNavigateToAdvice = { id -> navController.navigate("advice/$id") }
                     )
                 }
 
@@ -150,9 +150,9 @@ fun HomeScreenManager(
 @Composable
 fun HomeScreen(
     uiState: HomeUiState,
-    innerPadding : PaddingValues,
-    onNavigateToSettings : () -> Unit,
-    onNavigateToAdvice : (id : Int) -> Unit
+    innerPadding: PaddingValues,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToAdvice: (id: Int) -> Unit
 
 ) {
 
@@ -496,7 +496,7 @@ fun AdviceCard(
             }
 
             Button(
-                onClick = onNavigateToAdvice ,
+                onClick = onNavigateToAdvice,
                 modifier = Modifier.align(Alignment.End),
 
                 ) {
@@ -700,7 +700,11 @@ fun getColorForScore(number: Int): Color {
         in 3..5 -> Color(242, 140, 40)
         in 6..7 -> Color.Yellow
         in 8..10 -> Color(76, 187, 23)
-        else -> Color(76, 187, 23) // just to stop app from crashing in this scenario. Should not happen.
+        else -> Color(
+            76,
+            187,
+            23
+        ) // just to stop app from crashing in this scenario. Should not happen.
     }
 }
 

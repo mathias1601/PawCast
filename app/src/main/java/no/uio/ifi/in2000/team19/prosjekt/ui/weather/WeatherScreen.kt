@@ -47,9 +47,9 @@ import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.WeatherForecast
-import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.LoadingScreen
-import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.ErrorScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.BottomInfo
+import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.ErrorScreen
+import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.LoadingScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.theme.Measurements
 
 
@@ -116,8 +116,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController:
 
 
                 item {
-                    Column(
-                    ) {
+                    Column {
 
 
                         WeatherNow(weatherHours[0])
