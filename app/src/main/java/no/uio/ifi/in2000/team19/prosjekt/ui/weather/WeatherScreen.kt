@@ -45,6 +45,7 @@ import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import no.uio.ifi.in2000.team19.prosjekt.R
+import no.uio.ifi.in2000.team19.prosjekt.model.WeatherDrawableNameToResourceId
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.WeatherForecast
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.BottomInfo
@@ -414,12 +415,6 @@ fun SingleHourForecastCard(generalForecast: GeneralForecast) {
 fun WholeDayAverageWeatherCard(weatherForecast: WeatherForecast) {
 
 
-    //TODO find better way to showcase picture because of Discouraged API
-    val context = LocalContext.current
-    val drawableName = weatherForecast.symbol
-    val drawableId =
-        context.resources.getIdentifier(drawableName, "drawable", context.packageName)
-
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -435,11 +430,16 @@ fun WholeDayAverageWeatherCard(weatherForecast: WeatherForecast) {
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Image(
-                painter = painterResource(id = drawableId),
-                contentDescription = drawableName,
-                modifier = Modifier.size(85.dp)
-            )
+            val drawableName = weatherForecast.symbol
+            if (drawableName in WeatherDrawableNameToResourceId.map) {
+                Image(
+                    painter = painterResource(id = WeatherDrawableNameToResourceId.map[drawableName]!!),
+                    contentDescription = drawableName,
+                    modifier = Modifier.size(85.dp)
+                )
+            }
+
+
 
 
             Spacer(modifier = Modifier.padding(10.dp))

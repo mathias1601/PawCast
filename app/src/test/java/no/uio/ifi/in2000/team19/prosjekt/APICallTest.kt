@@ -13,8 +13,8 @@ class APICallTest {
         val longitude = "10"
         val latitude = "60"
 
-        val path = "${ApiUrls.locationForecastEDR}position?coords=POINT($longitude+$latitude)"
-        val result = "${ApiUrls.locationForecastEDR}position?coords=POINT(10+60)"
+        val path = "${ApiUrls.LOCATIONFORECAST_EDR_API}position?coords=POINT($longitude+$latitude)"
+        val result = "${ApiUrls.LOCATIONFORECAST_EDR_API}position?coords=POINT(10+60)"
 
         assertEquals(path, result)
     }
@@ -25,8 +25,8 @@ class APICallTest {
         val longitude = "58"
         val latitude = "59"
 
-        val path = "${ApiUrls.locationForecastEDR}position?coords=POINT($longitude+$latitude)"
-        val result = "${ApiUrls.locationForecastEDR}position?coords=POINT(59+58)"
+        val path = "${ApiUrls.LOCATIONFORECAST_EDR_API}position?coords=POINT($longitude+$latitude)"
+        val result = "${ApiUrls.LOCATIONFORECAST_EDR_API}position?coords=POINT(59+58)"
 
         assertNotEquals(path, result)
     }

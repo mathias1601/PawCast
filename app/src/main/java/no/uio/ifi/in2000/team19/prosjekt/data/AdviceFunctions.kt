@@ -12,7 +12,17 @@ import java.time.LocalDateTime
 
 // functions used by LocationForecastRepository.
 // Moved outside for easier testing.
-// todo write why this is not a domain class
+
+
+/** Contains functions for creating Advice
+ *
+ *  Inspired by domain classes for easier testing, but doest use the same "use case" conventions. It also
+ *  does not contain any communation with data layer, as domain layers has.
+ *
+ *  We moved these functions out of LocationForecastRepository to make the code more modular and readable. This was
+ *  also really important in making the repository more testable.
+ *
+ * */
 object AdviceFunctions {
 
     fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
@@ -173,8 +183,7 @@ object AdviceFunctions {
                 /**
                  * Technical debt: Only return the integer instead of accessing the actual stringArray here
                  *
-                 * Not fixed due to time constraints, this makes the parent HomeScreenViewModel harder to test
-                 * and is partly why we needed to add "Mockito" library for mocking, due to us really wanting to test this.
+                 * Not fixed due to time constraints, is one of the reasons the parent HomeScreenViewModel harder to test.
                  *
                  * In a real scenario, if we started testing this alot earlier, we would also likely catch this method as
                  * a bad thing. Therefore ideally this should be moved out, and let ui handle getting the actual string data.
@@ -201,6 +210,8 @@ object AdviceFunctions {
                 "TICK" -> adviceArray = context.resources.getStringArray(R.array.TICK)
                 "VIPER" -> adviceArray = context.resources.getStringArray(R.array.VIPER)
                 "CAR" -> adviceArray = context.resources.getStringArray(R.array.CAR)
+
+                "NEWYEAR" -> adviceArray = context.resources.getStringArray(R.array.NEWYEAR)
 
 
             }

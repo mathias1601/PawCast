@@ -11,7 +11,6 @@ import java.time.LocalDateTime
 
 
 class GetCategoryTest {
-    private lateinit var adviceFunctions: AdviceFunctions
 
     @Test
     fun getCategory_forVeryWarmWeather_flatNosed_IsCorrect() {

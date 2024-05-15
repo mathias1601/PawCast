@@ -34,7 +34,7 @@ class LocationForecastDataSource @Inject constructor() {
             Log.d("debug", "Making api call with coords: $latitude, $longitude")
 
             val path =
-                "${ApiUrls.locationForecastEDR}position?coords=POINT($longitude+$latitude)"
+                "${ApiUrls.LOCATIONFORECAST_EDR_API}position?coords=POINT($longitude+$latitude)"
 
             val result = client.get(path)
 

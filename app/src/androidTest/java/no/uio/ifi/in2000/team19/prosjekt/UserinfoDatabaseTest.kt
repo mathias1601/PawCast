@@ -39,19 +39,19 @@ class UserinfoDatabaseTest {
             "Coco",
             "Isabel",
             true,
-            true,
-            true,
-            true,
-            false,
-            false,
-            false,
-            true,
-            true,
-            false,
-            false,
-            false,
-            false,
-            false
+            isAdult = true,
+            isPuppy = true,
+            isFlatNosed = true,
+            isNormalNosed = false,
+            isThin = false,
+            isMediumBody = false,
+            isThickBody = true,
+            isLongHaired = true,
+            isShortHaired = false,
+            isThinHaired = false,
+            isThickHaired = false,
+            isLightHaired = false,
+            isDarkHaired = false
         )
         dao.upsertUserInfo(expectedUserInfo)
 

@@ -152,7 +152,7 @@ class HomeScreenViewModel @Inject constructor(
         val weatherNow = generalForecast.general[0]
 
         updateWeather(weatherNow)
-        updateDogImageId(Companion.getWhichDogTypeSymbol(weatherNow))
+        updateDogImageId(getWhichDogTypeSymbol(weatherNow))
         updateUserInfo(settingsRepository.getUserInfo())
         updateAdvice(locationForecastRepository.getAdvice(generalForecast, uiState.userInfo))
 
