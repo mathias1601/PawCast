@@ -18,10 +18,11 @@ import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepositor
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Location
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.createTemporaryUserinfo
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
 import no.uio.ifi.in2000.team19.prosjekt.model.ErrorReasons
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.Advice
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.AdviceForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
 import java.io.IOException
 import java.nio.channels.UnresolvedAddressException
 import java.time.LocalDateTime
@@ -39,6 +40,8 @@ data class BestTimesForWalk(
     var evening: String
 )
 
+/** Collected into one ui state as state updates happen mostly together.
+ * Splitting them into multiple StateFlows are therefore unnecessary */
 data class HomeUiState(
     var dataState: DataState,
     var advice : List<Advice>,
@@ -105,49 +108,27 @@ class HomeScreenViewModel @Inject constructor(
 
     fun loadWeatherForecast() {
 
+        lateinit var generalForecast : ForecastTypes
+
         val uiState = _uiState.value
         val location = uiState.location
+
         updateDataState(DataState.Loading)
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val generalForecast = locationForecastRepository.getGeneralForecast(
+                generalForecast = locationForecastRepository.getGeneralForecast(
                     location.latitude,
                     location.longitude,
                     2
                 )
-                val weatherNow = generalForecast.general[0]
 
-                updateWeather(weatherNow)
-                updateDogImageId( getWhichDogTypeSymbol( weatherNow ) )
-                updateUserInfo(settingsRepository.getUserInfo())
-                updateAdvice(locationForecastRepository.getAdvice(generalForecast, uiState.userInfo))
+                Log.d("debug", "temp: ${generalForecast.general[0].temperature}")
 
-                updateDataState(DataState.Success)
-
-                val graphScores = forecastGraphFunction(
-                    locationForecastRepository.getAdviceForecastList(generalForecast)
-                )
-                updateScoreAtIndexZero(graphScores[0])
-
-                // Vico graph method for updating graph data, does not need its own update method.
-                uiState.graphModel.tryRunTransaction {
-                    lineSeries {
-                        series(
-                            y = graphScores
-                        )
-                    }
-                }
-
-
-
-                // This is how we handle connectivity. Instead of using connectivity manager (which seems like the correct way).
-                // Essentially we catch our errors, and use the error message to decode if we lost internet, and update
-                // our screen to reflect this. This solution is a LOT simpler, although not as flexible. Landed on this
-                // mostly due to time constraints.
-
-                // TODO: Isolate functions of this function into own modules, to better know if internet is the problem of something going wrong....
-
+            // This is how we handle connectivity. Instead of using connectivity manager (which seems like the correct way).
+            // Essentially we catch our errors, and use the error message to decode if we lost internet, and update
+            // our screen to reflect this. This solution is a LOT simpler, although not as flexible. Landed on this
+            // mostly due to time constraints / focus on other issues under development, and this works and is robust.
             } catch (e: IOException) {
                 updateDataState(DataState.Error(ErrorReasons.INTERRUPTION))
             } catch (e: UnresolvedAddressException) {
@@ -155,15 +136,36 @@ class HomeScreenViewModel @Inject constructor(
             } catch (e: Exception) {
                 updateDataState(DataState.Error(ErrorReasons.UNKNOWN))
             }
+
+            updateUiStateBasedOnForecast(generalForecast)
+
         }
     }
 
+    private fun updateUiStateBasedOnForecast(generalForecast: ForecastTypes){
 
-    //based on temperature, percipitation and UVLimit
-    //percipitation mm is (i assume) only based on rain
-    //figuring out how to determine snow is not a high enough priority at this stage
+        val uiState = _uiState.value
+        val weatherNow = generalForecast.general[0]
 
-    //we are using AdviceForecast because we only need temp, percipitation and UVLimit
+        updateWeather(weatherNow)
+        updateDogImageId( getWhichDogTypeSymbol( weatherNow ) )
+        updateUserInfo(settingsRepository.getUserInfo())
+        updateAdvice(locationForecastRepository.getAdvice(generalForecast, uiState.userInfo))
+
+
+
+
+        // Graph values
+        val graphScores = forecastGraphFunction(locationForecastRepository.getAdviceForecastList(generalForecast))
+        updateScoreAtIndexZero(graphScores[0])
+        updateGraphValues(graphScores)
+
+        updateDataState(DataState.Success) // Signal to Ui that all ui items are done updating and to show your screen.
+    }
+
+
+    //based on temperature, precipitation and UVLimit
+    //we are using AdviceForecast because we only need temp, precipitation and UVLimit
 
     //Parameter: a list of (advice) forecast objects that each represent one hour of the day
 
@@ -189,7 +191,7 @@ class HomeScreenViewModel @Inject constructor(
 
             val tempRating = rating(forecast.temperature, LimitMaps.tempLimitMap)
             val percRating = rating(forecast.precipitation, LimitMaps.precipitationLimitMap)
-            val uvRating = rating(forecast.UVindex, LimitMaps.uvLimitMap)
+            val uvRating = rating(forecast.uvIndex, LimitMaps.uvLimitMap)
 
             val ratings = listOf(tempRating, percRating, uvRating)
 
@@ -252,7 +254,9 @@ class HomeScreenViewModel @Inject constructor(
         return 1
     }
 
-    /** Used by advice screen. Really simple so didnt move to other viewmodel, as that would require sharing existing advice with that viewmodel. */
+    /** Used by advice screen. Really simple so didnt move to other viewmodel, as that would require sharing existing advice with that viewmodel
+     * or changing overall architecture. If point is to expand on advice screens in future, there is techincal debt to modularizing AdviceScreen to its own viewmodel
+     * and its content. */
     fun collectAdviceById(id: Int): Advice {
         return _uiState.value.advice[id]
     }
@@ -285,7 +289,6 @@ class HomeScreenViewModel @Inject constructor(
     * update are moved into their own functions.
     *
     *  */
-
     private fun updateDataState(dataState: DataState) {
         _uiState.update { it.copy(dataState = dataState) }
         Log.d("debug", dataState.toString())
@@ -303,6 +306,16 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun updateScoreAtIndexZero(score: Int) {
         _uiState.update { it.copy(scoreAtIndexZero = score) }
+    }
+
+    private fun updateGraphValues(yAxisValue : List<Int>) {
+        _uiState.value.graphModel.tryRunTransaction {
+            lineSeries {
+                series(
+                    y = yAxisValue
+                )
+            }
+        }
     }
 
     private fun updateLocation(location: Location) {

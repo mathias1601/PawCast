@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Location
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.ErrorReasons
 import java.io.IOException

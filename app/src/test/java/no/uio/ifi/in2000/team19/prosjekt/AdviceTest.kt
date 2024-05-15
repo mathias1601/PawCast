@@ -4,8 +4,8 @@ import no.uio.ifi.in2000.team19.prosjekt.data.getAdviceForecastData
 import no.uio.ifi.in2000.team19.prosjekt.data.getCategory
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.AdviceForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.LocalDateTime
@@ -44,9 +44,9 @@ class AdviceTest {
         val warmAdviceForecast =
             AdviceForecast(
                 temperature = 29.1,
-                thunderprobability = 54.2,
+                thunderProbability = 54.2,
                 percipitation = 0.2,
-                UVindex = 4.1,
+                uvIndex = 4.1,
                 date = LocalDateTime.of(2024, 7, 4, 0, 0),
                 time = "14")
 

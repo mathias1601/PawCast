@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import no.uio.ifi.in2000.team19.prosjekt.R
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.Advice
 import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)

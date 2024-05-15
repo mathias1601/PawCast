@@ -4,9 +4,9 @@ import android.content.Context
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.Advice
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.AdviceForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
 import java.time.LocalDateTime
 
 // functions used by LocationForecastRepository.
@@ -15,7 +15,6 @@ import java.time.LocalDateTime
 class AdviceFunctions {
 
     fun getAdviceForecastData(generalForecast: GeneralForecast): AdviceForecast {
-
         return AdviceForecast(
             generalForecast.temperature,
             generalForecast.thunderProbability,
@@ -27,7 +26,7 @@ class AdviceFunctions {
     }
 
     //this function collects all necessary categories based on forecast and dog type
-//it uses AdviceForecast because it contains the necessary data
+    //it uses AdviceForecast because it contains the necessary data
     fun getCategory(adviceForecast: AdviceForecast, typeOfDog: UserInfo): List<AdviceCategory> {
 
         val categoryList = mutableListOf<AdviceCategory>()
@@ -54,46 +53,6 @@ class AdviceFunctions {
                 categoryList.add(category)
             }
         }
-        //Find special categories and overwrite by removing old category/categories
-        /*
-    when {
-        typeOfDog.isThin || typeOfDog.isPuppy || typeOfDog.isShortHaired || typeOfDog.isSenior || typeOfDog.isThinHaired -> {
-            if (AdviceCategory.COOL in categoryList) {
-                categoryList.add(AdviceCategory.COOLOTHER)
-                categoryList.remove(AdviceCategory.COOL)}
-            if (AdviceCategory.COLD in categoryList) {
-                categoryList.add(AdviceCategory.COLDOTHER)
-                categoryList.remove(AdviceCategory.COLD)}
-        }
-
-        typeOfDog.isFlatNosed -> {
-            if (AdviceCategory.WARM in categoryList) {
-                categoryList.add(AdviceCategory.WARMFLAT)
-                categoryList.remove(AdviceCategory.WARM)}
-            if (AdviceCategory.VERYWARM in categoryList) {
-                categoryList.add(AdviceCategory.VERYWARMFLAT)
-                categoryList.remove(AdviceCategory.VERYWARM)}
-        }
-
-        typeOfDog.isLongHaired && (AdviceCategory.COLD in categoryList || AdviceCategory.COLDOTHER in categoryList) -> {
-            categoryList.add(AdviceCategory.COLDLONGFUR)
-            categoryList.remove(AdviceCategory.COLD)
-            if (AdviceCategory.COLDOTHER in categoryList) {
-                categoryList.remove(AdviceCategory.COLDOTHER)
-            }
-
-        }
-
-        typeOfDog.isLongHaired && AdviceCategory.COLD in categoryList -> {
-            categoryList.add(AdviceCategory.COLDLONGFUR)
-
-            if (AdviceCategory.VERYWARM in categoryList) {
-                categoryList.add(AdviceCategory.VERYWARMFLAT)
-            }
-
-        }
-    }
-*/
 
         if (typeOfDog.isThin ||
             typeOfDog.isPuppy ||
@@ -137,7 +96,7 @@ class AdviceFunctions {
             }
 
 
-        if (adviceForecast.UVindex >= 3 && (
+        if (adviceForecast.uvIndex >= 3 && (
                     typeOfDog.isThinHaired ||
                             typeOfDog.isLightHaired ||
                             typeOfDog.isShortHaired
@@ -147,7 +106,7 @@ class AdviceFunctions {
         }
 
         //TODO find right number
-        if (adviceForecast.thunderprobability >= 50) {
+        if (adviceForecast.thunderProbability >= 50) {
             categoryList.add(AdviceCategory.THUNDER)
         }
 

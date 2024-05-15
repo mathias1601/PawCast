@@ -2,10 +2,10 @@ package no.uio.ifi.in2000.team19.prosjekt.data
 
 import android.content.Context
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.Advice
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
 import java.time.LocalDate

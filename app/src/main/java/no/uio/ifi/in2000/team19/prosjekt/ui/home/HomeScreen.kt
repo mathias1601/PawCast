@@ -82,7 +82,7 @@ import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import no.uio.ifi.in2000.team19.prosjekt.R
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.Advice
 import no.uio.ifi.in2000.team19.prosjekt.model.WeatherDrawableNameToResourceId
 import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.ErrorScreen
 import no.uio.ifi.in2000.team19.prosjekt.ui.temporary.LoadingScreen
