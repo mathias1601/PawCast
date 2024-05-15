@@ -86,7 +86,6 @@ object AdviceFunctions {
             }
         }
 
-
         if (typeOfDog.isLongHaired)
             if (AdviceCategory.COLD in categoryList) {
                 categoryList.remove(AdviceCategory.COLD)
@@ -170,21 +169,30 @@ object AdviceFunctions {
             var adviceArray: Array<String>? = null
 
             when (category.toString()) {
+
+                /**
+                 * Technical debt: Only return the integer instead of accessing the actual stringArray here
+                 *
+                 * Not fixed due to time constraints, this makes the parent HomeScreenViewModel harder to test
+                 * and is partly why we needed to add "Mockito" library for mocking, due to us really wanting to test this.
+                 *
+                 * In a real scenario, if we started testing this alot earlier, we would also likely catch this method as
+                 * a bad thing. Therefore ideally this should be moved out, and let ui handle getting the actual string data.
+                 *
+                 * */
                 "COOL" -> adviceArray = context.resources.getStringArray(R.array.COOL)
                 "COOLOTHER" -> adviceArray = context.resources.getStringArray(R.array.COOLOTHER)
                 "COLD" -> adviceArray = context.resources.getStringArray(R.array.COLD)
                 "COLDLONGFUR" -> adviceArray = context.resources.getStringArray(R.array.COLDLONGFUR)
                 "COLDOTHER" -> adviceArray = context.resources.getStringArray(R.array.COLDOTHER)
-                "COLDOTHERLONGFUR" -> adviceArray =
-                    context.resources.getStringArray(R.array.COLDOTHERLONGFUR)
+                "COLDOTHERLONGFUR" -> adviceArray = context.resources.getStringArray(R.array.COLDOTHERLONGFUR)
 
                 "FREEZING" -> adviceArray = context.resources.getStringArray(R.array.FREEZING)
                 "SALT" -> adviceArray = context.resources.getStringArray(R.array.SALT)
                 "WARM" -> adviceArray = context.resources.getStringArray(R.array.WARM)
                 "WARMFLAT" -> adviceArray = context.resources.getStringArray(R.array.WARMFLAT)
                 "VERYWARM" -> adviceArray = context.resources.getStringArray(R.array.VERYWARM)
-                "VERYWARMFLAT" -> adviceArray =
-                    context.resources.getStringArray(R.array.VERYWARMFLAT)
+                "VERYWARMFLAT" -> adviceArray = context.resources.getStringArray(R.array.VERYWARMFLAT)
 
                 "HEATWAVE" -> adviceArray = context.resources.getStringArray(R.array.HEATWAVE)
                 "RAIN" -> adviceArray = context.resources.getStringArray(R.array.RAIN)

@@ -2,9 +2,6 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="LocationDataSourceTest">
-        <State />
-      </entry>
       <entry key="app">
         <State>
           <targetSelectedWithDropDown>
@@ -20,9 +17,6 @@
           </targetSelectedWithDropDown>
           <timeTargetWasSelectedWithDropDown value="2024-05-13T11:23:15.540772800Z" />
         </State>
-      </entry>
-      <entry key="get_null_with_invalid_coordinates()">
-        <State />
       </entry>
     </value>
   </component>

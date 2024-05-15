@@ -1,18 +1,78 @@
 package no.uio.ifi.in2000.team19.prosjekt
 
-import androidx.hilt.navigation.compose.hiltViewModel
-import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.LocationDao
-import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfoDao
-import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel
-import org.junit.Before
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.ui.home.HomeScreenViewModel.Companion.getWhichDogTypeSymbol
+import org.junit.Assert.assertEquals
+import org.junit.Test
+import java.time.LocalDateTime
 
 class HomeViewModelTest {
 
-    @Before
+    @Test
+    fun testSunnyDog() {
+        val weather = GeneralForecast(
+            symbol = "day",
+            temperature = 20.0,
+            wind = 0.0,
+            precipitation = 0.0,
+            thunderProbability = 0.0,
+            uvIndex = 0.0,
+            timeFetched = LocalDateTime.now(),
+            hour = "12"
+        )
+        val expectedDrawable = R.drawable.dog_sunny
+        val actualDrawable = getWhichDogTypeSymbol(weather)
+        assertEquals(expectedDrawable, actualDrawable)
+    }
 
-    val viewModel = HomeScreenViewModel(
-        SettingsRepository(LocationDao, UserInfoDao()), LocationForecastRepository())
+    @Test
+    fun testColdDog() {
+        val weather = GeneralForecast(
+            symbol = "day",
+            temperature = -5.0,
+            wind = 0.0,
+            precipitation = 0.0,
+            thunderProbability = 0.0,
+            uvIndex = 0.0,
+            timeFetched = LocalDateTime.now(),
+            hour = "12"
+        )
+        val expectedDrawable = R.drawable.dog_cold
+        val actualDrawable = getWhichDogTypeSymbol(weather)
+        assertEquals(expectedDrawable, actualDrawable)
+    }
 
+    @Test
+    fun testWindyDog() {
+        val weather = GeneralForecast(
+            symbol = "day",
+            temperature = 10.0,
+            wind = 6.0,
+            precipitation = 0.0,
+            thunderProbability = 0.0,
+            uvIndex = 0.0,
+            timeFetched = LocalDateTime.now(),
+            hour = "12"
+        )
+        val expectedDrawable = R.drawable.dog_wind
+        val actualDrawable = getWhichDogTypeSymbol(weather)
+        assertEquals(expectedDrawable, actualDrawable)
+    }
+
+    @Test
+    fun whenRainingAndThundering_IsShowingThundering() {
+        val weather = GeneralForecast(
+            symbol = "thundering_day", // viewmodel only looks at this.
+            temperature = 10.0,
+            wind = 4.0,
+            precipitation = 40.0,
+            thunderProbability = 80.0,
+            uvIndex = 0.0,
+            timeFetched = LocalDateTime.now(),
+            hour = "12"
+        )
+        val expectedDrawable = R.drawable.dog_thunder
+        val actualDrawable = getWhichDogTypeSymbol(weather)
+        assertEquals(expectedDrawable, actualDrawable)
+    }
 }

@@ -48,7 +48,7 @@ class SettingsRepository @Inject constructor(
     fun getUserInfo(): UserInfo {
         if (userInfoDao.getUserInfo() == null) {
             updateUserInfo(createTemporaryUserinfo())
-        } // just to avoid null errors, but we guarantee using dataStores that the user must complete setup if this is null earilier at runtime
+        } // just to avoid null errors, but we guarantee using dataStores that the user must complete setup if this is null earlier at runtime
         return userInfoDao.getUserInfo()!!
     }
 

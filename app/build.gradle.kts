@@ -135,6 +135,8 @@ dependencies {
     // MARKDOWN LIBRARY for advice screens
     implementation("com.github.jeziellago:compose-markdown:0.5.0")
 
+    implementation("org.mockito:mockito-core:5.12.0")
+
 
 }
 

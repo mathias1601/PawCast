@@ -152,108 +152,23 @@ class HomeScreenViewModel @Inject constructor(
         val weatherNow = generalForecast.general[0]
 
         updateWeather(weatherNow)
-        updateDogImageId(getWhichDogTypeSymbol(weatherNow))
+        updateDogImageId(Companion.getWhichDogTypeSymbol(weatherNow))
         updateUserInfo(settingsRepository.getUserInfo())
         updateAdvice(locationForecastRepository.getAdvice(generalForecast, uiState.userInfo))
 
 
         // Graph values
-        val graphScores =
-            forecastGraphFunction(locationForecastRepository.getAdviceForecastList(generalForecast))
+        val bestTimesResult = makeHourlyScoreBasedOnForecast(locationForecastRepository.getAdviceForecastList(generalForecast))
+        val graphScores = bestTimesResult.first
+        val bestTimesForWalk = bestTimesResult.second
+
         updateScoreAtIndexZero(graphScores[0])
+        updateBestTimesForWalk(bestTimesForWalk)
         updateGraphValues(graphScores)
 
         updateDataState(DataState.Success) // Signal to Ui that all ui items are done updating and to show your screen.
     }
 
-
-    //based on temperature, precipitation and UVLimit
-    //we are using AdviceForecast because we only need temp, precipitation and UVLimit
-
-    //Parameter: a list of (advice) forecast objects that each represent one hour of the day
-
-    // TODO move to repository or domain layer
-    private fun forecastGraphFunction(forecasts: List<AdviceForecast>): List<Int> {
-
-        val overallRatingList = mutableListOf<Int>()
-        val currentHours = mutableListOf<String>()
-        var bestRatingMorning = 0
-        var bestRatingMidday = 0
-        var bestRatingEvening = 0
-
-        val bestTimesForWalk = BestTimesForWalk(
-            morning = "",
-            midday = "",
-            evening = ""
-        )
-
-        forecasts.forEach { forecast ->
-
-            val hourOfDay = forecast.time
-            currentHours.add(hourOfDay)
-
-            val tempRating = rating(forecast.temperature, LimitMaps.tempLimitMap)
-            val percRating = rating(forecast.precipitation, LimitMaps.precipitationLimitMap)
-            val uvRating = rating(forecast.uvIndex, LimitMaps.uvLimitMap)
-
-            val ratings = listOf(tempRating, percRating, uvRating)
-
-            var overallRating: Int = (tempRating + percRating + uvRating) / 3
-
-            ratings.forEach {
-                if (it < 3) {
-                    overallRating = it
-                }
-            }
-
-
-            // Find highest score at morning, midday and evening.
-            val hour = hourOfDay.toInt()
-
-            // Morning
-            if (hour in 5..10) {
-                if (overallRating >= bestRatingMorning && overallRating > 4) {
-                    bestRatingMorning = overallRating
-                    bestTimesForWalk.morning = hourOfDay
-                }
-            }
-
-            // Midday
-            else if (hour in 10..18) {
-                if (overallRating >= bestRatingMidday && overallRating > 4) {
-                    bestRatingMidday = overallRating
-                    bestTimesForWalk.midday = hourOfDay
-                }
-            }
-
-            // Evening
-            else if (hour in 18..22) {
-                if (overallRating >= bestRatingEvening && overallRating > 4) {
-                    bestRatingEvening = overallRating
-                    bestTimesForWalk.evening = hourOfDay
-                }
-            }
-
-            overallRatingList.add(overallRating)
-        }
-
-        updateBestTimesForWalk(bestTimesForWalk)
-
-        // x axis is defined in UI layer based on current time + index of y points.
-        return overallRatingList // y axis data
-    }
-
-
-    /** Function is used to fetch the rating of a given weather specification */
-    private fun rating(weatherTypeValue: Double, limitsMap: HashMap<List<Double>, Int>): Int {
-
-        for ((key, value) in limitsMap) {
-            if (weatherTypeValue in key[0]..key[1]) {
-                return value
-            }
-        }
-        return 1
-    }
 
     /** Used by advice screen. Really simple so didnt move to other viewmodel, as that would require sharing existing advice with that viewmodel
      * or changing overall architecture. If point is to expand on advice screens in future, there is techincal debt to modularizing AdviceScreen to its own viewmodel
@@ -262,25 +177,6 @@ class HomeScreenViewModel @Inject constructor(
         return _uiState.value.advice[id]
     }
 
-
-    private fun getWhichDogTypeSymbol(weather: GeneralForecast): Int {
-
-        val temperatureToShowSunnyDog = 17.0
-        val temperatureToShowColdDog = 0.0
-
-        val isNight = weather.symbol.contains("night", ignoreCase = true)
-        val isThundering = weather.symbol.contains("thunder", ignoreCase = true)
-        val windSpeed = weather.wind ?: 0.0
-
-        return if (isThundering) R.drawable.dog_thunder
-        else if (isNight) R.drawable.dog_sleepy
-        else if (windSpeed > 5) R.drawable.dog_wind
-        else if (weather.precipitation > 1) R.drawable.dog_rain
-        else if (weather.temperature >= temperatureToShowSunnyDog) R.drawable.dog_sunny
-        else if (weather.temperature <= temperatureToShowColdDog) R.drawable.dog_cold
-        else R.drawable.dog_normal
-
-    }
 
     /*
     *
@@ -292,7 +188,7 @@ class HomeScreenViewModel @Inject constructor(
     *  */
     private fun updateDataState(dataState: DataState) {
         _uiState.update { it.copy(dataState = dataState) }
-        Log.d("debug", dataState.toString())
+        Log.d("debug", "HomeScreen data state was updated: $dataState")
     }
 
     private fun updateAdvice(adviceList: List<Advice>) {
@@ -338,9 +234,122 @@ class HomeScreenViewModel @Inject constructor(
         return _uiState.value.dataState is DataState.Error
     }
 
+    /** Functions moved to companion mainly to make testing easier, but is also
+     * a nice way of modularizing the app and accessing this function whenever needed elsewhere. */
+    companion object {
+
+        /**
+         *
+         * Creates graph data based on temperature, precipitation and UVLimit
+         * we are using AdviceForecast because we only need temp, precipitation and UVLimit
+         *
+         * Parameter: a list of (advice) forecast objects that each represent one hour of the day
+         * Returns: A Pair containing a list with a score for each hour and an instance of BestTimesForWalk
+         *
+         */
+        private fun makeHourlyScoreBasedOnForecast(forecasts: List<AdviceForecast>): Pair<List<Int>, BestTimesForWalk> {
+
+            val overallRatingList = mutableListOf<Int>()
+            val currentHours = mutableListOf<String>()
+            var bestRatingMorning = 0
+            var bestRatingMidday = 0
+            var bestRatingEvening = 0
+
+            val bestTimesForWalk = BestTimesForWalk(
+                morning = "",
+                midday = "",
+                evening = ""
+            )
+
+            forecasts.forEach { forecast ->
+
+                val hourOfDay = forecast.time
+                currentHours.add(hourOfDay)
+
+                val tempRating = getRatingBasedOnLimitsMap(forecast.temperature, LimitMaps.tempLimitMap)
+                val percRating = getRatingBasedOnLimitsMap(forecast.precipitation, LimitMaps.precipitationLimitMap)
+                val uvRating = getRatingBasedOnLimitsMap(forecast.uvIndex, LimitMaps.uvLimitMap)
+
+                val ratings = listOf(tempRating, percRating, uvRating)
+
+                var overallRating: Int = (tempRating + percRating + uvRating) / 3
+
+                ratings.forEach {
+                    if (it < 3) {
+                        overallRating = it
+                    }
+                }
+
+                // Find highest score at morning, midday and evening.
+                val hour = hourOfDay.toInt()
+
+                // Morning
+                if (hour in 5..10) {
+                    if (overallRating >= bestRatingMorning && overallRating > 4) {
+                        bestRatingMorning = overallRating
+                        bestTimesForWalk.morning = hourOfDay
+                    }
+                }
+
+                // Midday
+                else if (hour in 10..18) {
+                    if (overallRating >= bestRatingMidday && overallRating > 4) {
+                        bestRatingMidday = overallRating
+                        bestTimesForWalk.midday = hourOfDay
+                    }
+                }
+
+                // Evening
+                else if (hour in 18..22) {
+                    if (overallRating >= bestRatingEvening && overallRating > 4) {
+                        bestRatingEvening = overallRating
+                        bestTimesForWalk.evening = hourOfDay
+                    }
+                }
+
+                overallRatingList.add(overallRating)
+            }
+            // x axis is defined in UI layer based on current time + index of y points.
+            return Pair(overallRatingList, bestTimesForWalk) // y axis data
+        }
+
+
+        /** Function is used to fetch the rating of a given weather specification */
+        private fun getRatingBasedOnLimitsMap(weatherTypeValue: Double, limitsMap: HashMap<List<Double>, Int>): Int {
+
+            for ((key, value) in limitsMap) {
+                if (weatherTypeValue in key[0]..key[1]) {
+                    return value
+                }
+            }
+            return 1
+        }
+
+
+        fun getWhichDogTypeSymbol(weather: GeneralForecast): Int {
+
+            val temperatureToShowSunnyDog = 17.0
+            val temperatureToShowColdDog = 0.0
+
+            val isNight = weather.symbol.contains("night", ignoreCase = true)
+            val isThundering = weather.symbol.contains("thunder", ignoreCase = true) // by only looking at symbol we let Met decide weather they think its thundering now.
+            val windSpeed = weather.wind ?: 0.0
+
+            return if (isThundering) R.drawable.dog_thunder
+            else if (isNight) R.drawable.dog_sleepy
+            else if (windSpeed > 5) R.drawable.dog_wind
+            else if (weather.precipitation > 1) R.drawable.dog_rain
+            else if (weather.temperature >= temperatureToShowSunnyDog) R.drawable.dog_sunny
+            else if (weather.temperature <= temperatureToShowColdDog) R.drawable.dog_cold
+            else R.drawable.dog_normal
+
+        }
+    }
+
+    /** Contains hashMaps that maps Temperatures, uvIndex and precipitation amount
+     * to scores ranging from 1 to 10 */
     object LimitMaps {
 
-        //these maps are used to determine rating
         val tempLimitMap: HashMap<List<Double>, Int> =
             hashMapOf(
                 listOf(-30.0, -10.1) to 1,
@@ -404,4 +413,6 @@ class HomeScreenViewModel @Inject constructor(
             )
 
     }
+
+
 }
