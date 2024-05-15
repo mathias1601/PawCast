@@ -147,5 +147,6 @@
     <string name="dog_avatar_description">Dog drawing responding to current weather</string>
     <string name="search_icon_description">Forstørrelses-glass</string>
     <string name="weather_symbol_description">Værsymbol</string>
+    <string name="fur_screen_tip_box">Du kan velge flere her! </string>
 
 </resources>

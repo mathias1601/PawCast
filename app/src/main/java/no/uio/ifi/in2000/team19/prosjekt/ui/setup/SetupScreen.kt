@@ -94,7 +94,7 @@ fun SetupManager(
                     )
         ) {
 
-            viewModel.updateSelectedIndexesBasedOnUserData()
+
 
             when (id) {
                 // For going to next step after finnishing.
@@ -120,6 +120,7 @@ fun SetupManager(
                 "6" -> FurSetupScreen(viewModel) {
                     viewModel.saveUserInfo()
                     viewModel.saveSetupState(isCompleted = true)
+                    navController.popBackStack()
                     navController.navigate("home")
                 }
 

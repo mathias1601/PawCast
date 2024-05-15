@@ -338,70 +338,70 @@ class HomeScreenViewModel @Inject constructor(
         return _uiState.value.dataState is DataState.Error
     }
 
-    class LimitMaps {
-        companion object {
-            //these maps are used to determine rating
-            val tempLimitMap: HashMap<List<Double>, Int> =
-                hashMapOf(
-                    listOf(-30.0, -10.1) to 1,
-                    listOf(30.1, 50.0) to 1,
+    object LimitMaps {
 
-                    listOf(-10.0, -6.0) to 2,
-                    listOf(29.1, 30.0) to 2,
+        //these maps are used to determine rating
+        val tempLimitMap: HashMap<List<Double>, Int> =
+            hashMapOf(
+                listOf(-30.0, -10.1) to 1,
+                listOf(30.1, 50.0) to 1,
 
-                    listOf(-5.9, -3.0) to 3,
-                    listOf(28.1, 29.0) to 3,
+                listOf(-10.0, -6.0) to 2,
+                listOf(29.1, 30.0) to 2,
 
-                    listOf(-2.9, 0.9) to 4,
-                    listOf(25.1, 28.0) to 4,
+                listOf(-5.9, -3.0) to 3,
+                listOf(28.1, 29.0) to 3,
 
-                    listOf(1.0, 2.9) to 5,
-                    listOf(22.1, 25.0) to 5,
+                listOf(-2.9, 0.9) to 4,
+                listOf(25.1, 28.0) to 4,
 
-                    listOf(3.0, 5.9) to 6,
-                    listOf(21.1, 22.0) to 6,
+                listOf(1.0, 2.9) to 5,
+                listOf(22.1, 25.0) to 5,
 
-                    listOf(6.0, 9.9) to 7,
-                    listOf(19.1, 21.0) to 7,
+                listOf(3.0, 5.9) to 6,
+                listOf(21.1, 22.0) to 6,
 
-                    listOf(10.0, 12.9) to 8,
-                    listOf(18.1, 19.0) to 8,
+                listOf(6.0, 9.9) to 7,
+                listOf(19.1, 21.0) to 7,
 
-                    listOf(13.0, 14.9) to 9,
-                    listOf(16.6, 18.0) to 9,
+                listOf(10.0, 12.9) to 8,
+                listOf(18.1, 19.0) to 8,
 
-                    listOf(15.0, 16.5) to 10
-                )
+                listOf(13.0, 14.9) to 9,
+                listOf(16.6, 18.0) to 9,
 
-            //Basert på info fra Yr
-            val precipitationLimitMap: HashMap<List<Double>, Int> =
-                hashMapOf(
-                    listOf(2.1, 7.0) to 1,
-                    listOf(1.6, 2.0) to 2,
-                    listOf(1.1, 1.5) to 3,
-                    listOf(0.9, 1.0) to 4,
-                    listOf(0.7, 0.8) to 5,
-                    listOf(0.5, 0.6) to 6,
-                    listOf(0.3, 0.4) to 7,
-                    listOf(0.2, 0.2) to 8,
-                    listOf(0.1, 0.1) to 9,
-                    listOf(0.0, 0.0) to 10
-                )
+                listOf(15.0, 16.5) to 10
+            )
 
-            //Basert på data fra SNL
-            val uvLimitMap: HashMap<List<Double>, Int> =
-                hashMapOf(
-                    listOf(8.1, 15.0) to 1,
-                    listOf(6.6, 8.0) to 2,
-                    listOf(5.1, 6.5) to 3,
-                    listOf(4.1, 5.0) to 4,
-                    listOf(3.7, 4.0) to 5,
-                    listOf(3.1, 3.6) to 6,
-                    listOf(2.6, 3.0) to 7,
-                    listOf(2.1, 2.5) to 8,
-                    listOf(1.1, 2.0) to 9,
-                    listOf(0.0, 1.0) to 10
-                )
-        }
+        //Based on info from YR: https://hjelp.yr.no/hc/no/articles/115003696813-Hva-er-grensene-for-lett-og-kraftig-nedbør
+        val precipitationLimitMap: HashMap<List<Double>, Int> =
+            hashMapOf(
+                listOf(2.1, 7.0) to 1,
+                listOf(1.6, 2.0) to 2,
+                listOf(1.1, 1.5) to 3,
+                listOf(0.9, 1.0) to 4,
+                listOf(0.7, 0.8) to 5,
+                listOf(0.5, 0.6) to 6,
+                listOf(0.3, 0.4) to 7,
+                listOf(0.2, 0.2) to 8,
+                listOf(0.1, 0.1) to 9,
+                listOf(0.0, 0.0) to 10
+            )
+
+        // Based on info from SML: https://sml.snl.no/solfaktor
+        val uvLimitMap: HashMap<List<Double>, Int> =
+            hashMapOf(
+                listOf(8.1, 15.0) to 1,
+                listOf(6.6, 8.0) to 2,
+                listOf(5.1, 6.5) to 3,
+                listOf(4.1, 5.0) to 4,
+                listOf(3.7, 4.0) to 5,
+                listOf(3.1, 3.6) to 6,
+                listOf(2.6, 3.0) to 7,
+                listOf(2.1, 2.5) to 8,
+                listOf(1.1, 2.0) to 9,
+                listOf(0.0, 1.0) to 10
+            )
+
     }
 }

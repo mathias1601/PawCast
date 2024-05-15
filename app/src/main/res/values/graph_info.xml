@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="graphinfo">
-        For å finne ut når det er best å gå tur, kan du se hvilke tidspunkter som har høyest poeng!\nDenne
-        grafen viser en gjennomsnittlig vurdering av værforholdene ved et gitt tidspunkt.
-        Værforholdene som er vurdert er temperatur, UV-indeks og nedbørsmengde. De har et visst
-        antall poeng hver, og gjennomsnittet av dem er det du ser på grafen.\nFargen til grafen er
-        basert på vurderingen av været til klokkeslettet som er akkurat nå; grønn (10-8), gul (7-6),
-        oransje (5-3) og rød (2-1).
-
-
+        For å finne ut når det er best å gå tur, kan du se hvilke tidspunkter som har høyest poeng!
+        Grafen viser en gjennomsnittlig vurdering av værforholdene for hver time.
+        Scoren er vurdert etter temperatur, UV-indeks og nedbørsmengde. Fargen til grafen er
+        basert på vurderingen av været til klokkeslettet som er akkurat nå, grønn er best, gul er ok og rød er dårlig.
 
     </string>
-
-
 </resources>

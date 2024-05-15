@@ -82,10 +82,10 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                         containerColor = if (ageIndex == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
                     ),
                     onClick = {
-                        viewModel.updateAgeIndex(0)
                         viewModel.updateIsPuppy(true)
-                        viewModel.updateIsMedium(false)
-                        viewModel.updateIsSenior(false) // Doesnt need to update puppy in database
+                        viewModel.updateIsAdult(false)
+                        viewModel.updateIsSenior(false)
+                        viewModel.updateSelectedIndexesBasedOnUserData()
                         onDone()
                     },
 
@@ -113,10 +113,10 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                     ),
 
                     onClick = {
-                        viewModel.updateAgeIndex(1)
                         viewModel.updateIsPuppy(false)
                         viewModel.updateIsAdult(true)
-                        viewModel.updateIsSenior(false) // Doesnt need to update adult in database
+                        viewModel.updateIsSenior(false)
+                        viewModel.updateSelectedIndexesBasedOnUserData()
                         onDone()
                     }) {
                     Column(
@@ -141,10 +141,10 @@ fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                     ),
 
                     onClick = {
-                        viewModel.updateAgeIndex(2)
                         viewModel.updateIsPuppy(false)
                         viewModel.updateIsAdult(false)
-                        viewModel.updateIsSenior(true) // Update senior in database
+                        viewModel.updateIsSenior(true)
+                        viewModel.updateSelectedIndexesBasedOnUserData()
                         onDone()
                     }) {
                     Column(

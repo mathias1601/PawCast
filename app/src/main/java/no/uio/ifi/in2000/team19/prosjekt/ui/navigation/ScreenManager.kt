@@ -164,6 +164,9 @@ fun ScreenManager(
                     val searchLocationViewModel: SearchLocationViewModel =
                         hiltViewModel(parentEntry)
 
+
+                    setupScreenViewModel.updateSelectedIndexesBasedOnUserData()
+
                     val id = backStackEntry.arguments?.getString("STAGE")
                         ?: "0" // 0 to force it to start if wrong parameter is supplied. Elvis operator needs to stay for when start destination supplies the argument
                     SetupManager(

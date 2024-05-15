@@ -81,11 +81,11 @@ dependencies {
     // EGNE DEPENDENCIES
 
     // ktor dependencies
-    val ktor_version = "2.3.8"
-    implementation("io.ktor:ktor-client-core:$ktor_version")
-    implementation("io.ktor:ktor-client-cio:$ktor_version")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-    implementation("io.ktor:ktor-serialization-gson:$ktor_version")
+    val ktorVersion = "2.3.8"
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-gson:$ktorVersion")
 
     // Android dependecies vi har lagt til: f.eks viewModel...
     implementation("ch.qos.logback:logback-classic:1.2.3")
@@ -97,11 +97,11 @@ dependencies {
     implementation("com.mapbox.search:mapbox-search-android-ui:1.2.0")
 
     //Room database
-    val room_version = "2.6.1"
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
-    implementation ("androidx.room:room-ktx:$room_version")
+    val roomVersion = "2.6.1"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+    implementation ("androidx.room:room-ktx:$roomVersion")
 
     //graphs
     implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.14")

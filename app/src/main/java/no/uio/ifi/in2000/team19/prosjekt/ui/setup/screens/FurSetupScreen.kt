@@ -142,7 +142,7 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
             Spacer(modifier = Modifier.padding(10.dp))
 
-            TipBox(tipText = "Du kan velge flere her! Blant annet vet vi at hunder med tynnere pels kan bli raskere solbrent.")
+            TipBox(tipText = stringResource(R.string.fur_screen_tip_box))
 
             Spacer(modifier = Modifier.padding(10.dp))
 
@@ -159,7 +159,6 @@ fun FurSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = {
-                    // navController.popBackStack() // removes history from backstack. Stops user from being able to click back, navigating the user back to setup 👎
                     onDone()
                 }
             ) {
