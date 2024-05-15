@@ -3,9 +3,8 @@ package no.uio.ifi.in2000.team19.prosjekt
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import no.uio.ifi.in2000.team19.prosjekt.data.AdviceFunctions
-import no.uio.ifi.in2000.team19.prosjekt.data.createAdvice
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.Advice
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.Assert.*

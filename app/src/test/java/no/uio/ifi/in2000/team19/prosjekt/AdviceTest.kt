@@ -1,11 +1,10 @@
 package no.uio.ifi.in2000.team19.prosjekt
 
-import no.uio.ifi.in2000.team19.prosjekt.data.getAdviceForecastData
-import no.uio.ifi.in2000.team19.prosjekt.data.getCategory
+import no.uio.ifi.in2000.team19.prosjekt.data.AdviceFunctions
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
 import no.uio.ifi.in2000.team19.prosjekt.model.AdviceCategory
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.AdviceForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.LocalDateTime
@@ -31,7 +30,7 @@ class AdviceTest {
 
         val expectedAdviceForecast =
             AdviceForecast(14.6, 44.2, 1.8, 2.7, LocalDateTime.of(2024, 3, 1, 0, 0), "12")
-        val result = getAdviceForecastData(generalForecast)
+        val result = AdviceFunctions.getAdviceForecastData(generalForecast)
 
         // Assert
         assertEquals(expectedAdviceForecast, result)
@@ -44,9 +43,9 @@ class AdviceTest {
         val warmAdviceForecast =
             AdviceForecast(
                 temperature = 29.1,
-                thunderprobability = 54.2,
-                percipitation = 0.2,
-                UVindex = 4.1,
+                thunderProbability = 54.2,
+                precipitation = 0.2,
+                uvIndex = 4.1,
                 date = LocalDateTime.of(2024, 7, 4, 0, 0),
                 time = "14")
 
@@ -63,7 +62,11 @@ class AdviceTest {
             isThinHaired = true,
             isThickHaired = false,
             isLightHaired = true,
-            isDarkHaired = false
+            isDarkHaired = false,
+            isAdult = false,
+            isMediumBody = false,
+            isNormalNosed = false,
+            isThickBody = false
         )
 
         // Act
@@ -76,7 +79,7 @@ class AdviceTest {
             AdviceCategory.VIPER
         ).toSet()
 
-        val result = getCategory(warmAdviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(warmAdviceForecast, userInfo).toSet()
 
         // Assert
         assertEquals(categoryList, result)

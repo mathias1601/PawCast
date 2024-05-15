@@ -16,9 +16,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.team19.prosjekt.data.ApiKeys
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import javax.inject.Inject
-import javax.inject.Named
 
 
 sealed class SearchState {
@@ -41,7 +41,6 @@ data class SearchLocationUiState(
 @HiltViewModel
 class SearchLocationViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
-    @Named("mapboxAccessToken") private val mapboxAccessToken: String
 ) : ViewModel() {
 
 
@@ -54,7 +53,7 @@ class SearchLocationViewModel @Inject constructor(
     )
     val uiState : StateFlow<SearchLocationUiState> = _uiState.asStateFlow()
 
-    private val placeAutocomplete = PlaceAutocomplete.create(mapboxAccessToken)
+    private val placeAutocomplete = PlaceAutocomplete.create(ApiKeys.MAPBOX_ACCESS_TOKEN)
 
     // Set Text in TextField to match stored value
     init {

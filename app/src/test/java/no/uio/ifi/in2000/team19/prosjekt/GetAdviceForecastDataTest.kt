@@ -1,8 +1,8 @@
 package no.uio.ifi.in2000.team19.prosjekt
 
 import no.uio.ifi.in2000.team19.prosjekt.data.AdviceFunctions
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.AdviceForecast
 import org.junit.Assert
 import org.junit.Test
 import java.time.LocalDateTime

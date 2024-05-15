@@ -1,14 +1,13 @@
 package no.uio.ifi.in2000.team19.prosjekt.data
 
 import android.content.Context
-import androidx.core.app.NotificationCompat.getCategory
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.userInfo.UserInfo
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.Advice
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.AdviceForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.ForecastTypes
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.GeneralForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.WeatherForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.Advice
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.AdviceForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.ForecastTypes
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.WeatherForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.locationForecast.LocationForecast
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
@@ -26,7 +25,6 @@ import javax.inject.Inject
 class LocationForecastRepository @Inject constructor(
     private val locationForecastDataSource: LocationForecastDataSource,
     private val context: Context,
-    private val adviceFunctions: AdviceFunctions
 ) {
 
 
@@ -35,9 +33,8 @@ class LocationForecastRepository @Inject constructor(
     private suspend fun fetchLocationForecast(
         latitude: String,
         longitude: String,
-        height: String
     ): LocationForecast {
-        return locationForecastDataSource.getLocationForecast(latitude, longitude, height)
+        return locationForecastDataSource.getLocationForecast(latitude, longitude)
     }
 
 
@@ -47,11 +44,11 @@ class LocationForecastRepository @Inject constructor(
     //a list of Advice-objects used to display advice cards
     fun getAdvice(generalForecast: ForecastTypes, typeOfDog: UserInfo): List<Advice> {
 
-        val adviceForecast = adviceFunctions.getAdviceForecastData(generalForecast.general[0])
+        val adviceForecast = AdviceFunctions.getAdviceForecastData(generalForecast.general[0])
 
-        val categories = adviceFunctions.getCategory(adviceForecast, typeOfDog)
+        val categories = AdviceFunctions.getCategory(adviceForecast, typeOfDog)
 
-        return adviceFunctions.createAdvice(categories, context)
+        return AdviceFunctions.createAdvice(categories, context)
     }
 
 
@@ -62,7 +59,7 @@ class LocationForecastRepository @Inject constructor(
         val adviceForecasts = mutableListOf<AdviceForecast>()
         val general: List<GeneralForecast> = listOfGeneralForecasts.general
         general.forEach {
-            adviceForecasts.add(adviceFunctions.getAdviceForecastData(it))
+            adviceForecasts.add(AdviceFunctions.getAdviceForecastData(it))
         }
         return adviceForecasts
     }
@@ -74,11 +71,10 @@ class LocationForecastRepository @Inject constructor(
     suspend fun getGeneralForecast(
         latitude: String,
         longitude: String,
-        height: String,
         nrDays: Int
     ): ForecastTypes {
 
-        val locationForecast = fetchLocationForecast(latitude, longitude, height)
+        val locationForecast = fetchLocationForecast(latitude, longitude)
 
         //retrieving time-related data from locationForecast
         val start = locationForecast.properties.timeseries[0].time
@@ -106,25 +102,25 @@ class LocationForecastRepository @Inject constructor(
         val genForecastList = mutableListOf<GeneralForecast>()
 
         //Necessary data is retrieved for each hour, and added to the list of general forecasts
-
         for (i in adjustedStart..lastHour) {
 
-            val data = locationForecast.properties.timeseries[i].data // shortcut
+            val instant = locationForecast.properties.timeseries[i].data.instant.details // shortcut
+            val nextOneHours = locationForecast.properties.timeseries[i].data.next_1_hours // shortcut
 
-            val temperature = data.instant.details.air_temperature
-            val wind = data.instant.details.wind_speed
-            val symbol = data.next_1_hours.summary.symbol_code
-
+            val temperature = instant.air_temperature
+            val wind = instant.wind_speed
+            val symbol = nextOneHours.summary.symbol_code
             val time = locationForecast.properties.timeseries[i].time
+
             val zonedDateTime = ZonedDateTime.parse(time)
             val hourFormatter = DateTimeFormatter.ofPattern("HH")
             val hourAsString = zonedDateTime.format(hourFormatter).toString()
 
             val timeFetched = LocalDateTime.now() // Store when
 
-            val precipitation = data.next_1_hours.details.precipitation_amount
-            val thunderProbability = data.next_1_hours.details.probability_of_thunder
-            val uvIndex = data.instant.details.ultraviolet_index_clear_sky
+            val precipitation = nextOneHours.details.precipitation_amount
+            val thunderProbability = nextOneHours.details.probability_of_thunder
+            val uvIndex = instant.ultraviolet_index_clear_sky
 
             genForecastList.add(
                 GeneralForecast(
@@ -138,7 +134,6 @@ class LocationForecastRepository @Inject constructor(
                     uvIndex,
                 )
             )
-
         }
 
         //The two other forecast types are also created, and added to a ForecastTypes-object

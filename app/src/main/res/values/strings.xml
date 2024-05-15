@@ -77,7 +77,7 @@
 
 
     <!-- Weather -->
-    <string name="celcius">°C</string>
+    <string name="celcius">°</string>
     <string name="wind_speed">%1$s m/s</string>
     <string name="precipitation">%1$s mm</string>
     <string name="low_degrees">L: %1$s</string>
