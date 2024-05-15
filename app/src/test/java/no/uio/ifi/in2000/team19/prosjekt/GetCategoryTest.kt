@@ -55,9 +55,9 @@ class GetCategoryTest {
             AdviceCategory.THUNDER,
             AdviceCategory.TICK,
             AdviceCategory.VIPER
-        ).toSet()
+        ).sorted()
 
-        val result = AdviceFunctions.getCategory(warmAdviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(warmAdviceForecast, userInfo).sorted()
 
         // Assert
         assertEquals(categoryList, result)
@@ -103,9 +103,9 @@ class GetCategoryTest {
             AdviceCategory.SUNBURN,
             AdviceCategory.WARM,
             AdviceCategory.CAR,
-        ).toSet()
+        ).sorted()
 
-        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).sorted()
 
         // Assert
         assertNotEquals(categoryList, result)
@@ -150,9 +150,9 @@ class GetCategoryTest {
             AdviceCategory.SUNBURN,
             AdviceCategory.TICK,
             AdviceCategory.VIPER
-        ).toSet()
+        ).sorted()
 
-        val result = AdviceFunctions.getCategory(warmAdviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(warmAdviceForecast, userInfo).sorted()
 
         // Assert
 
@@ -199,9 +199,9 @@ class GetCategoryTest {
             AdviceCategory.SUNBURN,
             AdviceCategory.TICK,
             AdviceCategory.VIPER
-        ).toSet()
+        ).sorted()
 
-        val result = AdviceFunctions.getCategory(warmAdviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(warmAdviceForecast, userInfo).sorted()
 
         // Assert
         println(result)
@@ -246,9 +246,9 @@ class GetCategoryTest {
         val categoryList = listOf(
             AdviceCategory.COLDOTHERLONGFUR,
             AdviceCategory.SALT
-        ).toSet()
+        ).sorted()
 
-        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).sorted()
 
         // Assert
         assertEquals(categoryList, result)
@@ -292,9 +292,9 @@ class GetCategoryTest {
         // Act
         val categoryList = listOf(
             AdviceCategory.NEWYEAR
-        ).toSet()
+        ).sorted()
 
-        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).sorted()
 
         // Assert
         assertEquals(categoryList, result)
@@ -338,9 +338,9 @@ class GetCategoryTest {
         // Act
         val categoryList = listOf(
             AdviceCategory.COLDOTHERLONGFUR,
-        ).toSet()
+        ).sorted()
 
-        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).toSet()
+        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).sorted()
 
         // Assert
         assertEquals(categoryList, result)
