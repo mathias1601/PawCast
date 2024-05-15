@@ -33,7 +33,7 @@ class LocationForecastRepository @Inject constructor(
     private suspend fun fetchLocationForecast(
         latitude: String,
         longitude: String,
-    ): LocationForecast {
+    ): LocationForecast? {
         return locationForecastDataSource.getLocationForecast(latitude, longitude)
     }
 
@@ -72,9 +72,9 @@ class LocationForecastRepository @Inject constructor(
         latitude: String,
         longitude: String,
         nrDays: Int
-    ): ForecastTypes {
+    ): ForecastTypes? {
 
-        val locationForecast = fetchLocationForecast(latitude, longitude)
+        val locationForecast = fetchLocationForecast(latitude, longitude) ?: return null
 
         //retrieving time-related data from locationForecast
         val start = locationForecast.properties.timeseries[0].time

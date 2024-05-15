@@ -11,9 +11,9 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.team19.prosjekt.data.LocationForecastRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.SettingsRepository
 import no.uio.ifi.in2000.team19.prosjekt.data.settingsDatabase.cords.Location
+import no.uio.ifi.in2000.team19.prosjekt.model.ErrorReasons
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.WeatherForecast
-import no.uio.ifi.in2000.team19.prosjekt.model.ErrorReasons
 import java.io.IOException
 import java.nio.channels.UnresolvedAddressException
 import javax.inject.Inject
@@ -77,7 +77,8 @@ class WeatherScreenViewModel @Inject constructor(
                     location.latitude,
                     location.longitude,
                     2
-                )
+                ) ?: throw IOException() // throws an error to be caught by try... catch..
+
                 val weatherHours = weatherForecast.general
                 val weatherDays = weatherForecast.day
                 val weatherMean = weatherForecast.hours

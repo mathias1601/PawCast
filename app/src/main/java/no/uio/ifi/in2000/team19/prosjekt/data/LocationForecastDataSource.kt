@@ -28,15 +28,22 @@ class LocationForecastDataSource @Inject constructor() {
     suspend fun getLocationForecast(
         latitude: String,
         longitude: String,
-    ): LocationForecast {
+    ): LocationForecast? {
 
-        Log.d("debug", "Making api call with coords: $latitude, $longitude")
+        return try {
+            Log.d("debug", "Making api call with coords: $latitude, $longitude")
 
-        val path =
-            "${ApiUrls.locationForecastEDR}position?coords=POINT($longitude+$latitude)"
+            val path =
+                "${ApiUrls.locationForecastEDR}position?coords=POINT($longitude+$latitude)"
 
-        val result = client.get(path)
-        return result.body<LocationForecast>()
+            val result = client.get(path)
+
+            result.body<LocationForecast>()
+
+        } catch (e: Exception){
+            null
+        }
+
     }
 
 

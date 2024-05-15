@@ -112,7 +112,6 @@ class HomeScreenViewModel @Inject constructor(
 
         updateDataState(DataState.Loading)
 
-        Log.d("debug", "3")
         viewModelScope.launch(Dispatchers.IO) {
 
             try {
@@ -141,12 +140,9 @@ class HomeScreenViewModel @Inject constructor(
 
             // >>  This is one of the areas of technical debt to focus on for future. <<
 
+            if (generalForecast != null) updateUiStateBasedOnForecast(generalForecast!!)
+            else updateDataState(DataState.Error(ErrorReasons.UNKNOWN))
 
-            if (generalForecast != null){
-                updateUiStateBasedOnForecast(generalForecast!!)
-            } else {
-                updateDataState(DataState.Error(ErrorReasons.UNKNOWN))
-            }
         }
     }
 
