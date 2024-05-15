@@ -89,17 +89,16 @@ class HomeScreenViewModel @Inject constructor(
 
                 try {
                     viewModelScope.launch(Dispatchers.IO) {
-                        Log.d("debug", "1")
                         settingsRepository.getLocation().collect { location ->
                             updateLocation(location)
+                            loadWeatherForecast()
                         }
+
                     }
                 } catch (e: IOException) {
                     updateDataState(DataState.Error(ErrorReasons.DATABASE))
                 } catch (e: Exception) {
                     updateDataState(DataState.Error(ErrorReasons.UNKNOWN))
-                    Log.d("debug", "2")
-            loadWeatherForecast()
             }
     }
 
@@ -122,9 +121,6 @@ class HomeScreenViewModel @Inject constructor(
                     location.longitude,
                     2
                 )
-                Log.d("debug", "4")
-
-                Log.d("debug", "temp: ${generalForecast!!.general[0].temperature}")
 
 
             } catch (e: IOException) {
@@ -145,7 +141,6 @@ class HomeScreenViewModel @Inject constructor(
 
             // >>  This is one of the areas of technical debt to focus on for future. <<
 
-            Log.d("debug", "5")
 
             if (generalForecast != null){
                 updateUiStateBasedOnForecast(generalForecast!!)

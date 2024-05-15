@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast
+package no.uio.ifi.in2000.team19.prosjekt.model.dto.locationForecast
 
 data class DetailsXXX(
     val air_temperature_max: Double,
