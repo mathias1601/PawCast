@@ -13,7 +13,6 @@
     <string name="graph_title">Beste tidspunkter for tur</string>
     <string name="info_about_graph">Info om grafen</string>
     <string name="settings">Instillinger</string>
-    <string name="setup_screen_greeting">Heisann!</string>
     <string name="what_is_your_name_and_dog_name_title">Hva er navnet ditt og navnet til hunden din?</string>
     <string name="your_name">Navnet ditt</string>
     <string name="your_dogs_name">Hunden din sitt navn</string>
@@ -38,9 +37,6 @@
 
 
     <!-- Body text -->
-    <string name="morning_recomendation">Vi anbefaler morgentur klokken %1$s</string>
-    <string name="midday_recomendation">Vi anbefaler dagstur klokken %1$s</string>
-    <string name="evening_recomendation">Vi anbefaler kveldstur klokken %1$s</string>
     <string name="why_store_name_disclaimer">Navn blir kun brukt til å personalisere appen for deg.</string>
     <string name="chooseDogCategoryBottomScreenTip"> Dette hjelper oss med å tilpasse anbefalinger til din hund. Du kan når som helst endre dette i instillinger.</string>
     <string name="body_setup_screen_tip">Tynnere hunder kan fryse raskere, mens tykkere hunder kan tåle mer kulde. Dersom du er i tvil kan du velge middels.</string>

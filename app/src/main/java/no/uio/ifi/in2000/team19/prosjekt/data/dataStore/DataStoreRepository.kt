@@ -19,6 +19,10 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "se
  *
  *  This is updated at the end of the setup process OR end of skip process.
  *
+ *  We have since decided that this does add unnecessary complexity to our app, and want to
+ *  find another way of just "null" checking our actual database for checking setup instead of this
+ *  value just for saying if its setup or not. + Technical debt here.
+ *
  * */
 class DataStoreRepository(context: Context) { // Context is provided by Dagger Hilt.
 
