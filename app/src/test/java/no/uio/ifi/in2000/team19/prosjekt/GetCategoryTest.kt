@@ -292,9 +292,9 @@ class GetCategoryTest {
         // Act
         val categoryList = listOf(
             AdviceCategory.NEWYEAR
-        ).sorted()
+        )
 
-        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).sorted()
+        val result = AdviceFunctions.getCategory(adviceForecast, userInfo)
 
         // Assert
         assertEquals(categoryList, result)
@@ -338,9 +338,9 @@ class GetCategoryTest {
         // Act
         val categoryList = listOf(
             AdviceCategory.COLDOTHERLONGFUR,
-        ).sorted()
+        )
 
-        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).sorted()
+        val result = AdviceFunctions.getCategory(adviceForecast, userInfo)
 
         // Assert
         assertEquals(categoryList, result)
