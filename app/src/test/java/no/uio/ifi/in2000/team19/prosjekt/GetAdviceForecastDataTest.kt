@@ -3,7 +3,7 @@ package no.uio.ifi.in2000.team19.prosjekt
 import no.uio.ifi.in2000.team19.prosjekt.data.AdviceFunctions
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.AdviceForecast
 import no.uio.ifi.in2000.team19.prosjekt.model.dto.GeneralForecast
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.LocalDateTime
 
@@ -30,6 +30,6 @@ class GetAdviceForecastDataTest {
         val result = AdviceFunctions.getAdviceForecastData(generalForecast)
 
         // Assert
-        Assert.assertEquals(expectedAdviceForecast, result)
+        assertEquals(expectedAdviceForecast, result)
     }
 }

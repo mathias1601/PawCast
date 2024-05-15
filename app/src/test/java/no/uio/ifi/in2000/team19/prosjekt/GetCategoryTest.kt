@@ -187,11 +187,11 @@ class GetCategoryTest {
             isMediumBody = true,
             isThickBody = false,
             isLongHaired = true,
-            isShortHaired = true,
-            isThinHaired = true,
-            isThickHaired = false,
-            isLightHaired = true,
-            isDarkHaired = false,
+            isShortHaired = false,
+            isThinHaired = false,
+            isThickHaired = true,
+            isLightHaired = false,
+            isDarkHaired = true,
         )
 
         // Act
@@ -292,6 +292,52 @@ class GetCategoryTest {
         // Act
         val categoryList = listOf(
             AdviceCategory.NEWYEAR
+        ).toSet()
+
+        val result = AdviceFunctions.getCategory(adviceForecast, userInfo).toSet()
+
+        // Assert
+        assertEquals(categoryList, result)
+    }
+
+    @Test
+    fun getCategory_allFurCategories_IsCorrect() {
+
+        // Arrange
+        val adviceForecast =
+            AdviceForecast(
+                temperature = -10.0,
+                thunderProbability = 0.0,
+                precipitation = 0.0,
+                uvIndex = 0.0,
+                date = LocalDateTime.of(2024, 12, 24, 0, 0),
+                time = "12"
+            )
+
+
+        val userInfo = UserInfo(
+            1,
+            "Per",
+            "Bella",
+            isSenior = false,
+            isAdult = true,
+            isPuppy = false,
+            isFlatNosed = false,
+            isNormalNosed = true,
+            isThin = false,
+            isMediumBody = true,
+            isThickBody = false,
+            isLongHaired = true,
+            isShortHaired = true,
+            isThinHaired = true,
+            isThickHaired = true,
+            isLightHaired = true,
+            isDarkHaired = true,
+        )
+
+        // Act
+        val categoryList = listOf(
+            AdviceCategory.COLDOTHERLONGFUR,
         ).toSet()
 
         val result = AdviceFunctions.getCategory(adviceForecast, userInfo).toSet()
