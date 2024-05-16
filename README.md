@@ -15,6 +15,9 @@
 + Opprett en emulator eller koble til en Android mobil og kjør appen. [Guide](https://developer.android.com/studio/run/emulator#get-started). 
 > Dersom det skjer en feil venligst kjør gradle sync og trykk `build > clean project`
 
+> Noen ganger ved build dukker et opp build performance issues, disse har ingen innvirkning på kjøring av app.
+
+
 
 
 
