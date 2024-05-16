@@ -16,55 +16,53 @@ flowchart TD;
 
     Start((Start))
 
-    AapneApp([Launch app])
-    VisVelkomsskjerm([Show welcome screen])
     SkrivNavn([Write names])
-    VelgAlder([Choose age category])
-    VelgSnute([Choose nose vategory])
-    VelgKropp([Choose body category])
-    VelgPels([Choose fur categories])
+    
+
     GiLokasjon([Write location])
-    GiLokasjonUtenKonfigurasjon([Write Location])
     VisHjemskjerm([Show home screen])
+    Neste([Next])
+    NesteLokasjon([Next])
+    NesteNavn([Next])
+    Velkommen([Show welcome screen])
 
 
-    foerstegangsbruker{First time user?}
     hoppover{Skip configuration?}
-    gaatilbakenavn{Go back?}
-    gaatilbakelokasjon{Go back?}
-    gaatilbakealder{Go back?}
-    gaatilbakesnute{Go back?}
-    gaatilbakekropp{Go back?}
+    VelgAlder{Choose age category}
+    VelgSnute{Choose nose category}
+    VelgKropp{Choose body category}
+    VelgPels{Choose fur categories}
 
-    Start --> AapneApp
-    AapneApp --> foerstegangsbruker
-    foerstegangsbruker --JA--> VisVelkomsskjerm
-    foerstegangsbruker --NEI--> VisHjemskjerm
-    VisVelkomsskjerm --> hoppover
-    hoppover --JA--> GiLokasjonUtenKonfigurasjon
-    GiLokasjonUtenKonfigurasjon --> VisHjemskjerm
-    hoppover --NEI--> SkrivNavn 
+    Start --> Velkommen
+    Velkommen --> hoppover
+    hoppover --YES--> GiLokasjon
+    GiLokasjon --> NesteLokasjon
+    NesteLokasjon --> VisHjemskjerm
+    hoppover --NO--> SkrivNavn 
 
-    SkrivNavn --> GiLokasjon
-    GiLokasjon --> gaatilbakenavn
-    gaatilbakenavn --JA--> SkrivNavn
-    gaatilbakenavn --> VelgAlder
+    SkrivNavn --> NesteNavn
+    NesteNavn --> GiLokasjon
+    NesteLokasjon --> VelgAlder
 
-    VelgAlder --> gaatilbakelokasjon
-    gaatilbakelokasjon --JA--> GiLokasjon
-    gaatilbakelokasjon --> VelgSnute
+    VelgAlder --Senior--> VelgSnute
+    VelgAlder --Puppy--> VelgSnute
+    VelgAlder --Adult--> VelgSnute
 
-    VelgSnute --> gaatilbakealder
-    gaatilbakealder --JA--> VelgAlder
-    gaatilbakealder --> VelgKropp
+    VelgSnute --Flat--> VelgKropp
+    VelgSnute --Normal--> VelgKropp
 
-    VelgKropp --> gaatilbakesnute
-    gaatilbakesnute --JA--> VelgSnute
-    gaatilbakesnute --> VelgPels
+    VelgKropp --Thick--> VelgPels
+    VelgKropp --Thin--> VelgPels
+    VelgKropp --Middle--> VelgPels
 
-    VelgPels --> gaatilbakekropp
-    gaatilbakekropp --JA--> VelgKropp
-    gaatilbakekropp --> VisHjemskjerm
+    VelgPels --Thin--> Neste
+    VelgPels --Thick--> Neste
+    VelgPels --Short--> Neste
+    VelgPels --Long--> Neste
+    VelgPels --Light--> Neste
+    VelgPels --Dark--> Neste
+    Neste --> VisHjemskjerm
+
 
     VisHjemskjerm --> Slutt
 
