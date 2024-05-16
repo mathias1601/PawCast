@@ -1,14 +1,15 @@
 # ☀ Team-19
  
-- Markus Evanger
-- Synnøve Birkeland
-- Isabelle Røed Lampl
-- Mai Anh Duong 
-- Linn Srongyoo Hjulstad
-- Mathias Knudsen
+- Markus Evanger 🪩
+- Synnøve Birkeland 🫧
+- Isabelle Røed Lampl 😼
+- Mai Anh Duong 🧑‍🎨
+- Linn Srongyoo Hjulstad ✨
+- Mathias Knudsen 🐌 
 
 
 ## 📦 Hvordan kjøre appen
++ Last ned og installer Android Studio, [se guide her](https://developer.android.com/studio/install)
 + Last ned prosjektmappen via github eller last ned fra innleveringsmappen.
 + Åpne prosjektet i Android Studio.
 + Opprett en emulator eller koble til en Android mobil. 
