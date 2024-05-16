@@ -3,7 +3,9 @@
 
 Appen vår tar i bruk mest mulig såkalte ["best practices" for Android arkitektur](https://developer.android.com/topic/architecture/recommendations). Med det mener vi at vi bruker en lag-delt arkitektur (MVVM), hvor data og UI er tydelig definert, og isolert til en oppgave. Med andre ord oppnår vi høy kohesjon og lav kobling ved å følge best practices. 
 
-> For eksemepel, er `LocationForecastDataSource` sin jobb å ta imot kordinater og deretter hente data og deserialisere den fra LocationForecast APIen.  
+> Kohesjon: For eksemepel, er `LocationForecastDataSource` sin jobb å ta imot kordinater og deretter hente data og deserialisere den fra LocationForecast APIen.  
+
+> Kobling: `HomeScreen` er kun avhengig av data fra `HomeScreenViewModel`
 
 Vi bruker også "Unidirectional Data Flow" for arkitekturen vår, hvor en composable kaller på en metode i en viewModel, som oppdaterer en verdi composablen ved bruk av `StateFlow`. Dette fører blant annet til at UI speiler dataen og vi unngår bugs forårsaket av en mismatch mellom disse verdienene. 
 
