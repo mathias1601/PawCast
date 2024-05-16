@@ -11,9 +11,9 @@
 ## 📦 Hvordan kjøre appen
 + Last ned og installer Android Studio, [se guide her](https://developer.android.com/studio/install)
 + Last ned prosjektmappen via github eller last ned fra innleveringsmappen.
-+ Åpne prosjektet i Android Studio.
-+ Opprett en emulator eller koble til en Android mobil. 
-+ Kjør gradle sync, gradle build og kjør appen. 
++ Åpne prosjektet i Android Studio [Guide](https://developer.android.com/studio/projects/create-project#ImportAProject).
++ Opprett en emulator eller koble til en Android mobil og kjør appen. [Guide](https://developer.android.com/studio/run/emulator#get-started). 
+ + Dersom det skjer en feil venligst kjør gradle sync og trykk build > clean project
 
 
 
