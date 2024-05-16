@@ -17,11 +17,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.searchBox.SearchLocationTextField
@@ -69,7 +69,7 @@ fun SettingsScreen(
             modifier = Modifier.padding(top = 10.dp)
         ) {
 
-            val searchLocationUiState = searchLocationViewModel.uiState.collectAsState().value
+            val searchLocationUiState = searchLocationViewModel.uiState.collectAsStateWithLifecycle().value
 
             SearchLocationTextField(
                 uiState = searchLocationUiState,

@@ -15,7 +15,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -23,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import no.uio.ifi.in2000.team19.prosjekt.R
 import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 
@@ -30,7 +30,7 @@ import no.uio.ifi.in2000.team19.prosjekt.ui.setup.SetupScreenViewModel
 @Composable
 fun AgeSetupScreen(viewModel: SetupScreenViewModel, onDone: () -> Unit) {
 
-    val ageIndex = viewModel.selectedAgeIndex.collectAsState().value
+    val ageIndex = viewModel.selectedAgeIndex.collectAsStateWithLifecycle().value
 
 
     Column(

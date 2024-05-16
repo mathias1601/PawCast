@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.team19.prosjekt.ui.weather
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -29,17 +28,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
@@ -67,8 +65,9 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController:
         onRefresh = { weatherScreenViewModel.loadWeather() })
 
 
+    val weatherUiState = weatherScreenViewModel.weatherUiState.collectAsStateWithLifecycle().value
 
-    when (val weatherUiState = weatherScreenViewModel.weatherUiState.collectAsState().value) {
+    when ( weatherUiState ) {
         is WeatherUiState.Loading -> {
             LoadingScreen()
         }
@@ -83,7 +82,7 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController:
         is WeatherUiState.Success -> {
 
 
-            val location = weatherScreenViewModel.locationUiState.collectAsState().value
+            val location = weatherScreenViewModel.locationUiState.collectAsStateWithLifecycle().value
 
             val weatherHours = weatherUiState.weatherHours
             val weatherDays = weatherUiState.weatherDays
@@ -170,18 +169,9 @@ fun WeatherScreen(weatherScreenViewModel: WeatherScreenViewModel, navController:
 }
 
 
-@SuppressLint("DiscouragedApi")
 @Composable
 fun WeatherNow(weather: GeneralForecast) {
 
-    val context = LocalContext.current
-    val drawableName = weather.symbol
-    val drawableId =
-        context.resources.getIdentifier(
-            drawableName,
-            "drawable",
-            context.packageName
-        ) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
 
 
 
@@ -193,7 +183,14 @@ fun WeatherNow(weather: GeneralForecast) {
     ) {
 
 
-        Image(painter = painterResource(id = drawableId), contentDescription = drawableName)
+        val drawableName = weather.symbol
+        if (drawableName in WeatherDrawableNameToResourceId.map) {
+            Image(
+                painter = painterResource(id = WeatherDrawableNameToResourceId.map[drawableName]!!),
+                contentDescription = drawableName,
+                modifier = Modifier.size(85.dp)
+            )
+        }
 
         Text(
             text = "${weather.temperature}" + stringResource(id = R.string.celcius),
@@ -233,7 +230,6 @@ fun TodayForecastCard(allHours: List<GeneralForecast>) {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
 
             ) {
 
@@ -260,7 +256,7 @@ fun TodayForecastCard(allHours: List<GeneralForecast>) {
 
 
             FilledTonalButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 onClick = { isExpanded = !isExpanded }
             ) {
 
@@ -334,7 +330,7 @@ fun NextDaysForecastCard(weatherForecast: WeatherForecast, meanHours: List<Weath
             }
 
             FilledTonalButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 onClick = { isExpanded = !isExpanded }
             ) {
 
@@ -353,18 +349,10 @@ fun NextDaysForecastCard(weatherForecast: WeatherForecast, meanHours: List<Weath
     }
 }
 
-@SuppressLint("DiscouragedApi")
 @Composable
 fun SingleHourForecastCard(generalForecast: GeneralForecast) {
 
-
-    val context = LocalContext.current
     val drawableName = generalForecast.symbol
-    val drawableId = context.resources.getIdentifier(
-        drawableName,
-        "drawable",
-        context.packageName
-    ) // need to use getIdentifier instead of R.drawable.. because of  the variable name.
 
     Surface(
         color = MaterialTheme.colorScheme.secondaryContainer,
@@ -383,10 +371,13 @@ fun SingleHourForecastCard(generalForecast: GeneralForecast) {
                 text = generalForecast.hour + ":00",
                 style = MaterialTheme.typography.bodyMedium
             )
-            Image(
-                painter = painterResource(id = drawableId),
-                contentDescription = drawableName
-            )
+            if (drawableName in WeatherDrawableNameToResourceId.map){
+                Image(
+                    painter = painterResource(id = WeatherDrawableNameToResourceId.map[drawableName]!!),
+                    contentDescription = drawableName
+                )
+            }
+
 
             Text(
                 text = "${generalForecast.temperature} ${stringResource(id = R.string.celcius)}",
@@ -410,15 +401,14 @@ fun SingleHourForecastCard(generalForecast: GeneralForecast) {
 }
 
 
-@SuppressLint("DiscouragedApi")
+
 @Composable
 fun WholeDayAverageWeatherCard(weatherForecast: WeatherForecast) {
 
 
     Surface(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.secondaryContainer
     ) {
@@ -470,14 +460,10 @@ fun WholeDayAverageWeatherCard(weatherForecast: WeatherForecast) {
 }
 
 
-@SuppressLint("DiscouragedApi")
 @Composable
 fun SixHourMeanForecastCard(weatherForecast: WeatherForecast) {
 
-    val context = LocalContext.current
-    val drawableName = weatherForecast.symbol
-    val drawableId =
-        context.resources.getIdentifier(drawableName, "drawable", context.packageName)
+
 
     Column(
         modifier = Modifier
@@ -503,10 +489,14 @@ fun SixHourMeanForecastCard(weatherForecast: WeatherForecast) {
             )
 
 
-            Image(
-                painter = painterResource(id = drawableId),
-                contentDescription = drawableName
-            )
+            val drawableName = weatherForecast.symbol
+            if (drawableName in WeatherDrawableNameToResourceId.map) {
+                Image(
+                    painter = painterResource(id = WeatherDrawableNameToResourceId.map[drawableName]!!),
+                    contentDescription = drawableName,
+                    modifier = Modifier.size(85.dp)
+                )
+            }
 
             Text(
                 text = "${weatherForecast.meanTemperature}" + stringResource(id = R.string.celcius),

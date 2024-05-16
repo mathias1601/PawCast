@@ -15,7 +15,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -46,8 +45,8 @@ fun ScreenManager(
     val navController = rememberNavController()
     val navBarItems = createBottomNavbarItems()
 
-    val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsState().value
-    val startDestination = viewModel.startDestination.collectAsState().value
+    val navBarSelectedItemIndex = viewModel.navBarSelectedIndex.collectAsStateWithLifecycle().value
+    val startDestination = viewModel.startDestination.collectAsStateWithLifecycle().value
 
     Scaffold(
         bottomBar = {
