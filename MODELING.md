@@ -36,11 +36,11 @@ Hovedflyt:
 17. System lagrer info om ferdig setup 
 19. Bruker navigeres til hjemskjermen 
  
-Alternativ flyt:
-3.1 Bruker velger “hopp over konfigurasjon”
-3.2 Bruker skriver inn lokasjon
-3.3 Systemet lagrer lokasjon
-3.4 Systemet oppretter en forhåndsdefinert definert hund profil 
+Alternativ flyt: \
+3.1 Bruker velger “hopp over konfigurasjon” \
+3.2 Bruker skriver inn lokasjon \
+3.3 Systemet lagrer lokasjon \
+3.4 Systemet oppretter en forhåndsdefinert definert hund profil \
 3.5 Systemet navigerer bruker til steg 17
 
 
