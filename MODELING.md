@@ -12,9 +12,9 @@ Se sekvensdiagrammer for tekstlige beskrivelser av use case.
 
 ## Aktivitetsdiagram
 
-Navn: Setup user / dog profile
-Prebetingelser: Bruker har ikke laget profil i systemet
-Postbetingelser: Systemer lagrer en brukerprofil
+Navn: Setup user / dog profile \
+Prebetingelser: Bruker har ikke laget profil i systemet \
+Postbetingelser: Systemer lagrer en brukerprofil 
  
 Hovedflyt:
 1. Bruker åpner appen
