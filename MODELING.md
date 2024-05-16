@@ -10,7 +10,10 @@ Viser de viktigste funskjonene i appen og hvilke avhengigheter de har.
 Se sekvensdiagrammer for tekstlige beskrivelser av use case. 
 
 
-## Aktivitets Diagram
+## Aktivitetsdiagram
+
+Her er en prebetingelse at brukeren ikke har opprettet en profil i systemet. 
+
 ```mermaid
 flowchart TD;
 
