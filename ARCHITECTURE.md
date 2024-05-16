@@ -128,7 +128,7 @@ Target SDK default er 34 for android studio prosjekter, og er i [prosjekt period
 
 Appen er laget i Kotlin og Jetpack Compose.
 
-Appen er bygget rundt LocationForecast apien til Metrologisk Institutt. Dataen hentes med bruk av Kotlins HTTP klient, `Ktor`. Dataen blir behandlet i `LocationForecastRespository` og i en tilhørende fil `AdviceFunctions`. Disse to filene til sammen gjennomfører det meste av databehandling, og gjør om rå værdata til lister av `Advice` og Graf data. Denne dataen blir lagret i UI laget i `viewModels` for de fleste skjermer. `HomeScreen` og `WeatherScreen` er de viktigste screens i appen, og dems viewModels: `HomeScreenViewModel` og `WeatherScreenViewModel`.
+Appen er bygget rundt LocationForecast apien til Metrologisk Institutt. Dataen hentes med bruk av Kotlins HTTP klient, `Ktor`. Dataen blir behandlet i `LocationForecastRespository` og i en tilhørende fil `AdviceFunctions`. Disse to filene til sammen gjennomfører det meste av databehandling, og gjør om rå værdata til lister av `Advice` og Graf data. Denne dataen blir lagret i UI laget i `viewModels` for de fleste skjermer. `HomeScreen` og `WeatherScreen` er de viktigste screens i appen, og deres viewModels: `HomeScreenViewModel` og `WeatherScreenViewModel`.
 
 I prosessen over bruker vi følgende teknologier: 
 - [Ktor](https://ktor.io/) (HTTP Klient)

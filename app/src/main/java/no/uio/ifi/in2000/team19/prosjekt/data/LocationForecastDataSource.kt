@@ -8,7 +8,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
 import io.ktor.util.appendIfNameAbsent
-import no.uio.ifi.in2000.team19.prosjekt.model.DTO.locationForecast.LocationForecast
+import no.uio.ifi.in2000.team19.prosjekt.model.dto.locationForecast.LocationForecast
 import javax.inject.Inject
 import javax.inject.Singleton
 

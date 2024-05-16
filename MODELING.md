@@ -8,10 +8,6 @@
 
 Viser de viktigste funskjonene i appen og hvilke avhengigheter de har. 
 
-## Class Diagram
-
-![class diagram](docs/klassediagram.png)
-
 
 ## Activity Diagram
 ```mermaid
@@ -74,10 +70,6 @@ flowchart TD;
     Slutt((End))
 ````
 
-Navn: \
-Aktør: Bruker\
-Prebetingelse: Bruker har lastet ned appen og er klar for bruk\
-Postbetingelse: Bruker får...
 
 
 ## Sequence diagram
@@ -217,3 +209,7 @@ sequenceDiagram
 
 ````
 
+
+## Class Diagram
+
+![class diagram](docs/klassediagram.png)
