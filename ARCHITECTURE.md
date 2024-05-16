@@ -1,7 +1,7 @@
 
 # Arkitektur
 
-Appen vår tar i bruk mest mulig såkalte ["best practices" for Android arkitektur](https://developer.android.com/topic/architecture/recommendations). Med det mener vi at vi bruker en lag-delt arkitektur (MVVM), hvor data og UI er tydelig definert, og isolert til en oppgave. Med andre ord oppnår vi høy kohesjon og lav kobling ved å følge best practices. 
+Appen vår tar i bruk mest mulig såkalte ["best practices" for Android arkitektur](https://developer.android.com/topic/architecture/recommendations). Med det mener vi at vi bruker en lag-delt arkitektur (MVVM), hvor data og UI er tydelig definert, og isolert til en oppgave. Med andre ord jobber vi mot høy kohesjon og lav kobling ved å følge best practices. 
 
 > Kohesjon: For eksemepel, er `LocationForecastDataSource` sin jobb å ta imot kordinater og deretter hente data og deserialisere den fra LocationForecast APIen.  
 
@@ -118,6 +118,17 @@ Appen er laget i Kotlin og Jetpack Compose.
 
 Appen er bygget rundt LocationForecast apien til Metrologisk Institutt. Dataen hentes med bruk av Kotlins HTTP klient, `Ktor`. Dataen blir behandlet i `LocationForecastRespository` og i en tilhørende fil `AdviceFunctions`. Disse to filene til sammen gjennomfører det meste av databehandling, og gjør om rå værdata til lister av `Advice` og Graf data. Denne dataen blir lagret i UI laget i `viewModels` for de fleste skjermer. `HomeScreen` og `WeatherScreen` er de viktigste screens i appen, og deres viewModels: `HomeScreenViewModel` og `WeatherScreenViewModel`.
 
+### Teknologisk gjeld
+
+Før nye funksjoner implementeres burde diverse kode-relaterte problemer addreses tidlig. 
+- Context burde flyttes ut av `AdviceFunctions` og `LocationForecastRepository` for å kunne lage bedre tester. 
+- Flytte `HttpClient` ut av `LocationForecastDataSource`
+- Generelt skrive flere test
+- `HomeScreenViewModel` og `WeatherScreenViewModel` burde dele vær data. 
+- Flytte viewmodels ut av tilhørende compasables, hvor det ikke er gjort.
+
+
+## Biblioteker brukt
 I prosessen over bruker vi følgende teknologier: 
 - [Ktor](https://ktor.io/) (HTTP Klient)
 - [Room](https://developer.android.com/training/data-storage/room) (Database, for lagring av kordinater og bruker informasjon)
