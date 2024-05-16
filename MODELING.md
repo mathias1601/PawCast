@@ -12,7 +12,37 @@ Se sekvensdiagrammer for tekstlige beskrivelser av use case.
 
 ## Aktivitetsdiagram
 
-Her er en prebetingelse at brukeren ikke har opprettet en profil i systemet. 
+Navn: Setup user / dog profile
+Prebetingelser: Bruker har ikke laget profil i systemet
+Postbetingelser: Systemer lagrer en brukerprofil
+ 
+Hovedflyt:
+1. Bruker åpner appen
+2. Systemet viser velkommen skjerm
+3. Bruker velger “konfigurer appen” 
+4. Bruker skriver inn navn
+5. System lagrer navn i midlertidig objekt
+6. Bruker skriver inn lokasjon
+7. Systemet lagrer lokasjon i databasen
+8. Bruker velger alder
+9. System lagrer alder i midlertidig objekt
+10. Bruker velger snute
+11. System lagrer snute i midlertidig objekt
+12. Bruker velger kroppsform
+13. System lagrer kroppsform i midlertidig objekt
+14. Bruker velger pelstyper
+15. System lagrer pelstyper i midlertidig objekt
+16. System lagrer midlertidig objekt i databasen
+17. System lagrer info om ferdig setup 
+19. Bruker navigeres til hjemskjermen 
+ 
+Alternativ flyt:
+3.1 Bruker velger “hopp over konfigurasjon”
+3.2 Bruker skriver inn lokasjon
+3.3 Systemet lagrer lokasjon
+3.4 Systemet oppretter en forhåndsdefinert definert hund profil 
+3.5 Systemet navigerer bruker til steg 17
+
 
 ```mermaid
 flowchart TD;
