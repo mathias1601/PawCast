@@ -7,9 +7,10 @@
 ![use case diagram](docs/UseCaseDiagram.drawio.png)
 
 Viser de viktigste funskjonene i appen og hvilke avhengigheter de har. 
+Se sekvensdiagrammer for tekstlige beskrivelser av use case. 
 
 
-## Activity Diagram
+## Aktivitets Diagram
 ```mermaid
 flowchart TD;
 
