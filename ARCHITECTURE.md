@@ -124,6 +124,7 @@ I prosessen over bruker vi følgende teknologier:
 - [Dagger Hilt](https://developer.android.com/training/dependency-injection/hilt-android) (Dependency Injection)
 
 I composables bruker vi følgende biblioteker:
+- [Material3PullToRefresh](https://github.com/BambooAppsDevTeam/Material3PullToRefresh), for Pull To Refresh komponent
 - [Vico Graph](https://github.com/patrykandpatrick/vico), for å vise en graf. Se `HomeScreen` 
 - [MapBox Search SDK](https://docs.mapbox.com/android/search/guides/), for å hente forslag på steder basert på søk. Se `SearchLocationTextField`
 - [Compose-Markdown](https://github.com/jeziellago/compose-markdown?tab=readme-ov-file) for å vise Advice stylet fritt. Se `AdviceCard` og `AdviceScreen`
