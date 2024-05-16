@@ -50,7 +50,7 @@ subgraph UI Layer
 
 
 
-        homeViewModel(HomeViewModel)
+        homeViewModel(homeScreenViewModel)
         weatherScreenViewModel(WeatherScreenViewModel)
         settingsViewModel(SettingsViewModel)
         setupScreenViewModel(SetupScreenViewModel)
@@ -61,11 +61,13 @@ subgraph UI Layer
         settingsViewModel --> settingsScreen
         searchLocationViewModel --> LocationSetupScreen
         searchLocationViewModel --> settingsScreen
-        homeViewModel -->  
 
 
         weatherScreenViewModel --> weatherScreen
         setupScreenViewModel --> SetupScreen
+        
+        homeViewModel --> AdviceScreen
+        homeViewModel --> homeScreen
     end
 end
 
