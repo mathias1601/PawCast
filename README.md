@@ -9,9 +9,11 @@
 
 
 ## 📦 Hvordan kjøre appen
-+ Klone repository eller last ned mappen. 
-+ ..
-+ Trykk play i Android Studio
++ Last ned prosjektmappen via github eller last ned fra innleveringsmappen.
++ Åpne prosjektet i Android Studio.
++ Opprett en emulator eller koble til en Android mobil. 
++ Kjør gradle sync, gradle build og kjør appen. 
+
 
 
 
