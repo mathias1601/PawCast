@@ -11,7 +11,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class CreateAdviceTest {
-    private lateinit var adviceFunctions: AdviceFunctions
 
     @Test
     fun createAdvice_Safe() {
@@ -28,7 +27,7 @@ class CreateAdviceTest {
         val expectedAdvice =
             listOf(Advice(expectedStrings[0], expectedStrings[1], expectedStrings[2]))
 
-        val result = adviceFunctions.createAdvice(categories, appContext)
+        val result = AdviceFunctions.createAdvice(categories, appContext)
 
 
         // Assert
@@ -51,7 +50,7 @@ class CreateAdviceTest {
         val expectedAdvice =
             listOf(Advice(expectedStrings[0], expectedStrings[1], expectedStrings[2]))
 
-        val result = adviceFunctions.createAdvice(categories, appContext)
+        val result = AdviceFunctions.createAdvice(categories, appContext)
 
 
         // Assert

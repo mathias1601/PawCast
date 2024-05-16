@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    kotlin("kapt")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 }
@@ -87,13 +86,12 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-gson:$ktorVersion")
 
-    // Android dependecies vi har lagt til: f.eks viewModel...
-    implementation("ch.qos.logback:logback-classic:1.2.3")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+    implementation("ch.qos.logback:logback-classic:1.2.3") // Logging
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0") // collectAsStateWithLifecycle
 
 
-    // MapBox!
+    // MapBox search
     implementation("com.mapbox.search:mapbox-search-android-ui:1.2.0")
 
     //Room database
@@ -123,28 +121,16 @@ dependencies {
     // DataStore. Storing preferences to local storage (used to remember if user has completed setup)
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
-    // Google Locations. used to get users current location
-    implementation("com.google.android.gms:play-services-location:21.2.0")
-
     //Material Design 3
-    implementation("androidx.compose.material3:material3:1.2.1")
-    implementation("androidx.compose.material3:material3-window-size-class:1.2.1")
-    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.0.0-alpha07")
+    //implementation("androidx.compose.material3:material3:1.2.1")
+    ///implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.0.0-alpha07")
+    // implementation("androidx.compose.material3:material3-window-size-class:1.2.1")  // would be used to scale the app for different screens https://m3.material.io/foundations/layout/applying-layout/window-size-classes
+    //
+    // ^We never ended up using these libraries
+
 
 
     // MARKDOWN LIBRARY for advice screens
     implementation("com.github.jeziellago:compose-markdown:0.5.0")
 
-    implementation("org.mockito:mockito-core:5.12.0")
-
-
-}
-
-kapt {
-    correctErrorTypes = true
-    arguments {
-        arg("dagger.fastInit", "enabled")
-        arg("room.schemaLocation", "$projectDir/schemas")
-        // ... and so on with other options
-    }
 }
